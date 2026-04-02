@@ -100,7 +100,11 @@ jobs:
         run: tuist generate --path "${{ env.TUIST_PATH }}" --no-open
 
       - name: Debug generated files
-        run: find . -maxdepth 3 \( -name "*.xcodeproj" -o -name "*.xcworkspace" \)
+        run: |
+          echo "=== Generated .xcodeproj and .xcworkspace ==="
+          find . -maxdepth 4 \( -name "*.xcodeproj" -o -name "*.xcworkspace" \) | sort
+          echo "=== Checking project.pbxproj ==="
+          find . -maxdepth 6 -name "project.pbxproj" | sort
 
       - name: Install xcbeautify
         run: |
@@ -116,14 +120,6 @@ jobs:
           key: derived-data-${{ runner.os }}-${{ env.XCODE_VERSION }}-${{ hashFiles('**/*.swift', 'Project.swift', 'Tuist.swift', '**/Package.resolved') }}
           restore-keys: |
             derived-data-${{ runner.os }}-${{ env.XCODE_VERSION }}-
-
-      - name: Resolve Swift Package Dependencies
-        run: |
-          xcodebuild \
-            -resolvePackageDependencies \
-            -project "${{ env.PROJECT }}" \
-            -scheme "${{ env.SCHEME }}" \
-            -derivedDataPath "${{ env.DERIVED_DATA }}"
 
       - name: Build (Debug)
         run: |
