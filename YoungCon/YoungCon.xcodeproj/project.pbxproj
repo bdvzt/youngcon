@@ -7,12 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		73241DEA2F7D99FB00A3A82E /* Major.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73241DE92F7D99FB00A3A82E /* Major.swift */; };
 		88DA3D642F7BF805008AB7A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88DA3D602F7BF805008AB7A8 /* Assets.xcassets */; };
 		88DA3D652F7BF805008AB7A8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D612F7BF805008AB7A8 /* ContentView.swift */; };
 		88DA3D662F7BF805008AB7A8 /* YoungConApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D622F7BF805008AB7A8 /* YoungConApp.swift */; };
 		88DA3D692F7BF808008AB7A8 /* YoungConTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D672F7BF808008AB7A8 /* YoungConTests.swift */; };
 		88DA3D6D2F7BF81E008AB7A8 /* YoungConUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D6A2F7BF81E008AB7A8 /* YoungConUITests.swift */; };
 		88DA3D6E2F7BF81E008AB7A8 /* YoungConUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D6B2F7BF81E008AB7A8 /* YoungConUITestsLaunchTests.swift */; };
+		88DA3D772F7BF805008AB7A8 /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D752F7BF805008AB7A8 /* Achievement.swift */; };
+		88DA3D782F7BF805008AB7A8 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D712F7BF805008AB7A8 /* Event.swift */; };
+		88DA3D792F7BF805008AB7A8 /* Floor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D732F7BF805008AB7A8 /* Floor.swift */; };
+		88DA3D7A2F7BF805008AB7A8 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D702F7BF805008AB7A8 /* NetworkService.swift */; };
+		88DA3D7B2F7BF805008AB7A8 /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D722F7BF805008AB7A8 /* Speaker.swift */; };
+		88DA3D7D2F7BF805008AB7A8 /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D742F7BF805008AB7A8 /* Zone.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +40,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		73241DE92F7D99FB00A3A82E /* Major.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Major.swift; sourceTree = "<group>"; };
 		88DA3D362F7BF7DA008AB7A8 /* YoungCon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YoungCon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88DA3D432F7BF7DC008AB7A8 /* YoungConTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YoungConTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88DA3D4D2F7BF7DC008AB7A8 /* YoungConUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YoungConUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,7 +50,21 @@
 		88DA3D672F7BF808008AB7A8 /* YoungConTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YoungConTests.swift; sourceTree = "<group>"; };
 		88DA3D6A2F7BF81E008AB7A8 /* YoungConUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YoungConUITests.swift; sourceTree = "<group>"; };
 		88DA3D6B2F7BF81E008AB7A8 /* YoungConUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YoungConUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		88DA3D702F7BF805008AB7A8 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		88DA3D712F7BF805008AB7A8 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		88DA3D722F7BF805008AB7A8 /* Speaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Speaker.swift; sourceTree = "<group>"; };
+		88DA3D732F7BF805008AB7A8 /* Floor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Floor.swift; sourceTree = "<group>"; };
+		88DA3D742F7BF805008AB7A8 /* Zone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zone.swift; sourceTree = "<group>"; };
+		88DA3D752F7BF805008AB7A8 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		73241DED2F7E499F00A3A82E /* User */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = User;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		88DA3D332F7BF7DA008AB7A8 /* Frameworks */ = {
@@ -92,9 +114,11 @@
 		88DA3D632F7BF805008AB7A8 /* YoungCon */ = {
 			isa = PBXGroup;
 			children = (
+				88DA3D7E2F7BF805008AB7A8 /* App */,
 				88DA3D602F7BF805008AB7A8 /* Assets.xcassets */,
-				88DA3D612F7BF805008AB7A8 /* ContentView.swift */,
-				88DA3D622F7BF805008AB7A8 /* YoungConApp.swift */,
+				88DA3D802F7BF805008AB7A8 /* Data */,
+				88DA3D822F7BF805008AB7A8 /* Domain */,
+				88DA3D7F2F7BF805008AB7A8 /* Presentation */,
 			);
 			path = YoungCon;
 			sourceTree = "<group>";
@@ -116,6 +140,84 @@
 			path = YoungConUITests;
 			sourceTree = "<group>";
 		};
+		88DA3D7E2F7BF805008AB7A8 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D622F7BF805008AB7A8 /* YoungConApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		88DA3D7F2F7BF805008AB7A8 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D612F7BF805008AB7A8 /* ContentView.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		88DA3D802F7BF805008AB7A8 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D812F7BF805008AB7A8 /* Network */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		88DA3D812F7BF805008AB7A8 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D702F7BF805008AB7A8 /* NetworkService.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		88DA3D822F7BF805008AB7A8 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D832F7BF805008AB7A8 /* Entities */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		88DA3D832F7BF805008AB7A8 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D862F7BF805008AB7A8 /* Badge */,
+				88DA3D852F7BF805008AB7A8 /* Map */,
+				88DA3D842F7BF805008AB7A8 /* Schedule */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		88DA3D842F7BF805008AB7A8 /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D712F7BF805008AB7A8 /* Event.swift */,
+				88DA3D722F7BF805008AB7A8 /* Speaker.swift */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		88DA3D852F7BF805008AB7A8 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				88DA3D732F7BF805008AB7A8 /* Floor.swift */,
+				88DA3D742F7BF805008AB7A8 /* Zone.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		88DA3D862F7BF805008AB7A8 /* Badge */ = {
+			isa = PBXGroup;
+			children = (
+				73241DED2F7E499F00A3A82E /* User */,
+				88DA3D752F7BF805008AB7A8 /* Achievement.swift */,
+				73241DE92F7D99FB00A3A82E /* Major.swift */,
+			);
+			path = Badge;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -130,6 +232,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				73241DED2F7E499F00A3A82E /* User */,
 			);
 			name = YoungCon;
 			packageProductDependencies = (
@@ -252,8 +357,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				88DA3D772F7BF805008AB7A8 /* Achievement.swift in Sources */,
 				88DA3D652F7BF805008AB7A8 /* ContentView.swift in Sources */,
+				88DA3D782F7BF805008AB7A8 /* Event.swift in Sources */,
+				88DA3D792F7BF805008AB7A8 /* Floor.swift in Sources */,
+				88DA3D7A2F7BF805008AB7A8 /* NetworkService.swift in Sources */,
+				88DA3D7B2F7BF805008AB7A8 /* Speaker.swift in Sources */,
 				88DA3D662F7BF805008AB7A8 /* YoungConApp.swift in Sources */,
+				88DA3D7D2F7BF805008AB7A8 /* Zone.swift in Sources */,
+				73241DEA2F7D99FB00A3A82E /* Major.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,7 +455,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -401,7 +513,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -421,11 +533,13 @@
 				DEVELOPMENT_TEAM = 3XMQDQF9VR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -434,6 +548,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = zayata.YoungCon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -453,11 +571,13 @@
 				DEVELOPMENT_TEAM = 3XMQDQF9VR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -466,6 +586,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = zayata.YoungCon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
