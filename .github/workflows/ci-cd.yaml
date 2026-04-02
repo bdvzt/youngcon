@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PROJECT: YoungCon.xcodeproj
+  PROJECT: YoungCon/YoungCon.xcodeproj
   SCHEME: YoungCon
   XCODE_VERSION: "26.1.1"
   IOS_DEPLOYMENT_TARGET: "17.0"
