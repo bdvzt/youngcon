@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PROJECT: YoungCon/YoungCon.xcodeproj
+  PROJECT: YoungCon.xcodeproj
   SCHEME: YoungCon
   TUIST_PATH: .
   XCODE_VERSION: "26.1.1"
