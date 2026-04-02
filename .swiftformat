@@ -4,4 +4,10 @@
 --semicolons never
 --trailingcommas always
 --importgrouping alphabetized
---exclude Tuist,Project.swift,Tuist.swift
+--swiftversion 6.0
+--indent 4
+--linebreaks lf
+--semicolons never
+--trailingcommas always
+--importgrouping alphabetized
+--exclude Tuist,Project.swift,Tuist.swift,**/Project.swift,**/Tuist.swift,YoungConTests/YoungConTests.swift,YoungConUITests/YoungConUITests.swift,YoungConUITests/YoungConUITestsLaunchTests.swift
