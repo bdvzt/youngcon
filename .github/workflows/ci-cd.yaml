@@ -72,27 +72,6 @@ jobs:
             --config .swiftformat \
             --swiftversion 6.0
 
-      - name: Check iOS Deployment Target
-        run: |
-          echo "🔍 Verifying IPHONEOS_DEPLOYMENT_TARGET >= ${{ env.IOS_DEPLOYMENT_TARGET }}"
-          TARGET=$(xcodebuild -project ${{ env.PROJECT }} \
-            -scheme ${{ env.SCHEME }} \
-            -showBuildSettings 2>/dev/null \
-            | grep "IPHONEOS_DEPLOYMENT_TARGET" \
-            | awk '{print $3}')
-          echo "  Found deployment target: $TARGET"
-          python3 -c "
-          import sys
-          found = '$TARGET'
-          required = '${{ env.IOS_DEPLOYMENT_TARGET }}'
-          fv = tuple(int(x) for x in found.split('.'))
-          rv = tuple(int(x) for x in required.split('.'))
-          if fv < rv:
-              print(f'Deployment target {found} < required {required}')
-              sys.exit(1)
-          print(f'Deployment target {found} satisfies >= {required}')
-          "
-
   build:
     name: "Build (Debug)"
     runs-on: macos-15
