@@ -5,5 +5,5 @@ struct UserProfile: Identifiable, Codable {
     let name: String
     let email: String
     let major: Major
-    let qr: String
+    let qrCode: String
 }
