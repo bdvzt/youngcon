@@ -1,6 +1,6 @@
 import Foundation
 
-struct Achievement {
+struct Achievement: Identifiable, Codeble {
     let id: UUID
     let title: String
     let description: String
