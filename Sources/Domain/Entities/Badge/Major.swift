@@ -8,9 +8,9 @@
 import Foundation
 
 public enum Major: String, Codable {
-    case Frontend
-    case Backend
-    case Mobile
-    case ML
-    case DevOps
+    case frontend
+    case backend
+    case mobile
+    case ml
+    case devOps
 }
