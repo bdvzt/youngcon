@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PROJECT: YoungCon.xcodeproj
+  WORKSPACE: YoungCon.xcworkspace
   SCHEME: YoungCon
   TUIST_PATH: .
   XCODE_VERSION: "26.1.1"
@@ -125,13 +125,13 @@ jobs:
         run: |
           set -o pipefail
           xcodebuild build \
-            -project "${{ env.PROJECT }}" \
+            -workspace "${{ env.WORKSPACE }}" \
             -scheme "${{ env.SCHEME }}" \
             -destination "${{ env.DESTINATION }}" \
             -configuration Debug \
             -derivedDataPath "${{ env.DERIVED_DATA }}" \
             CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=NO \
+            ONLY_ACTIVE_ARCH=YES \
             | xcbeautify --renderer github-actions
 
       - name: Upload DerivedData (for tests)
@@ -194,7 +194,7 @@ jobs:
           set -o pipefail
           mkdir -p "${{ env.ARTIFACTS_DIR }}"
           xcodebuild test \
-            -project "${{ env.PROJECT }}" \
+            -workspace "${{ env.WORKSPACE }}" \
             -scheme "${{ env.SCHEME }}" \
             -destination "id=${{ env.SIMULATOR_UDID }}" \
             -derivedDataPath "${{ env.DERIVED_DATA }}" \
@@ -266,7 +266,7 @@ jobs:
           set -o pipefail
           mkdir -p "${{ env.ARTIFACTS_DIR }}"
           xcodebuild test \
-            -project "${{ env.PROJECT }}" \
+            -workspace "${{ env.WORKSPACE }}" \
             -scheme "${{ env.SCHEME }}" \
             -destination "id=${{ env.SIMULATOR_UDID }}" \
             -derivedDataPath "${{ env.DERIVED_DATA }}" \
