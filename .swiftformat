@@ -4,3 +4,4 @@
 --semicolons never
 --trailingcommas always
 --importgrouping alphabetized
+--exclude Tuist,Project.swift,Tuist.swift
