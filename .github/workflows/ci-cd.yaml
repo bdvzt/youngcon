@@ -24,7 +24,7 @@ env:
   TUIST_PATH: .
   XCODE_VERSION: "26.1.1"
   IOS_DEPLOYMENT_TARGET: "17.0"
-  DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro,OS=latest"
+  DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro,OS=26.2"
   DERIVED_DATA: DerivedData
   ARTIFACTS_DIR: build_artifacts
 
@@ -64,6 +64,7 @@ jobs:
         run: |
           swiftlint lint \
             --reporter github-actions-logging \
+            --strict \
             --config .swiftlint.yml
 
       - name: Run SwiftFormat (check only)
@@ -179,16 +180,6 @@ jobs:
           name: derived-data
           path: ${{ env.DERIVED_DATA }}
 
-      - name: Boot Simulator
-        run: |
-          UDID=$(xcrun simctl list devices available \
-            | grep "iPhone 16 Pro" \
-            | head -1 \
-            | grep -oE '[A-F0-9-]{36}')
-          echo "SIMULATOR_UDID=$UDID" >> $GITHUB_ENV
-          xcrun simctl boot "$UDID" || true
-          xcrun simctl bootstatus "$UDID" -b
-
       - name: Run Unit Tests
         run: |
           set -o pipefail
@@ -196,7 +187,7 @@ jobs:
           xcodebuild test \
             -workspace "${{ env.WORKSPACE }}" \
             -scheme "${{ env.SCHEME }}" \
-            -destination "id=${{ env.SIMULATOR_UDID }}" \
+            -destination "${{ env.DESTINATION }}" \
             -derivedDataPath "${{ env.DERIVED_DATA }}" \
             -configuration Debug \
             -only-testing:YoungConTests \
@@ -251,16 +242,6 @@ jobs:
           name: derived-data
           path: ${{ env.DERIVED_DATA }}
 
-      - name: Boot Simulator
-        run: |
-          UDID=$(xcrun simctl list devices available \
-            | grep "iPhone 16 Pro" \
-            | head -1 \
-            | grep -oE '[A-F0-9-]{36}')
-          echo "SIMULATOR_UDID=$UDID" >> $GITHUB_ENV
-          xcrun simctl boot "$UDID" || true
-          xcrun simctl bootstatus "$UDID" -b
-
       - name: Run UI Tests
         run: |
           set -o pipefail
@@ -268,7 +249,7 @@ jobs:
           xcodebuild test \
             -workspace "${{ env.WORKSPACE }}" \
             -scheme "${{ env.SCHEME }}" \
-            -destination "id=${{ env.SIMULATOR_UDID }}" \
+            -destination "${{ env.DESTINATION }}" \
             -derivedDataPath "${{ env.DERIVED_DATA }}" \
             -configuration Debug \
             -only-testing:YoungConUITests \
