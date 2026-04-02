@@ -20,6 +20,8 @@
 		88DA3D7A2F7BF805008AB7A8 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D702F7BF805008AB7A8 /* NetworkService.swift */; };
 		88DA3D7B2F7BF805008AB7A8 /* Speaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D722F7BF805008AB7A8 /* Speaker.swift */; };
 		88DA3D7D2F7BF805008AB7A8 /* Zone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA3D742F7BF805008AB7A8 /* Zone.swift */; };
+		9E2F88862B2F44E0B854FF9C /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279FF0BA8E5444278B53E42D /* UserProfile.swift */; };
+		D735B2C900CE41D298EAE42D /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9289022E4A4D46D989085C36 /* UserState.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +58,8 @@
 		88DA3D732F7BF805008AB7A8 /* Floor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Floor.swift; sourceTree = "<group>"; };
 		88DA3D742F7BF805008AB7A8 /* Zone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zone.swift; sourceTree = "<group>"; };
 		88DA3D752F7BF805008AB7A8 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
+		279FF0BA8E5444278B53E42D /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		9289022E4A4D46D989085C36 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -208,10 +212,19 @@
 			path = Map;
 			sourceTree = "<group>";
 		};
+		79120FCC370040A999E05708 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				279FF0BA8E5444278B53E42D /* UserProfile.swift */,
+				9289022E4A4D46D989085C36 /* UserState.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
 		88DA3D862F7BF805008AB7A8 /* Badge */ = {
 			isa = PBXGroup;
 			children = (
-				73241DED2F7E499F00A3A82E /* User */,
+				79120FCC370040A999E05708 /* User */,
 				88DA3D752F7BF805008AB7A8 /* Achievement.swift */,
 				73241DE92F7D99FB00A3A82E /* Major.swift */,
 			);
@@ -366,6 +379,8 @@
 				88DA3D662F7BF805008AB7A8 /* YoungConApp.swift in Sources */,
 				88DA3D7D2F7BF805008AB7A8 /* Zone.swift in Sources */,
 				73241DEA2F7D99FB00A3A82E /* Major.swift in Sources */,
+				9E2F88862B2F44E0B854FF9C /* UserProfile.swift in Sources */,
+				D735B2C900CE41D298EAE42D /* UserState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
