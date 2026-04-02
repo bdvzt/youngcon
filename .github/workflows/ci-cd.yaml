@@ -94,6 +94,9 @@ jobs:
           fi
           tuist version
 
+      - name: Install Tuist Dependencies
+        run: tuist install --path "${{ env.TUIST_PATH }}"
+
       - name: Generate Xcode Project
         run: tuist generate --path "${{ env.TUIST_PATH }}" --no-open
 
@@ -163,6 +166,9 @@ jobs:
           fi
           tuist version
 
+      - name: Install Tuist Dependencies
+        run: tuist install --path "${{ env.TUIST_PATH }}"
+
       - name: Generate Xcode Project
         run: tuist generate --path "${{ env.TUIST_PATH }}" --no-open
 
@@ -231,6 +237,9 @@ jobs:
             brew install tuist
           fi
           tuist version
+
+      - name: Install Tuist Dependencies
+        run: tuist install --path "${{ env.TUIST_PATH }}"
 
       - name: Generate Xcode Project
         run: tuist generate --path "${{ env.TUIST_PATH }}" --no-open
