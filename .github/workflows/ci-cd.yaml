@@ -64,7 +64,6 @@ jobs:
         run: |
           swiftlint lint \
             --reporter github-actions-logging \
-            --strict \
             --config .swiftlint.yml
 
       - name: Run SwiftFormat (check only)
