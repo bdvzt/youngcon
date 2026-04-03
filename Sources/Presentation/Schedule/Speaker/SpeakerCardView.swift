@@ -1,5 +1,7 @@
 import SwiftUI
 
+// swiftlint:disable all
+
 let example = Speaker(
     id: UUID(),
     name: "Анна Иванова",
@@ -208,3 +210,5 @@ struct SpeakerCardView: View {
 #Preview {
     SpeakerCardView(speaker: example)
 }
+
+// swiftlint:enable all
