@@ -39,12 +39,8 @@ struct TabPageView: View {
                 }
                 .transition(slideTransition)
             case .badge:
-                VStack(spacing: 16) {
-                    Text("Бейдж")
-                        .font(.system(size: 32, weight: .black))
-                        .foregroundColor(.white)
-                }
-                .transition(slideTransition)
+                BadgeView(isOverlayPresented: $isOverlayPresented)
+                    .transition(slideTransition)
             }
         }
         .animation(.easeInOut(duration: 0.3), value: activeTab)
