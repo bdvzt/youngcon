@@ -4,7 +4,7 @@ struct BottomNavBar: View {
     @Binding var activeTab: AppTab
     var isOverlayPresented: Bool = false
 
-    private let bg = YoungConAsset.appBackground.swiftUIColor
+    private let background = YoungConAsset.appBackground.swiftUIColor
 
     var body: some View {
         VStack(spacing: 0) {
@@ -30,7 +30,7 @@ struct BottomNavBar: View {
             .padding(.bottom, 0)
         }
         .background(
-            bg
+            background
                 .opacity(0.85)
                 .background(.ultraThinMaterial)
                 .ignoresSafeArea(edges: .bottom)
