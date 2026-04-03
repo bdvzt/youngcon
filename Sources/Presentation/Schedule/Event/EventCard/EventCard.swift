@@ -6,10 +6,17 @@ import SwiftUI
 enum EventCardMocks {
 
     enum IDs {
-        static let event = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
-        static let zone = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
-        static let speaker1 = UUID(uuidString: "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")!
-        static let speaker2 = UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!
+        static let event = Self.uuid("11111111-1111-1111-1111-111111111111")
+        static let zone = Self.uuid("22222222-2222-2222-2222-222222222222")
+        static let speaker1 = Self.uuid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")
+        static let speaker2 = Self.uuid("BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")
+
+        private static func uuid(_ string: String) -> UUID {
+            guard let id = UUID(uuidString: string) else {
+                preconditionFailure("Invalid mock UUID string: \(string)")
+            }
+            return id
+        }
     }
 
     static let zone = Zone(
@@ -38,7 +45,7 @@ enum EventCardMocks {
             Архитектура и производительность больших iOS-клиентов. Ранее — лид мобильной разработки в e-commerce.
             """,
             photoURL: URL(string: "https://example.com/photos/maria-sokolova.jpg")
-        ),
+        )
     ]
 
     /// Интервал относительно «сейчас», чтобы в превью всегда были live-точка и кнопка трансляции.
@@ -82,91 +89,116 @@ struct EventCard: View {
     private var primarySpeaker: Speaker? { speakers.first }
 
     var body: some View {
+        cardStack
+            .padding(22)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background { cardBackground }
+            .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
+    }
+
+    private var cardStack: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .center, spacing: 6) {
-                Text(timeRangeText)
-                    .font(.footnote)
-                    .fontWeight(.bold)
-                    .monospacedDigit()
-                    .foregroundStyle(Color("Gray500"))
-
-                if isLive {
-                    LivePulseDot()
-                }
-
-                Spacer(minLength: 8)
-            }
-
-            Text(event.title)
-                .font(.title3)
-                .fontWeight(.bold)
-                .foregroundStyle(.white)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-
+            scheduleRow
+            titleBlock
             if let speaker = primarySpeaker {
-                HStack(alignment: .center, spacing: 12) {
-                    SpeakerAvatar(url: speaker.photoURL)
+                speakerRow(speaker)
+            }
+            separatorLine
+            metaRow
+        }
+    }
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(speaker.name)
-                            .font(.callout)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.white)
-                        Text(speaker.role)
-                            .font(.caption)
-                            .foregroundStyle(Color("Gray500"))
-                            .lineLimit(2)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+    private var scheduleRow: some View {
+        HStack(alignment: .center, spacing: 6) {
+            Text(timeRangeText)
+                .font(.footnote)
+                .fontWeight(.bold)
+                .monospacedDigit()
+                .foregroundStyle(Color("Gray500"))
+
+            if isLive {
+                LivePulseDot()
+            }
+
+            Spacer(minLength: 8)
+        }
+    }
+
+    private var titleBlock: some View {
+        Text(event.title)
+            .font(.title3)
+            .fontWeight(.bold)
+            .foregroundStyle(.white)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func speakerRow(_ speaker: Speaker) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            SpeakerAvatar(url: speaker.photoURL)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(speaker.name)
+                    .font(.callout)
+                    .fontWeight(.bold)
+                    .foregroundStyle(.white)
+                Text(speaker.role)
+                    .font(.caption)
+                    .foregroundStyle(Color("Gray500"))
+                    .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    private var separatorLine: some View {
+        Rectangle()
+            .fill(Color("Gray500").opacity(0.35))
+            .frame(height: 1)
+    }
+
+    private var metaRow: some View {
+        HStack(alignment: .center, spacing: 12) {
+            if let zone {
+                HStack(spacing: 6) {
+                    Image(systemName: zone.iconName)
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(zoneAccentColor(zone.color))
+                    Text(zone.name)
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                        .foregroundStyle(Color("Gray500"))
+                        .lineLimit(1)
                 }
             }
 
-            Rectangle()
-                .fill(Color("Gray500").opacity(0.35))
-                .frame(height: 1)
+            Spacer(minLength: 8)
 
-            HStack(alignment: .center, spacing: 12) {
-                if let zone {
-                    HStack(spacing: 6) {
-                        Image(systemName: zone.iconName)
-                            .font(.footnote.weight(.bold))
-                            .foregroundStyle(zoneAccentColor(zone.color))
-                        Text(zone.name)
-                            .font(.footnote)
-                            .fontWeight(.bold)
-                            .foregroundStyle(Color("Gray500"))
-                            .lineLimit(1)
-                    }
-                }
-
-                Spacer(minLength: 8)
-
-                if showsStreamControl {
-                    EventCardStreamButton()
-                }
+            if showsStreamControl {
+                EventCardStreamButton()
             }
         }
-        .padding(22)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(red: 21 / 255, green: 22 / 255, blue: 33 / 255))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .strokeBorder(Color("Gray500").opacity(0.22), lineWidth: 1)
-                }
-        }
-        .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
+    }
+
+    private var cardBackground: some View {
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .fill(Color(red: 21 / 255, green: 22 / 255, blue: 33 / 255))
+            .overlay {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .strokeBorder(Color("Gray500").opacity(0.22), lineWidth: 1)
+            }
     }
 
     private func zoneAccentColor(_ name: String) -> Color {
         switch name.lowercased() {
-        case "pink", "red": return Color("AccentPink")
-        case "orange", "yellow": return Color("AccentYellow")
+        case "pink", "red":
+            return Color("AccentPink")
+        case "orange", "yellow":
+            return Color("AccentYellow")
         case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
             return Color("AccentPurple")
-        default: return Color("AccentPurple")
+        default:
+            return Color("AccentPurple")
         }
     }
 }
@@ -238,4 +270,21 @@ private struct SpeakerAvatar: View {
     .padding()
     .background(Color("AppBackground"))
     .preferredColorScheme(.dark)
+}
+
+#Preview("Без зоны и эфира") {
+    let previewEvent = Event(
+        id: EventCardMocks.IDs.event,
+        title: "Короткий доклад",
+        start: Date(),
+        end: Date().addingTimeInterval(3600),
+        speakerIDs: [EventCardMocks.IDs.speaker1],
+        zoneID: nil,
+        categoryCode: "talk",
+        streamURL: nil
+    )
+    EventCard(event: previewEvent, zone: nil, speakers: [EventCardMocks.speakers[0]])
+        .padding()
+        .background(Color("AppBackground"))
+        .preferredColorScheme(.dark)
 }

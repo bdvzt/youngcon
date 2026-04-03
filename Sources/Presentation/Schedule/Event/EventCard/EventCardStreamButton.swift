@@ -2,7 +2,6 @@ import Foundation
 import SwiftUI
 
 struct EventCardStreamButton: View {
-    
     var body: some View {
         ZStack {
             Rectangle()
@@ -16,7 +15,6 @@ struct EventCardStreamButton: View {
         }
         .shadow(color: Color("AccentYellow"), radius: 7)
     }
-        
 }
 
 #Preview {
