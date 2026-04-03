@@ -24,7 +24,7 @@ env:
   TUIST_PATH: .
   XCODE_VERSION: "26.1.1"
   IOS_DEPLOYMENT_TARGET: "17.0"
-  DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro,OS=26.2"
+  DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro,OS=17.0"
   DERIVED_DATA: DerivedData
   ARTIFACTS_DIR: build_artifacts
 
