@@ -5,7 +5,7 @@ struct TabItemView: View {
     let isActive: Bool
     let action: () -> Void
 
-    private let activeColor   = YoungConAsset.accentYellow.swiftUIColor
+    private let activeColor = YoungConAsset.accentYellow.swiftUIColor
     private let inactiveColor = YoungConAsset.gray500.swiftUIColor
 
     var body: some View {

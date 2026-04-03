@@ -15,7 +15,7 @@ struct TabPageView: View {
     private var slideTransition: AnyTransition {
         .asymmetric(
             insertion: .move(edge: slideDirection > 0 ? .trailing : .leading),
-            removal:   .move(edge: slideDirection > 0 ? .leading  : .trailing)
+            removal: .move(edge: slideDirection > 0 ? .leading : .trailing)
         )
     }
 
@@ -46,12 +46,13 @@ struct TabPageView: View {
                 }
                 .transition(slideTransition)
             }
-        }                                        
+        }
         .animation(.easeInOut(duration: 0.3), value: activeTab)
         .gesture(swipeGesture)
     }
 
     // MARK: - Swipe Gesture
+
     private var swipeGesture: some Gesture {
         DragGesture(minimumDistance: 40, coordinateSpace: .local)
             .onEnded { value in
