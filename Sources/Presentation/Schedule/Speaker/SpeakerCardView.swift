@@ -10,36 +10,39 @@ let example = Speaker(
 
 struct SpeakerCardView: View {
     // MARK: - Properties
+
     let speaker: Speaker
     @State private var scrollOffset: CGFloat = 0
     @Environment(\.dismiss) private var dismiss
-    
+
     // MARK: - Colors
+
     private let whiteText = Color.white
-    
+
     // MARK: - Body
+
     var body: some View {
         ZStack {
             Color("AppBackground")
                 .ignoresSafeArea()
-            
+
             VStack(spacing: 0) {
                 Spacer()
-                
+
                 VStack(spacing: 0) {
                     TopNavigationBar()
                         .padding(.horizontal, 20)
                         .padding(.top, 20)
                         .padding(.bottom, 12)
                         .background(Color("CardBackgound"))
-                    
+
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
                             AvatarView()
                                 .padding(.leading, 28)
                                 .padding(.top, 20)
                                 .padding(.bottom, 20)
-                            
+
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("ТОП-МЕНЕДЖМЕНТ")
                                     .font(.system(size: 32, weight: .heavy))
@@ -51,7 +54,7 @@ struct SpeakerCardView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 28)
                             .padding(.bottom, 8)
-                            
+
                             HStack {
                                 Text("Ключевые спикеры")
                                     .font(.system(size: 14, weight: .bold))
@@ -70,16 +73,16 @@ struct SpeakerCardView: View {
                             }
                             .padding(.horizontal, 28)
                             .padding(.bottom, 32)
-                            
+
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("О СПИКЕРЕ")
                                     .font(.system(size: 13, weight: .heavy))
                                     .foregroundColor(whiteText.opacity(0.5))
-                                
+
                                 Rectangle()
                                     .fill(whiteText.opacity(0.15))
                                     .frame(height: 1)
-                                
+
                                 Text(speaker.bio)
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(whiteText.opacity(0.85))
@@ -88,7 +91,7 @@ struct SpeakerCardView: View {
                             }
                             .padding(.horizontal, 28)
                             .padding(.bottom, 32)
-                            
+
                             Button(action: {
                                 print("Задать вопрос спикеру: \(speaker.name)")
                             }) {
@@ -115,15 +118,15 @@ struct SpeakerCardView: View {
                     RoundedRectangle(cornerRadius: 42)
                         .stroke(whiteText.opacity(0.2), lineWidth: 1.0)
                 )
-                
+
                 Spacer()
             }
         }
         .navigationBarHidden(true)
     }
-    
+
     // MARK: - Top Navigation Bar
-    @ViewBuilder
+
     private func TopNavigationBar() -> some View {
         HStack {
             Button(action: {
@@ -138,9 +141,9 @@ struct SpeakerCardView: View {
                         .foregroundColor(whiteText.opacity(0.6))
                 }
             }
-            
+
             Spacer()
-            
+
             Button(action: {
                 dismiss()
             }) {
@@ -148,7 +151,7 @@ struct SpeakerCardView: View {
                     Circle()
                         .fill(whiteText.opacity(0.1))
                         .frame(width: 40, height: 40)
-                    
+
                     Image(systemName: "xmark")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(whiteText.opacity(0.6))
@@ -156,9 +159,9 @@ struct SpeakerCardView: View {
             }
         }
     }
-    
+
     // MARK: - Avatar View
-    @ViewBuilder
+
     private func AvatarView() -> some View {
         ZStack(alignment: .bottomTrailing) {
             if let photoURL = speaker.photoURL {
@@ -181,7 +184,7 @@ struct SpeakerCardView: View {
                     .clipShape(Circle())
                     .overlay(Circle().stroke(whiteText.opacity(0.3), lineWidth: 1.0))
             }
-            
+
             ZStack {
                 Circle()
                     .fill(Color("AccentYellow"))
@@ -190,7 +193,7 @@ struct SpeakerCardView: View {
                         Circle()
                             .stroke(Color("CardBackground"), lineWidth: 4.0)
                     )
-                
+
                 Image(systemName: "star.fill")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundColor(Color("CardBackground"))
@@ -201,6 +204,7 @@ struct SpeakerCardView: View {
 }
 
 // MARK: - Preview
+
 #Preview {
     SpeakerCardView(speaker: example)
 }
