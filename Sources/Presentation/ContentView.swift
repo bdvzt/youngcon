@@ -1,14 +1,22 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isLoading = true
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            Color("AppBackground")
+                .ignoresSafeArea()
+
+            if isLoading {
+                LoadingScreen(isLoading: $isLoading)
+                    .transition(.opacity)
+            } else {
+                MainTabView()
+                    .transition(.opacity)
+            }
         }
-        .padding()
+        .animation(.easeInOut(duration: 0.4), value: isLoading)
     }
 }
 

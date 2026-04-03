@@ -1,11 +1,23 @@
 import ProjectDescription
 
+let swiftFormatScript: TargetScript = .pre(
+    script: """
+        if which swiftformat >/dev/null; then
+            swiftformat .
+        else
+            echo "warning: SwiftFormat not installed"
+        fi
+    """,
+    name: "SwiftFormat",
+    basedOnDependencyAnalysis: false
+)
+
 let swiftLintScript: TargetScript = .pre(
     script: """
         if which swiftlint >/dev/null; then
             swiftlint
         else
-            echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+            echo "warning: SwiftLint not installed"
         fi
     """,
     name: "SwiftLint",
@@ -30,12 +42,10 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.bdvzt.YoungCon",
-            infoPlist: .extendingDefault(with: [
-                "CFBundleDisplayName": "YoungCon"
-            ]),
+            infoPlist: .file(path: "SupportingFiles/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            scripts: [swiftLintScript],
+            scripts: [swiftFormatScript, swiftLintScript],
             dependencies: [
                 .external(name: "SnapKit"),
                 .external(name: "Kingfisher")
@@ -62,26 +72,6 @@ let project = Project(
             dependencies: [
                 .target(name: "YoungCon")
             ]
-        )
-    ],
-
-    schemes: [
-        .scheme(
-            name: "YoungCon",
-            buildAction: .buildAction(
-                targets: ["YoungCon", "YoungConTests", "YoungConUITests"]
-            ),
-            testAction: .targets(
-                [
-                    .testableTarget(target: "YoungConTests"),
-                    .testableTarget(target: "YoungConUITests")
-                ],
-                configuration: "Debug"
-            ),
-            runAction: .runAction(
-                configuration: "Debug",
-                executable: "YoungCon"
-            )
         )
     ]
 )
