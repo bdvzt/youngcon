@@ -171,7 +171,7 @@ struct EventSpeakersDTO: Decodable {
 }
 ```
 
-### 6.6 `Sources/Data/DTOs/Events/EventLikeDTO.swift`
+ ### 6.6 `Sources/Data/DTOs/Events/EventLikeDTO.swift`
 
 ```swift
 import Foundation
