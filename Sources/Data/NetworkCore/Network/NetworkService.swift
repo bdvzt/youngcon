@@ -16,7 +16,7 @@ final class NetworkService: NetworkServiceProtocol {
         let _: Data = try await send(endpoint)
     }
 
-    func requestDecodable<T: Decodable>(_ endpoint: EndPoint, as: T.Type) async throws -> T {
+    func requestDecodable<T: Decodable>(_ endpoint: EndPoint, as _: T.Type) async throws -> T {
         let data = try await send(endpoint)
         do {
             return try JSONDecoder().decode(T.self, from: data)

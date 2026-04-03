@@ -4,8 +4,8 @@ enum URLRequestBuilder {
     static func build(from endpoint: EndPoint) throws -> URLRequest {
         let safePath =
             endpoint.path.hasPrefix("/")
-            ? String(endpoint.path.dropFirst())
-            : endpoint.path
+                ? String(endpoint.path.dropFirst())
+                : endpoint.path
 
         let url = endpoint.baseURL.appendingPathComponent(safePath)
 
@@ -20,7 +20,7 @@ enum URLRequestBuilder {
         case .request:
             break
 
-        case .requestBody(let data):
+        case let .requestBody(data):
             do {
                 request.httpBody = try JSONEncoder().encode(data)
 
@@ -34,15 +34,13 @@ enum URLRequestBuilder {
                 if request.value(forHTTPHeaderField: HTTPHeader.accept) == nil {
                     request.setValue(HTTPHeaderValue.json, forHTTPHeaderField: HTTPHeader.accept)
                 }
-            }
-            catch is EncodingError {
+            } catch is EncodingError {
                 throw NetworkError.encodingFailed
-            }
-            catch {
+            } catch {
                 throw NetworkError.transportError(underlying: error)
             }
 
-        case .requestUrlParameters(let parameters):
+        case let .requestUrlParameters(parameters):
             request.url = try addQuery(parameters, to: request.url)
         }
 
@@ -51,6 +49,7 @@ enum URLRequestBuilder {
 }
 
 // MARK: - Helpers
+
 private extension URLRequestBuilder {
     static func addQuery(_ parameters: Parameters, to url: URL?) throws -> URL {
         guard let url else {

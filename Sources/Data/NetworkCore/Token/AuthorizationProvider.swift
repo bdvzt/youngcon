@@ -19,7 +19,7 @@ final class AuthorizationProvider: AuthorizationProvidingProtocol {
 
         case .accessToken:
             guard let token = tokenStorage.accessToken,
-                token.isEmpty == false
+                  token.isEmpty == false
             else {
                 return request
             }

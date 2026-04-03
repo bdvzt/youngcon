@@ -29,8 +29,7 @@ final class KeychainStore: KeyValueStoreProtocol {
 
         if exists {
             status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
-        }
-        else {
+        } else {
             query.merge(attributes, uniquingKeysWith: { $1 })
             status = SecItemAdd(query as CFDictionary, nil)
         }

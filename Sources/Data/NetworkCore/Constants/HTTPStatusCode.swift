@@ -1,5 +1,5 @@
 enum HTTPStatusCode: Int {
-    case ok = 200
+    case okay = 200
     case created = 201
     case noContent = 204
 
@@ -15,10 +15,10 @@ enum HTTPStatusCode: Int {
     case unknown
 
     static func isSuccess(_ code: Int) -> Bool {
-        (200...299).contains(code)
+        (200 ... 299).contains(code)
     }
 
-    public init(code: Int) {
+    init(code: Int) {
         self = HTTPStatusCode(rawValue: code) ?? .unknown
     }
 }

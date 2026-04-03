@@ -8,7 +8,7 @@ final class KeychainTokenStorage: TokenStorageProtocol {
         accessGroup: String? = nil,
         accessibility: CFString = kSecAttrAccessibleAfterFirstUnlock
     ) {
-        self.store = KeychainStore(
+        store = KeychainStore(
             service: service,
             accessGroup: accessGroup,
             accessibility: accessibility
@@ -18,17 +18,15 @@ final class KeychainTokenStorage: TokenStorageProtocol {
     var accessToken: String? {
         get {
             if let data = try? store.get(for: KeychainKeys.accessToken) {
-                return String(data: data, encoding: .utf8)
-            }
-            else {
-                return nil
+                String(data: data, encoding: .utf8)
+            } else {
+                nil
             }
         }
         set {
             if let value = newValue {
                 try? store.set(Data(value.utf8), for: KeychainKeys.accessToken)
-            }
-            else {
+            } else {
                 try? store.delete(for: KeychainKeys.accessToken)
             }
         }
