@@ -6,7 +6,7 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color("AppBackground")
+            YoungConAsset.appBackground.swiftUIColor
                 .ignoresSafeArea()
 
             TabPageView(tab: activeTab, isOverlayPresented: $isOverlayPresented)

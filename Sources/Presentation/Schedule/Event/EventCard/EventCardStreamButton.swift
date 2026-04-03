@@ -6,14 +6,14 @@ struct EventCardStreamButton: View {
         ZStack {
             Rectangle()
                 .frame(width: 40, height: 40)
-                .foregroundColor(Color("AccentYellow"))
+                .foregroundColor(YoungConAsset.accentYellow.swiftUIColor)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             Image(systemName: "play.fill")
                 .resizable()
                 .frame(width: 14, height: 14)
                 .foregroundStyle(Color.black)
         }
-        .shadow(color: Color("AccentYellow"), radius: 7)
+        .shadow(color: YoungConAsset.accentYellow.swiftUIColor, radius: 7)
     }
 }
 

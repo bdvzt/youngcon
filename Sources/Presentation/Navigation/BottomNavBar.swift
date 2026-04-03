@@ -28,7 +28,7 @@ struct BottomNavBar: View {
             .padding(.bottom, 0)
         }
         .background(
-            Color("AppBackground")
+            YoungConAsset.appBackground.swiftUIColor
                 .opacity(0.85)
                 .background(.ultraThinMaterial)
                 .ignoresSafeArea(edges: .bottom)

@@ -151,7 +151,7 @@ struct EventCard: View {
                     .foregroundStyle(.white)
                 Text(speaker.role)
                     .font(.caption)
-                    .foregroundStyle(Color("Gray500"))
+                    .foregroundStyle(YoungConAsset.gray500.swiftUIColor)
                     .lineLimit(2)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -160,7 +160,7 @@ struct EventCard: View {
 
     private var separatorLine: some View {
         Rectangle()
-            .fill(Color("Gray500").opacity(0.35))
+            .fill(YoungConAsset.gray500.swiftUIColor.opacity(0.35))
             .frame(height: 1)
     }
 
@@ -192,20 +192,20 @@ struct EventCard: View {
             .fill(Color(red: 21 / 255, green: 22 / 255, blue: 33 / 255))
             .overlay {
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .strokeBorder(Color("Gray500").opacity(0.22), lineWidth: 1)
+                    .strokeBorder(YoungConAsset.gray500.swiftUIColor.opacity(0.22), lineWidth: 1)
             }
     }
 
     private func zoneAccentColor(_ name: String) -> Color {
         switch name.lowercased() {
         case "pink", "red":
-            Color("AccentPink")
+            YoungConAsset.accentPink.swiftUIColor
         case "orange", "yellow":
-            Color("AccentYellow")
+            YoungConAsset.accentYellow.swiftUIColor
         case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
-            Color("AccentPurple")
+            YoungConAsset.accentPurple.swiftUIColor
         default:
-            Color("AccentPurple")
+            YoungConAsset.accentPurple.swiftUIColor
         }
     }
 }
@@ -275,7 +275,7 @@ private struct SpeakerAvatar: View {
         speakers: EventCardMocks.speakers
     )
     .padding()
-    .background(Color("AppBackground"))
+    .background(YoungConAsset.appBackground.swiftUIColor)
     .preferredColorScheme(.dark)
 }
 
@@ -292,6 +292,6 @@ private struct SpeakerAvatar: View {
     )
     EventCard(event: previewEvent, zone: nil, speakers: [EventCardMocks.speakers[0]])
         .padding()
-        .background(Color("AppBackground"))
+        .background(YoungConAsset.appBackground.swiftUIColor)
         .preferredColorScheme(.dark)
 }

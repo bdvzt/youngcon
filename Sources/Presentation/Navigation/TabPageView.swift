@@ -6,7 +6,7 @@ struct TabPageView: View {
 
     var body: some View {
         ZStack {
-            Color("AppBackground").ignoresSafeArea()
+            YoungConAsset.appBackground.swiftUIColor.ignoresSafeArea()
 
             switch tab {
             case .schedule:
