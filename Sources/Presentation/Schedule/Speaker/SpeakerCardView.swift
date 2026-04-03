@@ -30,7 +30,7 @@ struct SpeakerCardView: View {
                 Spacer()
 
                 VStack(spacing: 0) {
-                    TopNavigationBar()
+                    topNavigationBar()
                         .padding(.horizontal, 20)
                         .padding(.top, 20)
                         .padding(.bottom, 12)
@@ -38,7 +38,7 @@ struct SpeakerCardView: View {
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
-                            AvatarView()
+                            avatarView()
                                 .padding(.leading, 28)
                                 .padding(.top, 20)
                                 .padding(.bottom, 20)
@@ -127,7 +127,7 @@ struct SpeakerCardView: View {
 
     // MARK: - Top Navigation Bar
 
-    private func TopNavigationBar() -> some View {
+    private func topNavigationBar() -> some View {
         HStack {
             Button(action: {
                 dismiss()
@@ -162,7 +162,7 @@ struct SpeakerCardView: View {
 
     // MARK: - Avatar View
 
-    private func AvatarView() -> some View {
+    private func avatarView() -> some View {
         ZStack(alignment: .bottomTrailing) {
             if let photoURL = speaker.photoURL {
                 AsyncImage(url: photoURL) { image in
