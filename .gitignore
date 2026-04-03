@@ -71,3 +71,8 @@ Tuist/.build.DS_Store
 .DS_Store
 **/.DS_Store
 .DS_Store
+Tuist/.build/
+Tuist/Dependencies/
+Tuist/.build/
+Tuist/Dependencies/
+Derived/
