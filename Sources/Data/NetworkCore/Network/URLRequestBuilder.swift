@@ -40,7 +40,7 @@ enum URLRequestBuilder {
                 throw NetworkError.transportError(underlying: error)
             }
 
-        case let .requestUrlParameters(parameters):
+        case let .requestURLParameters(parameters):
             request.url = try addQuery(parameters, to: request.url)
         }
 
