@@ -1,10 +1,3 @@
-//
-//  EventCard.swift
-//  YoungCon
-//
-//  Created by Сергей Мещеряков on 02.04.2026.
-//
-
 import Foundation
 import SwiftUI
 
@@ -92,7 +85,7 @@ struct EventCard: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center, spacing: 6) {
                 Text(timeRangeText)
-                    .font(.yandexSansText(.footnote, weight: .bold, monospacedDigits: true))
+                    .font(.yandexSansText(.footnote, weight: .bold, monospacedDigits: false))
                     .foregroundStyle(Theme.eventTime)
 
                 if isLive {

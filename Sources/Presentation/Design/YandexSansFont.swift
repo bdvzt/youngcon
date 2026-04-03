@@ -1,8 +1,3 @@
-//
-//  YandexSansFont.swift
-//  YoungCon
-//
-
 import SwiftUI
 import UIKit
 

@@ -1,10 +1,3 @@
-//
-//  Themes.swift
-//  YoungCon
-//
-//  Created by Сергей Мещеряков on 02.04.2026.
-//
-
 import SwiftUI
 
 enum Theme {
