@@ -31,7 +31,9 @@ let project = Project(
             product: .app,
             bundleId: "com.bdvzt.YoungCon",
             infoPlist: .extendingDefault(with: [
-                "CFBundleDisplayName": "YoungCon"
+                "UILaunchScreen": [
+                    "UIColorName": "AppBackground"
+                ]
             ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
