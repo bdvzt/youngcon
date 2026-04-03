@@ -27,7 +27,7 @@ struct LoadingScreen: View {
                                         Color.cyan.opacity(0.4),
                                         accentColor.opacity(0.6),
                                         Color.cyan.opacity(0.4),
-                                        accentColor.opacity(0.6)
+                                        accentColor.opacity(0.6),
                                     ]),
                                     center: .center
                                 )

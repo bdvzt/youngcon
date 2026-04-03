@@ -5,7 +5,7 @@ struct TabItemView: View {
     let isActive: Bool
     let action: () -> Void
 
-    private let activeColor   = Color("AccentYellow")
+    private let activeColor = Color("AccentYellow")
     private let inactiveColor = Color("Gray500")
 
     var body: some View {
@@ -18,7 +18,7 @@ struct TabItemView: View {
                                 RadialGradient(
                                     gradient: Gradient(colors: [
                                         activeColor.opacity(0.55),
-                                        activeColor.opacity(0)
+                                        activeColor.opacity(0),
                                     ]),
                                     center: .center,
                                     startRadius: 0,
