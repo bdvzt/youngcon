@@ -6,12 +6,12 @@ struct LoadingScreen: View {
     @State private var isPulsing = false
     @State private var glowRotation: Double = 0.0
 
-    private let backgroundColor = Color("AppBackground")
-    private let accentColor = Color("AccentYellow")
+    private let bg          = YoungConAsset.appBackground.swiftUIColor
+    private let accentColor = YoungConAsset.accentYellow.swiftUIColor
 
     var body: some View {
         ZStack {
-            backgroundColor.ignoresSafeArea()
+            bg.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Image("logo")
@@ -45,11 +45,9 @@ struct LoadingScreen: View {
             )
             .onAppear {
                 isPulsing = true
-
                 withAnimation(.linear(duration: 4.0).repeatForever(autoreverses: false)) {
                     glowRotation = 360.0
                 }
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
                     withAnimation(.easeOut(duration: 0.8)) {
                         isLoading = false
