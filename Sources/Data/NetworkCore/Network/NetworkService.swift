@@ -19,7 +19,7 @@ final class NetworkService: NetworkServiceProtocol {
     func requestDecodable<T: Decodable>(_ endpoint: EndPoint, as _: T.Type) async throws -> T {
         let data = try await send(endpoint)
         do {
-            return try JSONDecoder().decode(T.self, from: data)
+            return try JSONCoding.decoder.decode(T.self, from: data)
         } catch {
             throw NetworkError.decodingFailed
         }
