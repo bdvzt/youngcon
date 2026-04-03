@@ -31,7 +31,20 @@ let project = Project(
             product: .app,
             bundleId: "com.bdvzt.YoungCon",
             infoPlist: .extendingDefault(with: [
-                "CFBundleDisplayName": "YoungCon"
+                "CFBundleDisplayName": "YoungCon",
+                "UIAppFonts": [
+                    "Yandex_Sans/fonts/YandexSansDisplay-Bold.ttf",
+                    "Yandex_Sans/fonts/YandexSansDisplay-Light.ttf",
+                    "Yandex_Sans/fonts/YandexSansDisplay-Regular.ttf",
+                    "Yandex_Sans/fonts/YandexSansDisplay-RegularItalic.ttf",
+                    "Yandex_Sans/fonts/YandexSansDisplay-Thin.ttf",
+                    "Yandex_Sans/fonts/YandexSansText-Bold.ttf",
+                    "Yandex_Sans/fonts/YandexSansText-Light.ttf",
+                    "Yandex_Sans/fonts/YandexSansText-Medium.ttf",
+                    "Yandex_Sans/fonts/YandexSansText-Regular.ttf",
+                    "Yandex_Sans/fonts/YandexSansText-RegularItalic.ttf",
+                    "Yandex_Sans/fonts/YandexSansText-Thin.ttf"
+                ]
             ]),
             sources: [
                 "Sources/**"
