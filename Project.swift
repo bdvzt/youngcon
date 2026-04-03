@@ -30,9 +30,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.bdvzt.YoungCon",
-            infoPlist: .extendingDefault(with: [
-                "CFBundleDisplayName": "YoungCon"
-            ]),
+            infoPlist: .file(path: "SupportingFiles/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             scripts: [swiftLintScript],
