@@ -29,12 +29,17 @@ struct EventDetailedCard: View {
 
                 locationChip
 
-                Text("Ежегодное открытие фестиваля. Поговорим о том, куда движутся технологии, какие навыки будут востребованы через 5 лет и как ИИ меняет наши продукты прямо сейчас.")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white.opacity(0.74))
-                    .lineSpacing(6)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 2)
+                Text(
+                    "Ежегодное открытие фестиваля. "
+                        + "Поговорим о том, куда движутся технологии, "
+                        + "какие навыки будут востребованы через 5 лет "
+                        + "и как ИИ меняет наши продукты прямо сейчас."
+                )
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white.opacity(0.74))
+                .lineSpacing(6)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, 2)
 
                 speakerCard
                     .padding(.top, 2)
@@ -98,7 +103,7 @@ struct EventDetailedCard: View {
     }
 
     private var speakerCard: some View {
-        Button(action: {}) {
+        Button(action: {}, label: {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
@@ -114,7 +119,6 @@ struct EventDetailedCard: View {
                 }
                 .frame(width: 54, height: 54)
 
-                
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Топ-менеджмент\nЯндекса")
                         .foregroundColor(.white)
@@ -147,14 +151,14 @@ struct EventDetailedCard: View {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .stroke(Color.white.opacity(0.04), lineWidth: 1)
             )
-        }
+        })
         .buttonStyle(.plain)
         .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
     private var actionRow: some View {
         HStack(spacing: 12) {
-            Button(action: {}) {
+            Button(action: {}, label: {
                 HStack(spacing: 10) {
                     Image(systemName: "play.fill")
                         .font(.system(size: 16, weight: .bold))
@@ -169,8 +173,12 @@ struct EventDetailedCard: View {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(YoungConAsset.accentYellow.swiftUIColor)
                 )
-                .shadow(color: YoungConAsset.accentYellow.swiftUIColor.opacity(0.28), radius: 18, y: 6)
-            }
+                .shadow(
+                    color: YoungConAsset.accentYellow.swiftUIColor.opacity(0.28),
+                    radius: 18,
+                    y: 6
+                )
+            })
             .buttonStyle(.plain)
 
             Button {
@@ -197,7 +205,7 @@ struct EventDetailedCard: View {
     }
 
     private var closeButton: some View {
-        Button(action: {}) {
+        Button(action: {}, label: {
             Image(systemName: "xmark")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white.opacity(0.45))
@@ -206,7 +214,7 @@ struct EventDetailedCard: View {
                     Circle()
                         .fill(Color.white.opacity(0.05))
                 )
-        }
+        })
         .buttonStyle(.plain)
     }
 }
