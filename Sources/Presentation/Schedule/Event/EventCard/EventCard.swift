@@ -4,7 +4,6 @@ import SwiftUI
 // MARK: - Mocks (данные для карточки события)
 
 enum EventCardMocks {
-
     enum IDs {
         static let event = Self.uuid("11111111-1111-1111-1111-111111111111")
         static let zone = Self.uuid("22222222-2222-2222-2222-222222222222")
@@ -45,7 +44,7 @@ enum EventCardMocks {
             Архитектура и производительность больших iOS-клиентов. Ранее — лид мобильной разработки в e-commerce.
             """,
             photoURL: URL(string: "https://example.com/photos/maria-sokolova.jpg")
-        )
+        ),
     ]
 
     /// Интервал относительно «сейчас», чтобы в превью всегда были live-точка и кнопка трансляции.
@@ -65,6 +64,12 @@ enum EventCardMocks {
 }
 
 // MARK: - EventCard
+
+private enum EventCardPalette {
+    static let timeText = Color(red: 208 / 255, green: 208 / 255, blue: 211 / 255)
+    static let locationText = Color(red: 153 / 255, green: 161 / 255, blue: 175 / 255)
+    static let speakerAvatar = Color(red: 53 / 255, green: 55 / 255, blue: 84 / 255)
+}
 
 struct EventCard: View {
     let event: Event
@@ -86,7 +91,9 @@ struct EventCard: View {
         return "\(start) – \(end)"
     }
 
-    private var primarySpeaker: Speaker? { speakers.first }
+    private var primarySpeaker: Speaker? {
+        speakers.first
+    }
 
     var body: some View {
         cardStack
@@ -114,7 +121,7 @@ struct EventCard: View {
                 .font(.footnote)
                 .fontWeight(.bold)
                 .monospacedDigit()
-                .foregroundStyle(Color("Gray500"))
+                .foregroundStyle(EventCardPalette.timeText)
 
             if isLive {
                 LivePulseDot()
@@ -167,7 +174,7 @@ struct EventCard: View {
                     Text(zone.name)
                         .font(.footnote)
                         .fontWeight(.bold)
-                        .foregroundStyle(Color("Gray500"))
+                        .foregroundStyle(EventCardPalette.locationText)
                         .lineLimit(1)
                 }
             }
@@ -192,13 +199,13 @@ struct EventCard: View {
     private func zoneAccentColor(_ name: String) -> Color {
         switch name.lowercased() {
         case "pink", "red":
-            return Color("AccentPink")
+            Color("AccentPink")
         case "orange", "yellow":
-            return Color("AccentYellow")
+            Color("AccentYellow")
         case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
-            return Color("AccentPurple")
+            Color("AccentPurple")
         default:
-            return Color("AccentPurple")
+            Color("AccentPurple")
         }
     }
 }
@@ -229,7 +236,7 @@ private struct SpeakerAvatar: View {
             if let url {
                 AsyncImage(url: url) { phase in
                     switch phase {
-                    case .success(let image):
+                    case let .success(image):
                         image
                             .resizable()
                             .scaledToFill()
@@ -247,16 +254,16 @@ private struct SpeakerAvatar: View {
         .clipShape(Circle())
         .overlay {
             Circle()
-                .strokeBorder(Color("Gray500").opacity(0.35), lineWidth: 1)
+                .strokeBorder(EventCardPalette.speakerAvatar.opacity(0.55), lineWidth: 1)
         }
     }
 
     private var placeholder: some View {
         ZStack {
-            Color("AccentPurple").opacity(0.35)
+            EventCardPalette.speakerAvatar.opacity(0.35)
             Image(systemName: "person.fill")
                 .font(.system(size: 20, weight: .medium))
-                .foregroundStyle(.white.opacity(0.45))
+                .foregroundStyle(.white.opacity(0.5))
         }
     }
 }
