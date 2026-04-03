@@ -15,15 +15,12 @@ struct SpeakerCardView: View {
     @Environment(\.dismiss) private var dismiss
     
     // MARK: - Colors
-    private let scrollViewBackground = Color(red: 15 / 255, green: 15 / 255, blue: 30 / 255)
     private let whiteText = Color.white
-    private let yellowColor = Color(red: 252 / 255, green: 255 / 255, blue: 114 / 255)
-    private let blackColor = Color.black
     
     // MARK: - Body
     var body: some View {
         ZStack {
-            Color(.black)
+            Color("AppBackground")
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -34,7 +31,7 @@ struct SpeakerCardView: View {
                         .padding(.horizontal, 20)
                         .padding(.top, 20)
                         .padding(.bottom, 12)
-                        .background(scrollViewBackground)
+                        .background(Color("CardBackgound"))
                     
                     ScrollView {
                         VStack(alignment: .leading, spacing: 0) {
@@ -57,13 +54,13 @@ struct SpeakerCardView: View {
                             
                             HStack {
                                 Text("Ключевые спикеры")
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(yellowColor)
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(Color("AccentYellow"))
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 6)
                                     .background(
                                         RoundedRectangle(cornerRadius: 8)
-                                            .fill(blackColor)
+                                            .fill(Color("NavBackground"))
                                     )
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 8)
@@ -97,7 +94,7 @@ struct SpeakerCardView: View {
                             }) {
                                 Text("вопрос спикеру")
                                     .font(.system(size: 16, weight: .heavy))
-                                    .foregroundColor(scrollViewBackground)
+                                    .foregroundColor(Color("CardBackground"))
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .background(
@@ -112,7 +109,7 @@ struct SpeakerCardView: View {
                     .scrollIndicators(.visible)
                 }
                 .frame(height: UIScreen.main.bounds.height / 1.9)
-                .background(scrollViewBackground)
+                .background(Color("CardBackground").preferredColorScheme(.dark))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
                 .overlay(
                     RoundedRectangle(cornerRadius: 42)
@@ -187,16 +184,16 @@ struct SpeakerCardView: View {
             
             ZStack {
                 Circle()
-                    .fill(yellowColor)
+                    .fill(Color("AccentYellow"))
                     .frame(width: 32, height: 32)
                     .overlay(
                         Circle()
-                            .stroke(scrollViewBackground, lineWidth: 4.0)
+                            .stroke(Color("CardBackground"), lineWidth: 4.0)
                     )
                 
                 Image(systemName: "star.fill")
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(scrollViewBackground)
+                    .foregroundColor(Color("CardBackground"))
             }
             .offset(x: 4, y: 4)
         }

@@ -68,3 +68,6 @@ Derived/
 
 ### Tuist managed dependencies ###
 Tuist/.build.DS_Store
+.DS_Store
+**/.DS_Store
+.DS_Store
