@@ -85,8 +85,10 @@ struct EventCard: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center, spacing: 6) {
                 Text(timeRangeText)
-                    .font(.yandexSansText(.footnote, weight: .bold, monospacedDigits: false))
-                    .foregroundStyle(Theme.eventTime)
+                    .font(.footnote)
+                    .fontWeight(.bold)
+                    .monospacedDigit()
+                    .foregroundStyle(Color("Gray500"))
 
                 if isLive {
                     LivePulseDot()
@@ -96,7 +98,8 @@ struct EventCard: View {
             }
 
             Text(event.title)
-                .font(.yandexSansDisplay(.title3, weight: .bold))
+                .font(.title3)
+                .fontWeight(.bold)
                 .foregroundStyle(.white)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
@@ -107,11 +110,12 @@ struct EventCard: View {
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(speaker.name)
-                            .font(.yandexSansText(.callout, weight: .bold))
+                            .font(.callout)
+                            .fontWeight(.bold)
                             .foregroundStyle(.white)
                         Text(speaker.role)
-                            .font(.yandexSansText(.caption))
-                            .foregroundStyle(.white.opacity(0.55))
+                            .font(.caption)
+                            .foregroundStyle(Color("Gray500"))
                             .lineLimit(2)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -119,7 +123,7 @@ struct EventCard: View {
             }
 
             Rectangle()
-                .fill(Color.white.opacity(0.12))
+                .fill(Color("Gray500").opacity(0.35))
                 .frame(height: 1)
 
             HStack(alignment: .center, spacing: 12) {
@@ -129,8 +133,9 @@ struct EventCard: View {
                             .font(.footnote.weight(.bold))
                             .foregroundStyle(zoneAccentColor(zone.color))
                         Text(zone.name)
-                            .font(.yandexSansText(.footnote, weight: .bold))
-                            .foregroundStyle(Theme.eventLocation)
+                            .font(.footnote)
+                            .fontWeight(.bold)
+                            .foregroundStyle(Color("Gray500"))
                             .lineLimit(1)
                     }
                 }
@@ -146,10 +151,10 @@ struct EventCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Theme.eventCardBackground)
+                .fill(Color(red: 21 / 255, green: 22 / 255, blue: 33 / 255))
                 .overlay {
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.06), lineWidth: 1)
+                        .strokeBorder(Color("Gray500").opacity(0.22), lineWidth: 1)
                 }
         }
         .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
@@ -157,18 +162,11 @@ struct EventCard: View {
 
     private func zoneAccentColor(_ name: String) -> Color {
         switch name.lowercased() {
-        case "indigo": return .indigo
-        case "blue": return .blue
-        case "purple": return .purple
-        case "pink": return .pink
-        case "red": return .red
-        case "orange": return .orange
-        case "yellow": return .yellow
-        case "green": return .green
-        case "mint": return .mint
-        case "teal": return .teal
-        case "cyan": return .cyan
-        default: return Theme.tertiary
+        case "pink", "red": return Color("AccentPink")
+        case "orange", "yellow": return Color("AccentYellow")
+        case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
+            return Color("AccentPurple")
+        default: return Color("AccentPurple")
         }
     }
 }
@@ -217,13 +215,13 @@ private struct SpeakerAvatar: View {
         .clipShape(Circle())
         .overlay {
             Circle()
-                .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)
+                .strokeBorder(Color("Gray500").opacity(0.35), lineWidth: 1)
         }
     }
 
     private var placeholder: some View {
         ZStack {
-            Theme.tertiary.opacity(0.35)
+            Color("AccentPurple").opacity(0.35)
             Image(systemName: "person.fill")
                 .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(.white.opacity(0.45))
@@ -238,21 +236,6 @@ private struct SpeakerAvatar: View {
         speakers: EventCardMocks.speakers
     )
     .padding()
-    .background(Color(white: 0.12))
-}
-
-#Preview("Без зоны и эфира") {
-    let ev = Event(
-        id: EventCardMocks.IDs.event,
-        title: "Короткий доклад",
-        start: Date(),
-        end: Date().addingTimeInterval(3600),
-        speakerIDs: [EventCardMocks.IDs.speaker1],
-        zoneID: nil,
-        categoryCode: "talk",
-        streamURL: nil
-    )
-    EventCard(event: ev, zone: nil, speakers: [EventCardMocks.speakers[0]])
-        .padding()
-        .background(Color(white: 0.12))
+    .background(Color("AppBackground"))
+    .preferredColorScheme(.dark)
 }

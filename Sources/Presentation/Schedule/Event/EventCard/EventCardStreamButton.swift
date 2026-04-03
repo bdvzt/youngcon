@@ -7,14 +7,14 @@ struct EventCardStreamButton: View {
         ZStack {
             Rectangle()
                 .frame(width: 40, height: 40)
-                .foregroundColor(Theme.primary)
+                .foregroundColor(Color("AccentYellow"))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
             Image(systemName: "play.fill")
                 .resizable()
                 .frame(width: 14, height: 14)
                 .foregroundStyle(Color.black)
         }
-        .shadow(color: Theme.primary, radius: 7)
+        .shadow(color: Color("AccentYellow"), radius: 7)
     }
         
 }
