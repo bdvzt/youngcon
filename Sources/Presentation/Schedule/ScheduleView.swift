@@ -5,17 +5,31 @@ struct ScheduleView: View {
     @State private var gradientOffset: CGFloat = 0
 
     private let background = YoungConAsset.appBackground.swiftUIColor
-    private let yellow = YoungConAsset.accentYellow.swiftUIColor
-    private let purple = YoungConAsset.accentPurple.swiftUIColor
-    private let pink = YoungConAsset.accentPink.swiftUIColor
+    private let yellow     = YoungConAsset.accentYellow.swiftUIColor
+    private let purple     = YoungConAsset.accentPurple.swiftUIColor
+    private let pink       = YoungConAsset.accentPink.swiftUIColor
 
-    let filters = ["Все", "Избранное", "Live", "Лекция", "Бизнес", "Интерактив", "Backend", "ML"]
+    let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
 
-    var filteredEvents: [ScheduleModel] {
-        if activeFilter == "Все" { return scheduleData }
-        if activeFilter == "Live" { return scheduleData.filter(\.streamAvailable) }
-        return scheduleData.filter { $0.tags.contains(activeFilter) }
+    // MARK: - Filtering
+
+    var filteredEvents: [ScheduleEntry] {
+        switch activeFilter {
+        case "Все":
+            return scheduleData
+        case "Live":
+            return scheduleData.filter { $0.streamURL != nil }
+        case "Избранное":
+            // TODO: подключить FavoritesStore и фильтровать по избранным id
+            return []
+        default:
+            return scheduleData.filter {
+                $0.event.category.lowercased() == activeFilter.lowercased()
+            }
+        }
     }
+
+    // MARK: - Body
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -32,6 +46,7 @@ struct ScheduleView: View {
                 }
             }
 
+            // Top fade overlay
             VStack(spacing: 0) {
                 background.ignoresSafeArea(edges: .top)
                     .frame(height: 0)
@@ -47,6 +62,7 @@ struct ScheduleView: View {
             .zIndex(20)
             .allowsHitTesting(false)
 
+            // Logo
             VStack(spacing: 0) {
                 logoView
                     .padding(.horizontal, 20)
@@ -63,6 +79,8 @@ struct ScheduleView: View {
         }
     }
 
+    // MARK: - Subviews
+
     private var logoView: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 16)
@@ -74,6 +92,7 @@ struct ScheduleView: View {
                 .blur(radius: 20)
                 .opacity(0.35)
                 .allowsHitTesting(false)
+
             Image("logo")
                 .resizable()
                 .scaledToFit()
@@ -92,6 +111,7 @@ struct ScheduleView: View {
                 .opacity(0.3)
                 .offset(x: -130, y: -130)
                 .allowsHitTesting(false)
+
             Circle()
                 .fill(yellow)
                 .frame(width: 288, height: 288)
@@ -116,6 +136,7 @@ struct ScheduleView: View {
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )
                 )
+
             Text("Программа мероприятий")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
@@ -131,14 +152,22 @@ struct ScheduleView: View {
         VStack(spacing: 14) {
             if filteredEvents.isEmpty {
                 ScheduleEmptyState(activeFilter: activeFilter)
+            } else {
+                ForEach(filteredEvents) { entry in
+                    EventCard(
+                        event: entry.event,
+                        zone: entry.zone,
+                        speakers: entry.speakers,
+                        streamURL: entry.streamURL
+                    )
+                }
             }
-            // ForEach(filteredEvents) { event in
-            //     ScheduleCard(event: event)
-            // }
         }
         .padding(.horizontal, 20)
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     ScheduleView()
