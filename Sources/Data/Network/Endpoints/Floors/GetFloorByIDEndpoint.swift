@@ -1,9 +1,9 @@
 import Foundation
 
-struct GetFloorByIdEndpoint: Endpoint {
+struct GetFloorByIDEndpoint: Endpoint {
     private let id: String
 
-    init(id: String) {
+    init(_ id: String) {
         self.id = id
     }
 

@@ -1,14 +1,14 @@
 import Foundation
 
-struct GetEventByIdEndpoint: Endpoint {
-    private let id: String
+struct GetZoneByIDEndpoint: Endpoint {
+    private let zoneID: String
 
-    init(id: String) {
-        self.id = id
+    init(_ zoneID: String) {
+        self.zoneID = zoneID
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Events.details(id) }
+    var path: String { APIConstants.Zones.details(zoneID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .none }

@@ -20,18 +20,23 @@ enum APIConstants {
         static func byFestival(_ festivalID: String) -> String {
             "events/by-festival/\(festivalID)"
         }
+
         static func details(_ id: String) -> String {
             "events/\(id)"
         }
+
         static func speakers(_ id: String) -> String {
             "events/\(id)/speakers"
         }
+
         static func byZone(_ zoneID: String) -> String {
             "events/by-zone/\(zoneID)"
         }
+
         static func bySpeaker(_ speakerID: String) -> String {
             "events/by-speaker/\(speakerID)"
         }
+
         static func like(_ id: String) -> String {
             "events/\(id)/like"
         }
@@ -67,6 +72,7 @@ enum APIConstants {
         static func achievements(_ id: String) -> String {
             "users/\(id)/achievements"
         }
+
         static func likedEvents(_ id: String) -> String {
             "users/\(id)/liked-events"
         }
@@ -77,6 +83,7 @@ enum APIConstants {
         static func details(_ id: String) -> String {
             "zones/\(id)"
         }
+
         static func byFloor(_ floorID: String) -> String {
             "zones/by-floor/\(floorID)"
         }

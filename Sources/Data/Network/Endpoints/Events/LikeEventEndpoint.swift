@@ -1,14 +1,14 @@
 import Foundation
 
 struct LikeEventEndpoint: Endpoint {
-    private let id: String
+    private let eventID: String
 
-    init(id: String) {
-        self.id = id
+    init(_ eventID: String) {
+        self.eventID = eventID
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Events.like(id) }
+    var path: String { APIConstants.Events.like(eventID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .accessToken }

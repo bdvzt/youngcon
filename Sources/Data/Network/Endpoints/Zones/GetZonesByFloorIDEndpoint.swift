@@ -1,14 +1,14 @@
 import Foundation
 
-struct GetZoneByIdEndpoint: Endpoint {
-    private let id: String
+struct GetZonesByFloorIDEndpoint: Endpoint {
+    private let floorID: String
 
-    init(id: String) {
-        self.id = id
+    init(_ floorID: String) {
+        self.floorID = floorID
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Zones.details(id) }
+    var path: String { APIConstants.Zones.byFloor(floorID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .none }

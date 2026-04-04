@@ -1,6 +1,6 @@
 import Foundation
 
-struct GetSpeakerEventsEndpoint: Endpoint {
+struct GetSpeakerByIDEndpoint: Endpoint {
     private let speakerID: String
 
     init(_ speakerID: String) {
@@ -8,7 +8,7 @@ struct GetSpeakerEventsEndpoint: Endpoint {
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Events.bySpeaker(speakerID) }
+    var path: String { APIConstants.Speakers.details(speakerID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .none }

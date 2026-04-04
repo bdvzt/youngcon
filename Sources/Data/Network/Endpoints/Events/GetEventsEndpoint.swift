@@ -1,14 +1,14 @@
 import Foundation
 
 struct GetEventsEndpoint: Endpoint {
-    private let id: String
+    private let festivalID: String
 
-    init(id: String) {
-        self.id = id
+    init(_ festivalID: String) {
+        self.festivalID = festivalID
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Events.byFestival(id) }
+    var path: String { APIConstants.Events.byFestival(festivalID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .none }

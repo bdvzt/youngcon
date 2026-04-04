@@ -1,9 +1,14 @@
 import Foundation
 
-struct Speaker: Identifiable, Codable {
-    let id: UUID
-    let name: String
-    let role: String
+struct Speaker: Identifiable, Decodable {
+    let id: String
+    let fullName: String
+    let job: String
     let bio: String
-    let photoURL: URL?
+    let avatarURL: String?
+
+    var avatarImageURL: URL? {
+        guard let avatarURL else { return nil }
+        return URL(string: avatarURL)
+    }
 }

@@ -1,14 +1,14 @@
 import Foundation
 
 struct GetUserLikedEventsEndpoint: Endpoint {
-    private let id: String
+    private let userID: String
 
-    init(id: String) {
-        self.id = id
+    init(_ userID: String) {
+        self.userID = userID
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Users.likedEvents(id) }
+    var path: String { APIConstants.Users.likedEvents(userID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .accessToken }

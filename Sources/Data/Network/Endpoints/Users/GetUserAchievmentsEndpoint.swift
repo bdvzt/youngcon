@@ -1,14 +1,14 @@
 import Foundation
 
 struct GetUserAchievmentsEndpoint: Endpoint {
-    private let id: String
+    private let userID: String
 
-    init(id: String) {
-        self.id = id
+    init(_ userID: String) {
+        self.userID = userID
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Users.achievements(id) }
+    var path: String { APIConstants.Users.achievements(userID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .accessToken }

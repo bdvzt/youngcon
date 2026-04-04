@@ -1,14 +1,14 @@
 import Foundation
 
-struct GetAchievmentsByIdEndpoint: Endpoint {
-    private let id: String
+struct GetEventByIDEndpoint: Endpoint {
+    private let eventID: String
 
-    init(id: String) {
-        self.id = id
+    init(_ eventID: String) {
+        self.eventID = eventID
     }
 
     var baseURL: URL { APIConstants.baseURL }
-    var path: String { APIConstants.Achievements.details(id) }
+    var path: String { APIConstants.Events.details(eventID) }
     var method: HTTPMethod { .get }
     var task: HTTPTask { .request }
     var authorization: AuthorizationRequirement { .none }

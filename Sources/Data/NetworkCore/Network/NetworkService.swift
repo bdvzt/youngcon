@@ -4,12 +4,16 @@ final class NetworkService: NetworkServiceProtocol {
     private let session: URLSession
     private let authorizationProvider: AuthorizationProvidingProtocol
 
+    var tokenStorage: TokenStorageProtocol
+
     init(
         session: URLSession = .shared,
-        authorizationProvider: AuthorizationProvidingProtocol
+        authorizationProvider: AuthorizationProvidingProtocol,
+        tokenStorage: TokenStorageProtocol
     ) {
         self.session = session
         self.authorizationProvider = authorizationProvider
+        self.tokenStorage = tokenStorage
     }
 
     func request(_ endpoint: Endpoint) async throws {
