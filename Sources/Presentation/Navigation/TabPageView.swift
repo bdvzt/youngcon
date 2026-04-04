@@ -25,12 +25,8 @@ struct TabPageView: View {
 
             switch activeTab {
             case .schedule:
-                VStack(spacing: 16) {
-                    Text("Расписание")
-                        .font(.system(size: 32, weight: .black))
-                        .foregroundColor(.white)
-                }
-                .transition(slideTransition)
+                ScheduleView()
+                    .transition(slideTransition)
             case .map:
                 VStack(spacing: 16) {
                     Text("Карта")
@@ -46,8 +42,6 @@ struct TabPageView: View {
         .animation(.easeInOut(duration: 0.3), value: activeTab)
         .gesture(swipeGesture)
     }
-
-    // MARK: - Swipe Gesture
 
     private var swipeGesture: some Gesture {
         DragGesture(minimumDistance: 40, coordinateSpace: .local)

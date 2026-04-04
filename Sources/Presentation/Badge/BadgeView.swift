@@ -41,11 +41,34 @@ struct BadgeView: View {
                     .zIndex(10)
             }
 
-            VStack {
-                glowingLogo.padding(.horizontal, 20)
+            VStack(spacing: 0) {
+                (isOverlayPresented ? Color.clear : appBackground)
+                    .ignoresSafeArea(edges: .top)
+                    .frame(height: 0)
+                (isOverlayPresented ? Color.clear : appBackground)
+                    .frame(height: 52)
+                if !isOverlayPresented {
+                    LinearGradient(
+                        colors: [appBackground, appBackground.opacity(0)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 32)
+                }
                 Spacer()
             }
+            .animation(.easeInOut(duration: 0.2), value: isOverlayPresented)
             .zIndex(20)
+            .allowsHitTesting(false)
+
+            VStack(spacing: 0) {
+                glowingLogo
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                Spacer()
+            }
+            .zIndex(21)
+            .allowsHitTesting(false)
         }
         .onAppear { syncOverlay() }
         .onDisappear { isOverlayPresented = false }
