@@ -18,12 +18,11 @@ struct SpeakerCardView: View {
     // MARK: - Properties
 
     let speaker: Speaker
-    @State private var scrollOffset: CGFloat = 0
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - Colors
 
-    private let whiteText = Color(red: 255 / 255, green: 255 / 255, blue: 255 / 255)
+    private let whiteText = Color.white
     private let cardBackgroundColor = YoungConAsset.cardBackground.swiftUIColor
 
     // MARK: - Body
@@ -48,7 +47,13 @@ struct SpeakerCardView: View {
     private var mainContent: some View {
         VStack(spacing: 0) {
             Spacer()
-            cardContainer
+
+            GeometryReader { geometry in
+                cardContainer
+                    .frame(height: geometry.size.height / 1.6)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            }
+
             Spacer()
         }
     }
@@ -65,11 +70,12 @@ struct SpeakerCardView: View {
 
             scrollableContent
         }
-        .frame(height: UIScreen.main.bounds.height / 1.9)
         .background(cardBackgroundColor.preferredColorScheme(.dark))
         .clipShape(RoundedRectangle(cornerRadius: 30))
-        .overlay(RoundedRectangle(cornerRadius: 42)
-            .stroke(whiteText.opacity(0.2), lineWidth: 1.0))
+        .overlay(
+            RoundedRectangle(cornerRadius: 42)
+                .stroke(whiteText.opacity(0.2), lineWidth: 1.0)
+        )
     }
 
     // MARK: - Top Navigation Bar
@@ -163,10 +169,14 @@ struct SpeakerCardView: View {
             .foregroundColor(YoungConAsset.accentYellow.swiftUIColor)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(RoundedRectangle(cornerRadius: 8)
-                .fill(YoungConAsset.navBackground.swiftUIColor))
-            .overlay(RoundedRectangle(cornerRadius: 8)
-                .stroke(whiteText.opacity(0.2), lineWidth: 1.0))
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(YoungConAsset.navBackground.swiftUIColor)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(whiteText.opacity(0.2), lineWidth: 1.0)
+            )
     }
 
     // MARK: - About Speaker Section
@@ -210,8 +220,10 @@ struct SpeakerCardView: View {
                 .foregroundColor(cardBackgroundColor)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(RoundedRectangle(cornerRadius: 16)
-                    .fill(whiteText))
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(whiteText)
+                )
         }
         .padding(.horizontal, 28)
         .padding(.bottom, 32)
@@ -242,7 +254,10 @@ struct SpeakerCardView: View {
             avatarPlaceholder
                 .frame(width: 100, height: 100)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(whiteText.opacity(0.3), lineWidth: 1.0))
+                .overlay(
+                    Circle()
+                        .stroke(whiteText.opacity(0.3), lineWidth: 1.0)
+                )
         }
     }
 
@@ -257,8 +272,10 @@ struct SpeakerCardView: View {
             Circle()
                 .fill(YoungConAsset.accentYellow.swiftUIColor)
                 .frame(width: 32, height: 32)
-                .overlay(Circle()
-                    .stroke(cardBackgroundColor, lineWidth: 4.0))
+                .overlay(
+                    Circle()
+                        .stroke(cardBackgroundColor, lineWidth: 4.0)
+                )
 
             Image(systemName: "star.fill")
                 .font(.system(size: 14, weight: .bold))
