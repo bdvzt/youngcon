@@ -28,12 +28,8 @@ struct TabPageView: View {
                 ScheduleView()
                     .transition(slideTransition)
             case .map:
-                VStack(spacing: 16) {
-                    Text("Карта")
-                        .font(.system(size: 32, weight: .black))
-                        .foregroundColor(.white)
-                }
-                .transition(slideTransition)
+                LocationsView()
+                    .transition(slideTransition)
             case .badge:
                 BadgeView(isOverlayPresented: $isOverlayPresented)
                     .transition(slideTransition)

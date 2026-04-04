@@ -1,60 +1,39 @@
 import SwiftUI
 
-struct ScheduleView: View {
-    @State private var activeFilter: String = "Все"
+struct LocationsView: View {
+    @State private var floor: Int = 1
+    @State private var focusedLocId: String?
     @State private var gradientOffset: CGFloat = 0
 
-    private let background = YoungConAsset.appBackground.swiftUIColor
+    private let bg = YoungConAsset.appBackground.swiftUIColor
+    private let cardBg = YoungConAsset.cardBackground.swiftUIColor
     private let yellow = YoungConAsset.accentYellow.swiftUIColor
     private let purple = YoungConAsset.accentPurple.swiftUIColor
     private let pink = YoungConAsset.accentPink.swiftUIColor
 
-    let filters = ["Все", "Избранное", "Live", "Лекция", "Бизнес", "Интерактив", "Backend", "ML"]
-
-    var filteredEvents: [ScheduleModel] {
-        if activeFilter == "Все" { return scheduleData }
-        if activeFilter == "Live" { return scheduleData.filter(\.streamAvailable) }
-        return scheduleData.filter { $0.tags.contains(activeFilter) }
+    private var currentLocations: [LocationModal] {
+        mapLocationsData.filter { $0.floor == floor }
     }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            background.ignoresSafeArea()
+            bg.ignoresSafeArea()
             ambientGlows
 
-            ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     Color.clear.frame(height: 52)
                     headerSection
-                    ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
-                    eventList
+                    mapSection
                     Color.clear.frame(height: 120)
                 }
             }
 
-            VStack(spacing: 0) {
-                background.ignoresSafeArea(edges: .top)
-                    .frame(height: 0)
-                background.frame(height: 52)
-                LinearGradient(
-                    colors: [background, background.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 32)
+            VStack {
+                logoView.padding(.horizontal, 20)
                 Spacer()
             }
             .zIndex(20)
-            .allowsHitTesting(false)
-
-            VStack(spacing: 0) {
-                logoView
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                Spacer()
-            }
-            .zIndex(21)
-            .allowsHitTesting(false)
         }
         .onAppear {
             withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
@@ -74,6 +53,7 @@ struct ScheduleView: View {
                 .blur(radius: 20)
                 .opacity(0.35)
                 .allowsHitTesting(false)
+
             Image("logo")
                 .resizable()
                 .scaledToFit()
@@ -92,6 +72,7 @@ struct ScheduleView: View {
                 .opacity(0.3)
                 .offset(x: -130, y: -130)
                 .allowsHitTesting(false)
+
             Circle()
                 .fill(yellow)
                 .frame(width: 288, height: 288)
@@ -105,7 +86,7 @@ struct ScheduleView: View {
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Расписание")
+            Text("Локации")
                 .font(.system(size: 48, weight: .black))
                 .tracking(-1)
                 .textCase(.uppercase)
@@ -116,31 +97,80 @@ struct ScheduleView: View {
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )
                 )
-            Text("Программа мероприятий")
+
+            Text("Навигация по площадке")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.25))
         }
         .padding(.horizontal, 20)
-        .padding(.top, 32)
+        .padding(.top, 20)
         .padding(.bottom, 12)
     }
 
-    private var eventList: some View {
-        VStack(spacing: 14) {
-            if filteredEvents.isEmpty {
-                ScheduleEmptyState(activeFilter: activeFilter)
+    private var mapSection: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(cardBg.opacity(0.6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                )
+
+            GeometryReader { geo in
+                let w = geo.size.width
+                let h = geo.size.height
+                ZStack {
+                    LocationFloorSwitcher(
+                        floor: $floor,
+                        bg: bg, yellow: yellow, purple: purple
+                    ) {
+                        focusedLocId = nil
+                    }
+                    .position(x: 32, y: h / 2)
+
+                    flatMap(containerW: w, containerH: h)
+                }
             }
-            // ForEach(filteredEvents) { event in
-            //     ScheduleCard(event: event)
-            // }
         }
+        .frame(height: 520)
         .padding(.horizontal, 20)
+        .animation(.easeInOut(duration: 0.25), value: floor)
+        .animation(.easeInOut(duration: 0.2), value: focusedLocId)
+    }
+
+    @ViewBuilder
+    private func flatMap(containerW: CGFloat, containerH: CGFloat) -> some View {
+        let mapW: CGFloat = containerW * 0.73
+        let mapH: CGFloat = containerH * 0.82
+        let mapX: CGFloat = containerW / 2 + 28
+        let mapY: CGFloat = containerH / 2
+
+        ZStack {
+            ForEach(currentLocations) { loc in
+                LocationPinView(
+                    loc: loc,
+                    isFocused: focusedLocId == loc.id,
+                    focusedLocId: focusedLocId,
+                    bg: bg,
+                    yellow: yellow
+                ) {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        focusedLocId = (focusedLocId == loc.id) ? nil : loc.id
+                    }
+                }
+                .position(
+                    x: mapX - mapW / 2 + mapW * loc.leftPercent,
+                    y: mapY - mapH / 2 + mapH * loc.topPercent
+                )
+            }
+        }
+        .position(x: mapX, y: mapY)
     }
 }
 
 #Preview {
-    ScheduleView()
+    LocationsView()
         .preferredColorScheme(.dark)
 }
