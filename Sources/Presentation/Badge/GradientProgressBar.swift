@@ -20,7 +20,7 @@ struct GradientProgressBar: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(width: geo.size.width * max(0, min(1, progress))) // Защита от значений вне 0...1
+                    .frame(width: geo.size.width * max(0, min(1, progress)))
             }
         }
         .frame(height: 6)
