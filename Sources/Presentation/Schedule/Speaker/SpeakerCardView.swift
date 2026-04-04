@@ -5,11 +5,11 @@ import SwiftUI
 // MARK: - Mocks
 
 let example = Speaker(
-    id: UUID(),
-    name: "Анна Иванова",
-    role: "Директор по продукту, Яндекс",
+    id: "",
+    fullName: "Анна Иванова",
+    job: "Директор по продукту, Яндекс",
     bio: "Лидеры направлений, визионеры и создатели ключевых продуктов. Они задают тренды в индустрии, формируют вектор развития технологий и знают, как построить сервисы, которыми будут пользоваться миллионы людей каждый день.",
-    photoURL: nil
+    avatarURL: ""
 )
 
 // MARK: - SpeakerCardView
@@ -214,7 +214,7 @@ struct SpeakerCardView: View {
     // MARK: - Ask Question Button
 
     private var askQuestionButton: some View {
-        Button(action: { print("Задать вопрос спикеру: \(speaker.name)") }) {
+        Button(action: { print("Задать вопрос спикеру: \(speaker.fullName)") }) {
             Text("вопрос спикеру")
                 .font(.system(size: 16, weight: .heavy))
                 .foregroundColor(cardBackgroundColor)
@@ -240,7 +240,9 @@ struct SpeakerCardView: View {
 
     @ViewBuilder
     private var speakerAvatarImage: some View {
-        if let photoURL = speaker.photoURL {
+        if let photoURLString = speaker.avatarURL, !photoURLString.isEmpty,
+           let photoURL = URL(string: photoURLString)
+        {
             AsyncImage(url: photoURL) { image in
                 image
                     .resizable()
@@ -264,7 +266,7 @@ struct SpeakerCardView: View {
     private var avatarPlaceholder: some View {
         Image(systemName: "person.circle.fill")
             .resizable()
-            .foregroundColor(whiteText.opacity(speaker.photoURL == nil ? 0.3 : 0.5))
+            .foregroundColor(whiteText.opacity(speaker.avatarURL == nil ? 0.3 : 0.5))
     }
 
     private var starBadge: some View {
