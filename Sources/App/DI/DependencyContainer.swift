@@ -1,41 +1,41 @@
 import Foundation
 
-/// Корневой контейнер: репозитории и фабрики ViewModel.
-/// Cюда добавляют `lazy` репозитории, затем пробрасывают их в `make…ViewModel`.
+/// Корневой DI-контейнер приложения.
+///
+/// На этом этапе — только каркас: один экземпляр на процесс, проброс через SwiftUI `Environment`.
+/// Сюда позже добавляют:
+/// - `lazy` сервисы (сеть, keychain);
+/// - репозитории, завязанные на протоколы из Domain;
+/// - фабрики `make…ViewModel(...)` для экранов.
+///
+/// См. `Documentation/Architecture-MVVM-DI.md`.
 final class DependencyContainer {
-    // MARK: - Репозитории (по мере появления)
+    // MARK: - Сервисы и репозитории (позже)
 
+    // Пример:
+    // private lazy var tokenStorage: TokenStorageProtocol = KeychainTokenStorage()
+    // private lazy var networkService: NetworkServiceProtocol = NetworkService(
+    //     authorizationProvider: AuthorizationProvider(tokenStorage: tokenStorage)
+    // )
     // private lazy var eventsRepository: EventsRepositoryProtocol = EventsRepository(network: networkService)
-    // private lazy var networkService: NetworkServiceProtocol = ...
 
-    // MARK: - Инициализация
+    // MARK: - Фабрики ViewModel (позже)
+
+    // Пример:
+    // @MainActor
+    // func makeScheduleViewModel() -> ScheduleViewModel {
+    //     ScheduleViewModel(eventsRepository: eventsRepository)
+    // }
 
     init() {}
 
-    /// Продакшен-контейнер: сюда позже добавить реальные сервисы и keychain.
+    /// Продакшен: сюда подключать реальные зависимости.
     static func live() -> DependencyContainer {
         DependencyContainer()
     }
 
-    /// Превью и тесты — без сети или с моками.
+    /// Превью и тесты: моки или облегчённый контейнер.
     static var preview: DependencyContainer {
         DependencyContainer()
-    }
-
-    // MARK: - Фабрики экранов (MainActor — создание VM для SwiftUI)
-
-    @MainActor
-    func makeScheduleViewModel() -> ScheduleViewModel {
-        ScheduleViewModel()
-    }
-
-    @MainActor
-    func makeMapViewModel() -> MapViewModel {
-        MapViewModel()
-    }
-
-    @MainActor
-    func makeBadgeViewModel() -> BadgeViewModel {
-        BadgeViewModel()
     }
 }

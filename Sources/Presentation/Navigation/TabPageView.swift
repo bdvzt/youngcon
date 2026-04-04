@@ -4,19 +4,31 @@ struct TabPageView: View {
     let tab: AppTab
     @Binding var isOverlayPresented: Bool
 
-    @Environment(\.dependencyContainer) private var dependencyContainer
-
     var body: some View {
         ZStack {
             YoungConAsset.appBackground.swiftUIColor.ignoresSafeArea()
 
             switch tab {
             case .schedule:
-                ScheduleScreen(container: dependencyContainer)
+                VStack(spacing: 16) {
+                    Text(tab.label)
+                        .font(.system(size: 32, weight: .black))
+                        .foregroundColor(.white)
+                }
+
             case .map:
-                MapScreen(container: dependencyContainer)
+                VStack(spacing: 16) {
+                    Text(tab.label)
+                        .font(.system(size: 32, weight: .black))
+                        .foregroundColor(.white)
+                }
+
             case .badge:
-                BadgeScreen(container: dependencyContainer)
+                VStack(spacing: 16) {
+                    Text("Бейдж")
+                        .font(.system(size: 32, weight: .black))
+                        .foregroundColor(.white)
+                }
             }
         }
     }
