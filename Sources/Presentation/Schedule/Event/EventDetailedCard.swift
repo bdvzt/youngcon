@@ -3,7 +3,12 @@ import SwiftUI
 struct EventDetailedCard: View {
     @State private var isFavorite = false
 
+    private let model: EventDetailedCardModel
     private let cardCornerRadius: CGFloat = 34
+
+    init(model: EventDetailedCardModel = .mock) {
+        self.model = model
+    }
 
     var body: some View {
         ZStack {
@@ -21,7 +26,7 @@ struct EventDetailedCard: View {
             VStack(alignment: .leading, spacing: 18) {
                 timeChip
 
-                Text("ОТКРЫТИЕ YOUNGCON:\nБУДУЩЕЕ БИГТЕХА")
+                Text(model.title)
                     .foregroundColor(.white)
                     .font(.system(size: 28, weight: .black))
                     .lineSpacing(-2)
@@ -29,17 +34,12 @@ struct EventDetailedCard: View {
 
                 locationChip
 
-                Text(
-                    "Ежегодное открытие фестиваля. "
-                        + "Поговорим о том, куда движутся технологии, "
-                        + "какие навыки будут востребованы через 5 лет "
-                        + "и как ИИ меняет наши продукты прямо сейчас."
-                )
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white.opacity(0.74))
-                .lineSpacing(6)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 2)
+                Text(model.description)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white.opacity(0.74))
+                    .lineSpacing(6)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 2)
 
                 speakerCard
                     .padding(.top, 2)
@@ -55,8 +55,7 @@ struct EventDetailedCard: View {
                 .padding(.top, 20)
                 .padding(.trailing, 18)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(maxWidth: 420)
+        .frame(maxWidth: 420, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
                 .fill(YoungConAsset.appBackground.swiftUIColor)
@@ -69,7 +68,7 @@ struct EventDetailedCard: View {
     }
 
     private var timeChip: some View {
-        Text("11:00 - 12:30")
+        Text(model.time)
             .foregroundColor(.white.opacity(0.92))
             .font(.system(size: 15, weight: .semibold))
             .padding(.horizontal, 13)
@@ -90,7 +89,7 @@ struct EventDetailedCard: View {
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(YoungConAsset.accentPurple.swiftUIColor)
 
-            Text("LIVE Арена (Главная)")
+            Text(model.location)
                 .foregroundColor(.white.opacity(0.62))
                 .font(.system(size: 16, weight: .semibold))
         }
@@ -120,13 +119,13 @@ struct EventDetailedCard: View {
                 .frame(width: 54, height: 54)
 
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Топ-менеджмент\nЯндекса")
+                    Text(model.speakerName)
                         .foregroundColor(.white)
                         .font(.system(size: 17, weight: .black))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text("КЛЮЧЕВЫЕ СПИКЕРЫ")
+                    Text(model.speakerRole)
                         .foregroundColor(YoungConAsset.accentYellow.swiftUIColor)
                         .font(.system(size: 14, weight: .black))
                 }
@@ -163,7 +162,7 @@ struct EventDetailedCard: View {
                     Image(systemName: "play.fill")
                         .font(.system(size: 16, weight: .bold))
 
-                    Text("ТРАНСЛЯЦИЯ")
+                    Text(model.primaryActionTitle)
                         .font(.system(size: 16, weight: .black))
                 }
                 .foregroundColor(.black)
