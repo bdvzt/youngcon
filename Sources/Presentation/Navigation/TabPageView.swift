@@ -44,7 +44,7 @@ struct TabPageView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: activeTab)
-        .gesture(swipeGesture)
+        .gesture(sBadgeViewwipeGesture)
     }
 
     // MARK: - Swipe Gesture
