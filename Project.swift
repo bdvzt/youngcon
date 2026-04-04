@@ -2,7 +2,8 @@ import ProjectDescription
 
 let swiftFormatScript: TargetScript = .pre(
     script: """
-        if which swiftformat >/dev/null; then
+        export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+        if command -v swiftformat >/dev/null; then
             swiftformat .
         else
             echo "warning: SwiftFormat not installed"
@@ -14,7 +15,8 @@ let swiftFormatScript: TargetScript = .pre(
 
 let swiftLintScript: TargetScript = .pre(
     script: """
-        if which swiftlint >/dev/null; then
+        export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+        if command -v swiftlint >/dev/null; then
             swiftlint
         else
             echo "warning: SwiftLint not installed"
@@ -49,7 +51,12 @@ let project = Project(
             dependencies: [
                 .external(name: "SnapKit"),
                 .external(name: "Kingfisher")
-            ]
+            ],
+            settings: .settings(
+                base: [
+                    "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentPurple"
+                ]
+            )
         ),
 
         .target(

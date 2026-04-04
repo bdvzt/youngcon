@@ -5,25 +5,30 @@ struct EventCard: View {
     let event: Event
     let zone: Zone?
     let speakers: [Speaker]
+    /// streamURL передаётся снаружи — поля нет в модели Event
+    var streamURL: URL?
 
     private var isLive: Bool {
+        guard let start = event.startDate, let end = event.endDate else { return false }
         let now = Date()
-        return now >= event.start && now <= event.end
+        return now >= start && now <= end
     }
 
     private var showsStreamControl: Bool {
-        isLive && event.streamURL != nil
+        isLive && streamURL != nil
     }
 
     private var timeRangeText: String {
-        let start = event.start.formatted(date: .omitted, time: .shortened)
-        let end = event.end.formatted(date: .omitted, time: .shortened)
+        let start = event.startDate?.formatted(date: .omitted, time: .shortened) ?? "--:--"
+        let end = event.endDate?.formatted(date: .omitted, time: .shortened) ?? "--:--"
         return "\(start) – \(end)"
     }
 
     private var primarySpeaker: Speaker? {
         speakers.first
     }
+
+    // MARK: - Body
 
     var body: some View {
         cardStack
@@ -45,6 +50,8 @@ struct EventCard: View {
         }
     }
 
+    // MARK: - Subviews
+
     private var scheduleRow: some View {
         HStack(alignment: .center, spacing: 6) {
             Text(timeRangeText)
@@ -52,11 +59,9 @@ struct EventCard: View {
                 .fontWeight(.bold)
                 .monospacedDigit()
                 .foregroundStyle(EventCardPalette.timeText)
-
             if isLive {
                 LivePulseDot()
             }
-
             Spacer(minLength: 8)
         }
     }
@@ -72,14 +77,14 @@ struct EventCard: View {
 
     private func speakerRow(_ speaker: Speaker) -> some View {
         HStack(alignment: .center, spacing: 12) {
-            SpeakerAvatar(url: speaker.photoURL)
+            SpeakerAvatar(url: speaker.avatarImageURL)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(speaker.name)
+                Text(speaker.fullName)
                     .font(.callout)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
-                Text(speaker.role)
+                Text(speaker.job)
                     .font(.caption)
                     .foregroundStyle(YoungConAsset.gray500.swiftUIColor)
                     .lineLimit(2)
@@ -98,19 +103,17 @@ struct EventCard: View {
         HStack(alignment: .center, spacing: 12) {
             if let zone {
                 HStack(spacing: 6) {
-                    Image(systemName: zone.iconName)
+                    Image(systemName: zone.icon)
                         .font(.footnote.weight(.bold))
                         .foregroundStyle(zoneAccentColor(zone.color))
-                    Text(zone.name)
+                    Text(zone.title)
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundStyle(EventCardPalette.locationText)
                         .lineLimit(1)
                 }
             }
-
             Spacer(minLength: 8)
-
             if showsStreamControl {
                 EventCardStreamButton()
             }
@@ -140,11 +143,14 @@ struct EventCard: View {
     }
 }
 
+// MARK: - Previews
+
 #Preview("Карточка") {
     EventCard(
         event: EventCardMocks.event,
         zone: EventCardMocks.zone,
-        speakers: EventCardMocks.speakers
+        speakers: EventCardMocks.speakers,
+        streamURL: URL(string: "https://example.com/stream")
     )
     .padding()
     .background(YoungConAsset.appBackground.swiftUIColor)
@@ -152,18 +158,12 @@ struct EventCard: View {
 }
 
 #Preview("Без зоны и эфира") {
-    let previewEvent = Event(
-        id: EventCardMocks.IDs.event,
-        title: "Короткий доклад",
-        start: Date(),
-        end: Date().addingTimeInterval(3600),
-        speakerIDs: [EventCardMocks.IDs.speaker1],
-        zoneID: nil,
-        categoryCode: "talk",
-        streamURL: nil
+    EventCard(
+        event: EventCardMocks.shortEvent,
+        zone: nil,
+        speakers: [EventCardMocks.speakers[0]]
     )
-    EventCard(event: previewEvent, zone: nil, speakers: [EventCardMocks.speakers[0]])
-        .padding()
-        .background(YoungConAsset.appBackground.swiftUIColor)
-        .preferredColorScheme(.dark)
+    .padding()
+    .background(YoungConAsset.appBackground.swiftUIColor)
+    .preferredColorScheme(.dark)
 }
