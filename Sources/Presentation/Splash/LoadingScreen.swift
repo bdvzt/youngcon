@@ -14,7 +14,7 @@ struct LoadingScreen: View {
             background.ignoresSafeArea()
 
             VStack(spacing: 24) {
-                Image("logo")
+                Image(asset: YoungConAsset.logo)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 200, height: 200)
