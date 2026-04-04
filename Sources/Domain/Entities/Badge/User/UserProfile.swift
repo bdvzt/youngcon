@@ -1,9 +1,9 @@
-import Foundation
-
-struct UserProfile: Identifiable, Codable {
-    let id: UUID
-    let name: String
+struct UserProfile: Decodable {
+    let id: String
+    let firstName: String
+    let lastName: String
     let email: String
-    let major: Major
     let qrCode: String
+    let major: Major
+    let role: UserRole
 }

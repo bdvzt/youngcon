@@ -1,8 +1,11 @@
 import Foundation
 
-struct Floor: Identifiable, Codable {
-    let id: UUID
+struct Floor: Identifiable, Decodable {
+    let id: String
     let title: String
-    let mapImageURL: URL
-    let zoneIDs: [UUID]
+    let mapURL: String
+
+    var mapImageURL: URL? {
+        URL(string: mapURL)
+    }
 }

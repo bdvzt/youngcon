@@ -1,7 +1,7 @@
 import Foundation
 
 enum URLRequestBuilder {
-    static func build(from endpoint: EndPoint) throws -> URLRequest {
+    static func build(from endpoint: Endpoint) throws -> URLRequest {
         let safePath =
             endpoint.path.hasPrefix("/")
                 ? String(endpoint.path.dropFirst())

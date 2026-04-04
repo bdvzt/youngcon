@@ -2,20 +2,35 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var activeTab: AppTab = .schedule
+    @State private var previousTab: AppTab = .schedule
     @State private var isOverlayPresented = false
+
+    private let background = YoungConAsset.appBackground.swiftUIColor
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            YoungConAsset.appBackground.swiftUIColor
-                .ignoresSafeArea()
+            background.ignoresSafeArea()
 
-            TabPageView(tab: activeTab, isOverlayPresented: $isOverlayPresented)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .zIndex(0)
+            TabPageView(
+                activeTab: $activeTab,
+                previousTab: $previousTab,
+                isOverlayPresented: $isOverlayPresented
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .zIndex(0)
 
             VStack(spacing: 0) {
                 Spacer()
-                BottomNavBar(activeTab: $activeTab, isOverlayPresented: isOverlayPresented)
+                BottomNavBar(
+                    activeTab: Binding(
+                        get: { activeTab },
+                        set: { newTab in
+                            previousTab = activeTab
+                            activeTab = newTab
+                        }
+                    ),
+                    isOverlayPresented: isOverlayPresented
+                )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .zIndex(1)

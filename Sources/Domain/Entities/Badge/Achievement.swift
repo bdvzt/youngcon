@@ -1,9 +1,7 @@
-import Foundation
-
-struct Achievement: Identifiable, Codable {
-    let id: UUID
-    let title: String
+struct Achievement: Identifiable, Decodable {
+    let id: String
+    let name: String
     let description: String
-    let iconName: String
+    let icon: String
     let color: String
 }
