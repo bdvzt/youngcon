@@ -5,6 +5,8 @@ struct EventCard: View {
     let event: Event
     let zone: Zone?
     let speakers: [Speaker]
+    /// streamURL передаётся снаружи — поля нет в модели Event
+    var streamURL: URL?
 
     private var isLive: Bool {
         guard let start = event.startDate, let end = event.endDate else { return false }
@@ -12,9 +14,8 @@ struct EventCard: View {
         return now >= start && now <= end
     }
 
-    /// В доменной модели с API пока нет URL трансляции — оставлено для будущего UI.
     private var showsStreamControl: Bool {
-        false
+        isLive && streamURL != nil
     }
 
     private var timeRangeText: String {
@@ -29,6 +30,8 @@ struct EventCard: View {
     private var primarySpeaker: Speaker? {
         speakers.first
     }
+
+    // MARK: - Body
 
     var body: some View {
         cardStack
@@ -50,6 +53,8 @@ struct EventCard: View {
         }
     }
 
+    // MARK: - Subviews
+
     private var scheduleRow: some View {
         HStack(alignment: .center, spacing: 6) {
             Text(timeRangeText)
@@ -57,11 +62,9 @@ struct EventCard: View {
                 .fontWeight(.bold)
                 .monospacedDigit()
                 .foregroundStyle(EventCardPalette.timeText)
-
             if isLive {
                 LivePulseDot()
             }
-
             Spacer(minLength: 8)
         }
     }
@@ -113,9 +116,7 @@ struct EventCard: View {
                         .lineLimit(1)
                 }
             }
-
             Spacer(minLength: 8)
-
             if showsStreamControl {
                 EventCardStreamButton()
             }
@@ -145,11 +146,14 @@ struct EventCard: View {
     }
 }
 
+// MARK: - Previews
+
 #Preview("Карточка") {
     EventCard(
         event: EventCardMocks.event,
         zone: EventCardMocks.zone,
-        speakers: EventCardMocks.speakers
+        speakers: EventCardMocks.speakers,
+        streamURL: URL(string: "https://example.com/stream")
     )
     .padding()
     .background(YoungConAsset.appBackground.swiftUIColor)
@@ -157,21 +161,13 @@ struct EventCard: View {
 }
 
 #Preview("Без зоны и эфира") {
-    let formatter = ISO8601DateFormatter()
-    let start = Date()
-    let end = Date().addingTimeInterval(3600)
-    let previewEvent = Event(
-        id: EventCardMocks.IDs.event,
-        title: "Короткий доклад",
-        description: "",
-        startDateTime: formatter.string(from: start),
-        endDateTime: formatter.string(from: end),
-        category: "talk",
-        zoneID: EventCardMocks.IDs.zone,
-        festivalID: EventCardMocks.IDs.festival
+    EventCard(
+        event: EventCardMocks.shortEvent,
+        zone: nil,
+        speakers: [EventCardMocks.speakers[0]],
+        streamURL: nil
     )
-    EventCard(event: previewEvent, zone: nil, speakers: [EventCardMocks.speakers[0]])
-        .padding()
-        .background(YoungConAsset.appBackground.swiftUIColor)
-        .preferredColorScheme(.dark)
+    .padding()
+    .background(YoungConAsset.appBackground.swiftUIColor)
+    .preferredColorScheme(.dark)
 }

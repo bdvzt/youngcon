@@ -16,7 +16,7 @@ enum EventCardMocks {
         id: IDs.zone,
         floorID: IDs.floor,
         title: "Главная сцена",
-        description: "",
+        description: "Основная сцена фестиваля",
         icon: "theatermasks.fill",
         color: "indigo"
     )
@@ -43,20 +43,39 @@ enum EventCardMocks {
         ),
     ]
 
-    /// Интервал относительно «сейчас», чтобы в превью всегда были live-точка.
+    /// Интервал относительно «сейчас», чтобы в превью были live-точка и кнопка эфира при переданном `streamURL`.
     static var event: Event {
         let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
         let now = Date()
         let start = now.addingTimeInterval(-30 * 60)
         let end = now.addingTimeInterval(2 * 60 * 60)
         return Event(
             id: IDs.event,
             title: "Разработка на Swift: современные подходы и best practices",
-            description: "Превью карточки события.",
+            description: "Глубокое погружение в современный Swift. Concurrency, SwiftUI, архитектура.",
             startDateTime: formatter.string(from: start),
             endDateTime: formatter.string(from: end),
             category: "development",
             zoneID: IDs.zone,
+            festivalID: IDs.festival
+        )
+    }
+
+    /// Короткий доклад без зоны и трансляции.
+    static var shortEvent: Event {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        let start = Date().addingTimeInterval(60 * 60)
+        let end = Date().addingTimeInterval(2 * 60 * 60)
+        return Event(
+            id: "event-mock-002",
+            title: "Короткий доклад",
+            description: "Краткое выступление без трансляции.",
+            startDateTime: formatter.string(from: start),
+            endDateTime: formatter.string(from: end),
+            category: "talk",
+            zoneID: "",
             festivalID: IDs.festival
         )
     }

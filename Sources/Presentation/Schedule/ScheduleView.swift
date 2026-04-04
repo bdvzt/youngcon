@@ -9,12 +9,21 @@ struct ScheduleView: View {
     private let purple = YoungConAsset.accentPurple.swiftUIColor
     private let pink = YoungConAsset.accentPink.swiftUIColor
 
-    let filters = ["Все", "Избранное", "Live", "Лекция", "Бизнес", "Интерактив", "Backend", "ML"]
+    let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
 
-    var filteredEvents: [ScheduleModel] {
-        if activeFilter == "Все" { return scheduleData }
-        if activeFilter == "Live" { return scheduleData.filter(\.streamAvailable) }
-        return scheduleData.filter { $0.tags.contains(activeFilter) }
+    var filteredEvents: [ScheduleEntry] {
+        switch activeFilter {
+        case "Все":
+            scheduleData
+        case "Live":
+            scheduleData.filter { $0.streamURL != nil }
+        case "Избранное":
+            []
+        default:
+            scheduleData.filter {
+                $0.event.category.lowercased() == activeFilter.lowercased()
+            }
+        }
     }
 
     var body: some View {
@@ -74,6 +83,7 @@ struct ScheduleView: View {
                 .blur(radius: 20)
                 .opacity(0.35)
                 .allowsHitTesting(false)
+
             Image("logo")
                 .resizable()
                 .scaledToFit()
@@ -92,6 +102,7 @@ struct ScheduleView: View {
                 .opacity(0.3)
                 .offset(x: -130, y: -130)
                 .allowsHitTesting(false)
+
             Circle()
                 .fill(yellow)
                 .frame(width: 288, height: 288)
@@ -116,6 +127,7 @@ struct ScheduleView: View {
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )
                 )
+
             Text("Программа мероприятий")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
@@ -131,10 +143,16 @@ struct ScheduleView: View {
         VStack(spacing: 14) {
             if filteredEvents.isEmpty {
                 ScheduleEmptyState(activeFilter: activeFilter)
+            } else {
+                ForEach(filteredEvents) { entry in
+                    EventCard(
+                        event: entry.event,
+                        zone: entry.zone,
+                        speakers: entry.speakers,
+                        streamURL: entry.streamURL
+                    )
+                }
             }
-            // ForEach(filteredEvents) { event in
-            //     ScheduleCard(event: event)
-            // }
         }
         .padding(.horizontal, 20)
     }
