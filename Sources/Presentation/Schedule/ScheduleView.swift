@@ -5,31 +5,26 @@ struct ScheduleView: View {
     @State private var gradientOffset: CGFloat = 0
 
     private let background = YoungConAsset.appBackground.swiftUIColor
-    private let yellow     = YoungConAsset.accentYellow.swiftUIColor
-    private let purple     = YoungConAsset.accentPurple.swiftUIColor
-    private let pink       = YoungConAsset.accentPink.swiftUIColor
+    private let yellow = YoungConAsset.accentYellow.swiftUIColor
+    private let purple = YoungConAsset.accentPurple.swiftUIColor
+    private let pink = YoungConAsset.accentPink.swiftUIColor
 
     let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
-
-    // MARK: - Filtering
 
     var filteredEvents: [ScheduleEntry] {
         switch activeFilter {
         case "Все":
-            return scheduleData
+            scheduleData
         case "Live":
-            return scheduleData.filter { $0.streamURL != nil }
+            scheduleData.filter { $0.streamURL != nil }
         case "Избранное":
-            // TODO: подключить FavoritesStore и фильтровать по избранным id
-            return []
+            []
         default:
-            return scheduleData.filter {
+            scheduleData.filter {
                 $0.event.category.lowercased() == activeFilter.lowercased()
             }
         }
     }
-
-    // MARK: - Body
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -46,7 +41,6 @@ struct ScheduleView: View {
                 }
             }
 
-            // Top fade overlay
             VStack(spacing: 0) {
                 background.ignoresSafeArea(edges: .top)
                     .frame(height: 0)
@@ -62,7 +56,6 @@ struct ScheduleView: View {
             .zIndex(20)
             .allowsHitTesting(false)
 
-            // Logo
             VStack(spacing: 0) {
                 logoView
                     .padding(.horizontal, 20)
@@ -78,8 +71,6 @@ struct ScheduleView: View {
             }
         }
     }
-
-    // MARK: - Subviews
 
     private var logoView: some View {
         ZStack {
@@ -166,8 +157,6 @@ struct ScheduleView: View {
         .padding(.horizontal, 20)
     }
 }
-
-// MARK: - Preview
 
 #Preview {
     ScheduleView()

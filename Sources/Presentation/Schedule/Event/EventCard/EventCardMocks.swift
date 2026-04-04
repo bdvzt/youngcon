@@ -1,7 +1,6 @@
 import Foundation
 
 enum EventCardMocks {
-
     static let zone = Zone(
         id: "zone-mock-001",
         floorID: "floor-1",
@@ -16,7 +15,8 @@ enum EventCardMocks {
             id: "speaker-mock-001",
             fullName: "Иван Петров",
             job: "Lead iOS Developer",
-            bio: "Иван работает в Яндексе более 5 лет. Руководит разработкой мобильного приложения Яндекс.Карт. Спикер конференций Mobius и RIW.",
+            bio: "Иван работает в Яндексе более 5 лет. Руководит разработкой мобильного приложения Яндекс.Карт." +
+                " Спикер конференций Mobius и RIW.",
             avatarURL: "https://example.com/photos/ivan-petrov.jpg"
         ),
         Speaker(
@@ -33,7 +33,7 @@ enum EventCardMocks {
         let fmt = ISO8601DateFormatter()
         fmt.formatOptions = [.withInternetDateTime]
         let start = Date().addingTimeInterval(-30 * 60)
-        let end   = Date().addingTimeInterval(2 * 60 * 60)
+        let end = Date().addingTimeInterval(2 * 60 * 60)
         return Event(
             id: "event-mock-001",
             title: "Разработка на Swift: современные подходы и best practices",
@@ -51,7 +51,7 @@ enum EventCardMocks {
         let fmt = ISO8601DateFormatter()
         fmt.formatOptions = [.withInternetDateTime]
         let start = Date().addingTimeInterval(60 * 60)
-        let end   = Date().addingTimeInterval(2 * 60 * 60)
+        let end = Date().addingTimeInterval(2 * 60 * 60)
         return Event(
             id: "event-mock-002",
             title: "Короткий доклад",

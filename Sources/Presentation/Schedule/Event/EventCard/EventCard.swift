@@ -6,7 +6,7 @@ struct EventCard: View {
     let zone: Zone?
     let speakers: [Speaker]
     /// streamURL передаётся снаружи — поля нет в модели Event
-    var streamURL: URL? = nil
+    var streamURL: URL?
 
     private var isLive: Bool {
         guard let start = event.startDate, let end = event.endDate else { return false }
@@ -20,11 +20,13 @@ struct EventCard: View {
 
     private var timeRangeText: String {
         let start = event.startDate?.formatted(date: .omitted, time: .shortened) ?? "--:--"
-        let end   = event.endDate?.formatted(date: .omitted, time: .shortened)   ?? "--:--"
+        let end = event.endDate?.formatted(date: .omitted, time: .shortened) ?? "--:--"
         return "\(start) – \(end)"
     }
 
-    private var primarySpeaker: Speaker? { speakers.first }
+    private var primarySpeaker: Speaker? {
+        speakers.first
+    }
 
     // MARK: - Body
 
@@ -130,13 +132,13 @@ struct EventCard: View {
     private func zoneAccentColor(_ name: String) -> Color {
         switch name.lowercased() {
         case "pink", "red":
-            return YoungConAsset.accentPink.swiftUIColor
+            YoungConAsset.accentPink.swiftUIColor
         case "orange", "yellow":
-            return YoungConAsset.accentYellow.swiftUIColor
+            YoungConAsset.accentYellow.swiftUIColor
         case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
-            return YoungConAsset.accentPurple.swiftUIColor
+            YoungConAsset.accentPurple.swiftUIColor
         default:
-            return YoungConAsset.accentPurple.swiftUIColor
+            YoungConAsset.accentPurple.swiftUIColor
         }
     }
 }
