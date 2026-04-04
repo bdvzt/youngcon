@@ -9,7 +9,7 @@
 | Файл | Назначение |
 |------|------------|
 | `Sources/App/DI/DependencyContainer.swift` | Один класс-контейнер на приложение; пока без сервисов и фабрик. |
-| `Sources/App/DI/DependencyInjection.swift` | `EnvironmentKey` + `EnvironmentValues.dependencyContainer`. |
+| `Sources/App/DI/DependencyInjection.swift` | `EnvironmentValues.dependencyContainer` через `@Entry` (SwiftUI). |
 | `Sources/App/YoungConApp.swift` | `DependencyContainer.live()` и `.environment(\.dependencyContainer, …)` на корне. |
 | `Sources/Presentation/ContentView.swift` | В превью: `.environment(\.dependencyContainer, .preview)`. |
 

@@ -7,18 +7,23 @@ struct EventCard: View {
     let speakers: [Speaker]
 
     private var isLive: Bool {
+        guard let start = event.startDate, let end = event.endDate else { return false }
         let now = Date()
-        return now >= event.start && now <= event.end
+        return now >= start && now <= end
     }
 
+    /// В доменной модели с API пока нет URL трансляции — оставлено для будущего UI.
     private var showsStreamControl: Bool {
-        isLive && event.streamURL != nil
+        false
     }
 
     private var timeRangeText: String {
-        let start = event.start.formatted(date: .omitted, time: .shortened)
-        let end = event.end.formatted(date: .omitted, time: .shortened)
-        return "\(start) – \(end)"
+        guard let start = event.startDate, let end = event.endDate else {
+            return "—"
+        }
+        let startText = start.formatted(date: .omitted, time: .shortened)
+        let endText = end.formatted(date: .omitted, time: .shortened)
+        return "\(startText) – \(endText)"
     }
 
     private var primarySpeaker: Speaker? {
@@ -72,14 +77,14 @@ struct EventCard: View {
 
     private func speakerRow(_ speaker: Speaker) -> some View {
         HStack(alignment: .center, spacing: 12) {
-            SpeakerAvatar(url: speaker.photoURL)
+            SpeakerAvatar(url: speaker.avatarImageURL)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(speaker.name)
+                Text(speaker.fullName)
                     .font(.callout)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
-                Text(speaker.role)
+                Text(speaker.job)
                     .font(.caption)
                     .foregroundStyle(YoungConAsset.gray500.swiftUIColor)
                     .lineLimit(2)
@@ -98,10 +103,10 @@ struct EventCard: View {
         HStack(alignment: .center, spacing: 12) {
             if let zone {
                 HStack(spacing: 6) {
-                    Image(systemName: zone.iconName)
+                    Image(systemName: zone.icon)
                         .font(.footnote.weight(.bold))
                         .foregroundStyle(zoneAccentColor(zone.color))
-                    Text(zone.name)
+                    Text(zone.title)
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundStyle(EventCardPalette.locationText)
@@ -152,15 +157,18 @@ struct EventCard: View {
 }
 
 #Preview("Без зоны и эфира") {
+    let formatter = ISO8601DateFormatter()
+    let start = Date()
+    let end = Date().addingTimeInterval(3600)
     let previewEvent = Event(
         id: EventCardMocks.IDs.event,
         title: "Короткий доклад",
-        start: Date(),
-        end: Date().addingTimeInterval(3600),
-        speakerIDs: [EventCardMocks.IDs.speaker1],
-        zoneID: nil,
-        categoryCode: "talk",
-        streamURL: nil
+        description: "",
+        startDateTime: formatter.string(from: start),
+        endDateTime: formatter.string(from: end),
+        category: "talk",
+        zoneID: EventCardMocks.IDs.zone,
+        festivalID: EventCardMocks.IDs.festival
     )
     EventCard(event: previewEvent, zone: nil, speakers: [EventCardMocks.speakers[0]])
         .padding()

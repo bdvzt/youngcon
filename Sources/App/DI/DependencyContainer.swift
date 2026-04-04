@@ -17,7 +17,7 @@ final class DependencyContainer {
     // private lazy var networkService: NetworkServiceProtocol = NetworkService(
     //     authorizationProvider: AuthorizationProvider(tokenStorage: tokenStorage)
     // )
-    // private lazy var eventsRepository: EventsRepositoryProtocol = EventsRepository(network: networkService)
+    // private lazy var eventsRepository: EventsRepositoryProtocol = EventsRepository(networkService: networkService)
 
     // MARK: - Фабрики ViewModel (позже)
 
