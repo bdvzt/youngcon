@@ -1,40 +1,53 @@
 import Foundation
 
-/// Корневой DI-контейнер приложения.
-///
-/// На этом этапе — только каркас: один экземпляр на процесс, проброс через SwiftUI `Environment`.
-/// Сюда позже добавляют:
-/// - `lazy` сервисы (сеть, keychain);
-/// - репозитории, завязанные на протоколы из Domain;
-/// - фабрики `make…ViewModel(...)` для экранов.
-///
-/// См. `Documentation/Architecture-MVVM-DI.md`.
 final class DependencyContainer {
-    // MARK: - Сервисы и репозитории (позже)
 
-    // Пример:
-    // private lazy var tokenStorage: TokenStorageProtocol = KeychainTokenStorage()
-    // private lazy var networkService: NetworkServiceProtocol = NetworkService(
-    //     authorizationProvider: AuthorizationProvider(tokenStorage: tokenStorage)
-    // )
-    // private lazy var eventsRepository: EventsRepositoryProtocol = EventsRepository(networkService: networkService)
+    private lazy var tokenStorage: TokenStorageProtocol = KeychainTokenStorage()
 
-    // MARK: - Фабрики ViewModel (позже)
+    private lazy var networkService: NetworkServiceProtocol = NetworkService(
+        authorizationProvider: AuthorizationProvider(tokenStorage: tokenStorage),
+        tokenStorage: tokenStorage
+    )
 
-    // Пример:
-    // @MainActor
-    // func makeScheduleViewModel() -> ScheduleViewModel {
-    //     ScheduleViewModel(eventsRepository: eventsRepository)
-    // }
+    private(set) lazy var authRepository: AuthRepositoryProtocol = AuthRepository(
+        networkService: networkService,
+        tokenStorage: tokenStorage
+    )
+
+    private(set) lazy var achievementsRepository: AchievementsRepositoryProtocol = AchievementsRepository(
+        networkService: networkService
+    )
+
+    private(set) lazy var eventsRepository: EventsRepositoryProtocol = EventsRepository(
+        networkService: networkService
+    )
+
+    private(set) lazy var festivalsRepository: FestivalsRepositoryProtocol = FestivalsRepository(
+        networkService: networkService
+    )
+
+    private(set) lazy var floorsRepository: FloorsRepositoryProtocol = FloorsRepository(
+        networkService: networkService
+    )
+
+    private(set) lazy var speakersRepository: SpeakersRepositoryProtocol = SpeakersRepository(
+        networkService: networkService
+    )
+
+    private(set) lazy var usersRepository: UsersRepositoryProtocol = UsersRepository(
+        networkService: networkService
+    )
+
+    private(set) lazy var zoneRepository: ZoneRepositoryProtocol = ZoneRepository(
+        networkService: networkService
+    )
 
     init() {}
 
-    /// Продакшен: сюда подключать реальные зависимости.
     static func live() -> DependencyContainer {
         DependencyContainer()
     }
 
-    /// Превью и тесты: моки или облегчённый контейнер.
     static var preview: DependencyContainer {
         DependencyContainer()
     }
