@@ -1,3 +1,3 @@
-protocol AchievementsNetworkProtocol {
+protocol AchievementsRepositoryProtocol {
     func getAchievements() async throws -> [Achievement]
 }

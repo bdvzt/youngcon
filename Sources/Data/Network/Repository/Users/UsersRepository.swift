@@ -1,7 +1,13 @@
-extension NetworkService: UsersNetworkProtocol {
+final class UsersRepository: UsersRepositoryProtocol {
+    private let networkService: NetworkServiceProtocol
+
+    init(networkService: NetworkServiceProtocol) {
+        self.networkService = networkService
+    }
+
     func getMyProfile() async throws -> UserProfile {
         let endpoint = GetUserProfileEndpoint()
-        return try await requestDecodable(
+        return try await networkService.requestDecodable(
             endpoint,
             as: UserProfile.self
         )
@@ -9,7 +15,7 @@ extension NetworkService: UsersNetworkProtocol {
 
     func getUserLikedEvents(userID: String) async throws -> [Event] {
         let endpoint = GetUserLikedEventsEndpoint(userID)
-        return try await requestDecodable(
+        return try await networkService.requestDecodable(
             endpoint,
             as: [Event].self
         )
@@ -17,7 +23,7 @@ extension NetworkService: UsersNetworkProtocol {
 
     func getUserAchievements(userID: String) async throws -> [Achievement] {
         let endpoint = GetUserAchievmentsEndpoint(userID)
-        return try await requestDecodable(
+        return try await networkService.requestDecodable(
             endpoint,
             as: [Achievement].self
         )

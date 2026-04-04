@@ -1,3 +1,3 @@
-protocol FestivalsNetworkProtocol {
+protocol FestivalsRepositoryProtocol {
     func getLastFestival() async throws -> Festival
 }

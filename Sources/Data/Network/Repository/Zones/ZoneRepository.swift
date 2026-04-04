@@ -1,7 +1,13 @@
-extension NetworkService: ZoneNetworkProtocol {
+final class ZoneRepository: ZoneRepositoryProtocol {
+    private let networkService: NetworkServiceProtocol
+
+    init(networkService: NetworkServiceProtocol) {
+        self.networkService = networkService
+    }
+
     func getZone(zoneID: String) async throws -> Zone {
         let endpoint = GetZoneByIDEndpoint(zoneID)
-        return try await requestDecodable(
+        return try await networkService.requestDecodable(
             endpoint,
             as: Zone.self
         )
@@ -9,7 +15,7 @@ extension NetworkService: ZoneNetworkProtocol {
 
     func getZone(floorID: String) async throws -> Zone {
         let endpoint = GetZonesByFloorIDEndpoint(floorID)
-        return try await requestDecodable(
+        return try await networkService.requestDecodable(
             endpoint,
             as: Zone.self
         )
