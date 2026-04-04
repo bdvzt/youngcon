@@ -12,11 +12,11 @@ final class NetworkService: NetworkServiceProtocol {
         self.authorizationProvider = authorizationProvider
     }
 
-    func request(_ endpoint: EndPoint) async throws {
+    func request(_ endpoint: Endpoint) async throws {
         let _: Data = try await send(endpoint)
     }
 
-    func requestDecodable<T: Decodable>(_ endpoint: EndPoint, as _: T.Type) async throws -> T {
+    func requestDecodable<T: Decodable>(_ endpoint: Endpoint, as _: T.Type) async throws -> T {
         let data = try await send(endpoint)
         do {
             return try JSONDecoder().decode(T.self, from: data)
@@ -28,7 +28,7 @@ final class NetworkService: NetworkServiceProtocol {
     // MARK: - Private
 
     @discardableResult
-    private func send(_ endpoint: EndPoint) async throws -> Data {
+    private func send(_ endpoint: Endpoint) async throws -> Data {
         var request = try URLRequestBuilder.build(from: endpoint)
         request = await authorizationProvider.addAuthorization(
             to: request,

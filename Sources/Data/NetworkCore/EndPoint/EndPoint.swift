@@ -1,6 +1,6 @@
 import Foundation
 
-protocol EndPoint {
+protocol Endpoint {
     var baseURL: URL { get }
     var path: String { get }
     var method: HTTPMethod { get }
