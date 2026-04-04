@@ -4,14 +4,14 @@ struct LocationPinView: View {
     let loc: LocationModal
     let isFocused: Bool
     let focusedLocId: String?
-    let bg: Color
+    let background: Color
     let yellow: Color
     let onTap: () -> Void
 
     var body: some View {
         ZStack(alignment: .bottom) {
             if isFocused {
-                LocationPopupCard(loc: loc, bg: bg, yellow: yellow) {
+                LocationPopupCard(loc: loc, background: background, yellow: yellow) {
                     onTap()
                 }
                 .offset(y: -56)
@@ -58,7 +58,7 @@ struct LocationPinView: View {
             .padding(.horizontal, 6).padding(.vertical, 2)
             .background(
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(bg.opacity(0.9))
+                    .fill(background.opacity(0.9))
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(Color.white.opacity(0.08), lineWidth: 1)

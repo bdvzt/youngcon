@@ -2,22 +2,22 @@ import SwiftUI
 
 struct LocationFloorSwitcher: View {
     @Binding var floor: Int
-    let bg: Color
+    let background: Color
     let yellow: Color
     let purple: Color
     let onFloorChange: () -> Void
 
     var body: some View {
         VStack(spacing: 4) {
-            floorButton(direction: .up)
+            floorButton(direction: .upfloor)
             floorLabel
-            floorButton(direction: .down)
+            floorButton(direction: .downfloor)
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(bg.opacity(0.9))
+                .fill(background.opacity(0.9))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.white.opacity(0.06), lineWidth: 1)
@@ -44,15 +44,15 @@ struct LocationFloorSwitcher: View {
         }
     }
 
-    private enum FloorDirection { case up, down }
+    private enum FloorDirection { case upfloor, downfloor }
 
     private func floorButton(direction: FloorDirection) -> some View {
-        let isDisabled = direction == .up ? floor == 2 : floor == 1
-        let icon = direction == .up ? "chevron.up" : "chevron.down"
+        let isDisabled = direction == .upfloor ? floor == 2 : floor == 1
+        let icon = direction == .upfloor ? "chevron.up" : "chevron.down"
 
         return Button {
             withAnimation(.easeInOut(duration: 0.25)) {
-                floor = direction == .up ? 2 : 1
+                floor = direction == .upfloor ? 2 : 1
                 onFloorChange()
             }
         } label: {

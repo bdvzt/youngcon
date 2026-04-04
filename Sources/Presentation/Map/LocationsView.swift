@@ -5,7 +5,7 @@ struct LocationsView: View {
     @State private var focusedLocId: String?
     @State private var gradientOffset: CGFloat = 0
 
-    private let bg = YoungConAsset.appBackground.swiftUIColor
+    private let background = YoungConAsset.appBackground.swiftUIColor
     private let cardBg = YoungConAsset.cardBackground.swiftUIColor
     private let yellow = YoungConAsset.accentYellow.swiftUIColor
     private let purple = YoungConAsset.accentPurple.swiftUIColor
@@ -17,7 +17,7 @@ struct LocationsView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            bg.ignoresSafeArea()
+            background.ignoresSafeArea()
             ambientGlows
 
             ScrollView(showsIndicators: false) {
@@ -119,18 +119,18 @@ struct LocationsView: View {
                 )
 
             GeometryReader { geo in
-                let w = geo.size.width
-                let h = geo.size.height
+                let width = geo.size.width
+                let height = geo.size.height
                 ZStack {
                     LocationFloorSwitcher(
                         floor: $floor,
-                        bg: bg, yellow: yellow, purple: purple
+                        background: background, yellow: yellow, purple: purple
                     ) {
                         focusedLocId = nil
                     }
-                    .position(x: 32, y: h / 2)
+                    .position(x: 32, y: height / 2)
 
-                    flatMap(containerW: w, containerH: h)
+                    flatMap(containerW: width, containerH: height)
                 }
             }
         }
@@ -146,24 +146,26 @@ struct LocationsView: View {
         let mapH: CGFloat = containerH * 0.82
         let mapX: CGFloat = containerW / 2 + 28
         let mapY: CGFloat = containerH / 2
+        let offsetX: CGFloat = mapX - mapW / 2
+        let offsetY: CGFloat = mapY - mapH / 2
 
         ZStack {
             ForEach(currentLocations) { loc in
+                let pinX = offsetX + mapW * loc.leftPercent
+                let pinY = offsetY + mapH * loc.topPercent
+
                 LocationPinView(
                     loc: loc,
                     isFocused: focusedLocId == loc.id,
                     focusedLocId: focusedLocId,
-                    bg: bg,
+                    background: background,
                     yellow: yellow
                 ) {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         focusedLocId = (focusedLocId == loc.id) ? nil : loc.id
                     }
                 }
-                .position(
-                    x: mapX - mapW / 2 + mapW * loc.leftPercent,
-                    y: mapY - mapH / 2 + mapH * loc.topPercent
-                )
+                .position(x: pinX, y: pinY)
             }
         }
         .position(x: mapX, y: mapY)

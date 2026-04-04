@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LocationPopupCard: View {
     let loc: LocationModal
-    let bg: Color
+    let background: Color
     let yellow: Color
     let onClose: () -> Void
 
@@ -26,7 +26,7 @@ struct LocationPopupCard: View {
         .padding(14)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(bg.opacity(0.95))
+                .fill(background.opacity(0.95))
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
@@ -76,7 +76,7 @@ struct LocationPopupCard: View {
 
     private var arrowTip: some View {
         Rectangle()
-            .fill(bg.opacity(0.95))
+            .fill(background.opacity(0.95))
             .frame(width: 12, height: 12)
             .rotationEffect(.degrees(45))
             .overlay(
