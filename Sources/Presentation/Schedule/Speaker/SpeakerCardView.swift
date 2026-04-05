@@ -1,7 +1,5 @@
 import SwiftUI
 
-// swiftlint:disable all
-
 // MARK: - Mocks
 
 let example = Speaker(
@@ -89,28 +87,34 @@ struct SpeakerCardView: View {
     }
 
     private var backButton: some View {
-        Button(action: { dismiss() }) {
-            HStack(spacing: 12) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .medium))
-                Text("К СОБЫТИЮ")
-                    .font(.system(size: 16, weight: .heavy))
+        Button(
+            action: { dismiss() },
+            label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .medium))
+                    Text("К СОБЫТИЮ")
+                        .font(.system(size: 16, weight: .heavy))
+                }
+                .foregroundColor(whiteText.opacity(0.6))
             }
-            .foregroundColor(whiteText.opacity(0.6))
-        }
+        )
     }
 
     private var closeButton: some View {
-        Button(action: { dismiss() }) {
-            ZStack {
-                Circle()
-                    .fill(whiteText.opacity(0.1))
-                    .frame(width: 40, height: 40)
-                Image(systemName: "xmark")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(whiteText.opacity(0.6))
+        Button(
+            action: { dismiss() },
+            label: {
+                ZStack {
+                    Circle()
+                        .fill(whiteText.opacity(0.1))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(whiteText.opacity(0.6))
+                }
             }
-        }
+        )
     }
 
     // MARK: - Scrollable Content
@@ -292,5 +296,3 @@ struct SpeakerCardView: View {
 #Preview {
     SpeakerCardView(speaker: example)
 }
-
-// swiftlint:enable all
