@@ -6,7 +6,12 @@ let example = Speaker(
     id: "",
     fullName: "Анна Иванова",
     job: "Директор по продукту, Яндекс",
-    bio: "Лидеры направлений, визионеры и создатели ключевых продуктов. Они задают тренды в индустрии, формируют вектор развития технологий и знают, как построить сервисы, которыми будут пользоваться миллионы людей каждый день.",
+    bio: """
+    Лидеры направлений, визионеры и создатели ключевых продуктов. 
+    Они задают тренды в индустрии, формируют вектор развития технологий 
+    и знают, как построить сервисы, которыми будут пользоваться 
+    миллионы людей каждый день.
+    """,
     avatarURL: ""
 )
 
@@ -218,17 +223,20 @@ struct SpeakerCardView: View {
     // MARK: - Ask Question Button
 
     private var askQuestionButton: some View {
-        Button(action: { print("Задать вопрос спикеру: \(speaker.fullName)") }) {
-            Text("вопрос спикеру")
-                .font(.system(size: 16, weight: .heavy))
-                .foregroundColor(cardBackgroundColor)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(whiteText)
-                )
-        }
+        Button(
+            action: { print("Задать вопрос спикеру: \(speaker.fullName)") },
+            label: {
+                Text("вопрос спикеру")
+                    .font(.system(size: 16, weight: .heavy))
+                    .foregroundColor(cardBackgroundColor)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(whiteText)
+                    )
+            }
+        )
         .padding(.horizontal, 28)
         .padding(.bottom, 32)
     }
@@ -245,8 +253,7 @@ struct SpeakerCardView: View {
     @ViewBuilder
     private var speakerAvatarImage: some View {
         if let photoURLString = speaker.avatarURL, !photoURLString.isEmpty,
-           let photoURL = URL(string: photoURLString)
-        {
+           let photoURL = URL(string: photoURLString) {
             AsyncImage(url: photoURL) { image in
                 image
                     .resizable()
