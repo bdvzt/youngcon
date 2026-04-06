@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum EventCardPalette {
-    static let timeText = Color(red: 208 / 255, green: 208 / 255, blue: 211 / 255)
-    static let locationText = Color(red: 153 / 255, green: 161 / 255, blue: 175 / 255)
-    static let speakerAvatar = Color(red: 53 / 255, green: 55 / 255, blue: 84 / 255)
+    static let timeText = YoungConAsset.gray500.swiftUIColor
+    static let locationText = YoungConAsset.gray500.swiftUIColor.opacity(0.7)
+    static let speakerAvatar = YoungConAsset.gray700.swiftUIColor
 }
