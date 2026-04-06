@@ -92,7 +92,7 @@ struct EventCard: View {
                 .font(.footnote)
                 .fontWeight(.bold)
                 .monospacedDigit()
-                .foregroundStyle(EventCardPalette.timeText)
+                .foregroundStyle(AppColor.gray500)
             if isLive {
                 LivePulseDot()
             }
@@ -142,7 +142,7 @@ struct EventCard: View {
                     Text(zone.title)
                         .font(.footnote)
                         .fontWeight(.bold)
-                        .foregroundStyle(EventCardPalette.locationText)
+                        .foregroundStyle(AppColor.gray500.opacity(0.7))
                         .lineLimit(1)
                 }
             }
