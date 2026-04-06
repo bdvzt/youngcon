@@ -2,14 +2,16 @@ import SwiftUI
 
 struct StickerDetailModal: View {
     @Binding var selectedSticker: Sticker?
+    @State private var displayedSticker: Sticker?
+    @State private var isVisible = false
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.9)
+            Color.black.opacity(isVisible ? 0.9 : 0)
                 .ignoresSafeArea()
                 .onTapGesture { dismiss() }
 
-            if let sticker = selectedSticker {
+            if let sticker = displayedSticker {
                 VStack(alignment: .leading, spacing: 20) {
                     headerRow(sticker: sticker)
                     Text(sticker.description)
@@ -20,10 +22,21 @@ struct StickerDetailModal: View {
                 .padding(24)
                 .frame(maxWidth: 300)
                 .background(modalBackground)
-                .transition(.scale(scale: 0.94).combined(with: .opacity))
+                .scaleEffect(isVisible ? 1 : 0.94)
+                .opacity(isVisible ? 1 : 0)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: selectedSticker)
+        .animation(.easeInOut(duration: 0.25), value: isVisible)
+        .onAppear {
+            guard let selectedSticker else { return }
+            displayedSticker = selectedSticker
+            isVisible = true
+        }
+        .onChange(of: selectedSticker) { newValue in
+            guard let newValue else { return }
+            displayedSticker = newValue
+            isVisible = true
+        }
     }
 
     private func headerRow(sticker: Sticker) -> some View {
@@ -93,6 +106,11 @@ struct StickerDetailModal: View {
     }
 
     private func dismiss() {
-        withAnimation(.easeInOut(duration: 0.25)) { selectedSticker = nil }
+        guard displayedSticker != nil else { return }
+        isVisible = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            selectedSticker = nil
+            displayedSticker = nil
+        }
     }
 }

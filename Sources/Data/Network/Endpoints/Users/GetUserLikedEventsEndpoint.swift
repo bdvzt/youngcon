@@ -1,12 +1,10 @@
 import Foundation
 
 struct GetUserLikedEventsEndpoint: Endpoint {
-    private let userID: String
-
     init(
         _ userID: String
     ) {
-        self.userID = userID
+        _ = userID
     }
 
     var baseURL: URL {
@@ -14,7 +12,7 @@ struct GetUserLikedEventsEndpoint: Endpoint {
     }
 
     var path: String {
-        APIConstants.Users.likedEvents(userID)
+        APIConstants.Users.myLikedEvents
     }
 
     var method: HTTPMethod {

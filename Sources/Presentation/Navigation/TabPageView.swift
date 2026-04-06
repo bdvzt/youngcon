@@ -4,6 +4,7 @@ struct TabPageView: View {
     @Binding var activeTab: AppTab
     @Binding var previousTab: AppTab
     @Binding var isOverlayPresented: Bool
+    let container: DependencyContainer
 
     var scheduleViewModel: ScheduleViewModel?
 
@@ -14,8 +15,8 @@ struct TabPageView: View {
 
     private var slideTransition: AnyTransition {
         .asymmetric(
-            insertion: .move(edge: slideDirection > 0 ? .trailing : .leading),
-            removal: .move(edge: slideDirection > 0 ? .leading : .trailing)
+            insertion: .move(edge: slideDirection > 0 ? .trailing : .leading).combined(with: .opacity),
+            removal: .move(edge: slideDirection > 0 ? .leading : .trailing).combined(with: .opacity)
         )
     }
 
@@ -37,7 +38,7 @@ struct TabPageView: View {
                 LocationsView()
                     .transition(slideTransition)
             case .badge:
-                BadgeView(isOverlayPresented: $isOverlayPresented)
+                BadgeView(container: container, isOverlayPresented: $isOverlayPresented)
                     .transition(slideTransition)
             }
         }

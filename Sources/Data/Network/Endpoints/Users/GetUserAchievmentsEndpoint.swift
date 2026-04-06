@@ -1,12 +1,10 @@
 import Foundation
 
 struct GetUserAchievmentsEndpoint: Endpoint {
-    private let userID: String
-
     init(
         _ userID: String
     ) {
-        self.userID = userID
+        _ = userID
     }
 
     var baseURL: URL {
@@ -14,7 +12,7 @@ struct GetUserAchievmentsEndpoint: Endpoint {
     }
 
     var path: String {
-        APIConstants.Users.achievements(userID)
+        APIConstants.Users.myAchievements
     }
 
     var method: HTTPMethod {

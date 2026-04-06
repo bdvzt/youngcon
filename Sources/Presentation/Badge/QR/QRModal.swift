@@ -1,7 +1,18 @@
 import SwiftUI
 
 struct QRModal: View {
+    let qrString: String // Принимаем строку
+    let userID: String
     @Binding var isOpen: Bool
+
+    private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
+    private let accentPurple = YoungConAsset.accentPurple.swiftUIColor
+    private let cardBackground = YoungConAsset.cardBackground.swiftUIColor
+    private var shortNumericID: String {
+        let digits = userID.filter(\.isNumber)
+        let source = digits.isEmpty ? userID : digits
+        return String(source.prefix(4))
+    }
 
     var body: some View {
         ZStack {
@@ -11,15 +22,15 @@ struct QRModal: View {
 
             VStack(spacing: 0) {
                 headerRow
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 32)
                 qrCode
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 32)
                 Text("Покажите этот код на входе или на стендах партнёров")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white.opacity(0.3))
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
-                badgeNumber
+                badgeNumber("YY-\(shortNumericID)")
             }
             .padding(32)
             .frame(maxWidth: 300)
@@ -51,21 +62,17 @@ struct QRModal: View {
     }
 
     private var qrCode: some View {
-        ZStack {
-            CornerMarks(color: AppColor.accentYellow)
-            Image(systemName: "qrcode")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 200, height: 200)
-                .padding(12)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-        }
-        .frame(width: 224, height: 224)
+        // Используем QRCodeView без декоративной рамки по запросу
+        QRCodeView(text: qrString)
+            .frame(width: 200, height: 200)
+            .padding(12)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .frame(width: 224, height: 224)
     }
 
-    private var badgeNumber: some View {
-        Text("#YY-1024")
+    private func badgeNumber(_ text: String) -> some View {
+        Text(text)
             .font(.system(size: 14, weight: .bold))
             .tracking(0.1)
             .textCase(.uppercase)
@@ -76,30 +83,30 @@ struct QRModal: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
-                            colors: [AppColor.accentYellow.opacity(0.08), AppColor.accentPurple.opacity(0.08)],
+                            colors: [accentYellow.opacity(0.08), accentPurple.opacity(0.08)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(AppColor.accentYellow.opacity(0.1), lineWidth: 1)
+                            .stroke(accentYellow.opacity(0.1), lineWidth: 1)
                     )
             )
     }
 
     private var modalBackground: some View {
         RoundedRectangle(cornerRadius: 32)
-            .fill(AppColor.cardBackground)
+            .fill(cardBackground)
             .overlay(
                 RoundedRectangle(cornerRadius: 32)
                     .stroke(
                         LinearGradient(
                             colors: [
-                                AppColor.accentYellow.opacity(0.2),
+                                accentYellow.opacity(0.2),
                                 Color.clear,
                                 Color.clear,
-                                AppColor.accentPurple.opacity(0.2),
+                                accentPurple.opacity(0.2),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
