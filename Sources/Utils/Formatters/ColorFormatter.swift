@@ -9,27 +9,27 @@ extension Color {
             return nil
         }
 
-        let a, r, g, b: UInt64
+        let alpha, red, green, blue: UInt64
         switch hexSanitized.count {
         case 6:
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+            (alpha, red, green, blue) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
         case 8:
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+            (alpha, red, green, blue) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
             return nil
         }
 
         self.init(
             .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
+            red: Double(red) / 255,
+            green: Double(green) / 255,
+            blue: Double(blue) / 255,
+            opacity: Double(alpha) / 255
         )
     }
 
     static func from(hex: String, defaultValue: Color = .gray) -> Color {
-        return Color(hex: hex) ?? defaultValue
+        Color(hex: hex) ?? defaultValue
     }
 }
 
@@ -39,7 +39,7 @@ extension String {
             return color
         }
 
-        switch self.lowercased() {
+        switch lowercased() {
         case "red":
             return .red
         case "blue":

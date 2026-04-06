@@ -1,17 +1,14 @@
 import Foundation
 
-struct EventDTO: Decodable {
+struct FestivalDTO: Decodable {
     let id: String
     let title: String
     let description: String
     let startDateTime: String
     let endDateTime: String
-    let category: String
-    let zoneID: String
-    let festivalID: String
 }
 
-extension EventDTO {
+extension FestivalDTO {
     var startDate: Date? {
         startDateTime.toISODate()
     }
@@ -20,22 +17,19 @@ extension EventDTO {
         endDateTime.toISODate()
     }
 
-    func toEntity() -> Event? {
+    func toEntity() -> Festival? {
         guard let startDate,
               let endDate
         else {
             return nil
         }
 
-        return Event(
+        return Festival(
             id: id,
             title: title,
             description: description,
             startDate: startDate,
-            endDate: endDate,
-            category: category,
-            zoneID: zoneID,
-            festivalID: festivalID
+            endDate: endDate
         )
     }
 }
