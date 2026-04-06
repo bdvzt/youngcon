@@ -10,12 +10,9 @@ struct BadgeView: View {
         stickers.count(where: { $0.isUnlocked })
     }
 
-    private let appBackground = YoungConAsset.appBackground.swiftUIColor
-    private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
-
     var body: some View {
         ZStack {
-            appBackground.ignoresSafeArea()
+            AppColor.appBackground.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -42,14 +39,14 @@ struct BadgeView: View {
             }
 
             VStack(spacing: 0) {
-                (isOverlayPresented ? Color.clear : appBackground)
+                (isOverlayPresented ? Color.clear : AppColor.appBackground)
                     .ignoresSafeArea(edges: .top)
                     .frame(height: 0)
-                (isOverlayPresented ? Color.clear : appBackground)
+                (isOverlayPresented ? Color.clear : AppColor.appBackground)
                     .frame(height: 52)
                 if !isOverlayPresented {
                     LinearGradient(
-                        colors: [appBackground, appBackground.opacity(0)],
+                        colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -85,7 +82,7 @@ struct BadgeView: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(
                     RadialGradient(
-                        gradient: Gradient(colors: [accentYellow, Color.clear]),
+                        gradient: Gradient(colors: [AppColor.accentYellow, Color.clear]),
                         center: .center,
                         startRadius: 5,
                         endRadius: 40
@@ -99,7 +96,7 @@ struct BadgeView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 36)
-                .shadow(color: accentYellow.opacity(0.3), radius: 8)
+                .shadow(color: AppColor.accentYellow.opacity(0.3), radius: 8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

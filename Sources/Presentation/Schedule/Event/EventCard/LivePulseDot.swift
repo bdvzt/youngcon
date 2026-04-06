@@ -5,7 +5,7 @@ struct LivePulseDot: View {
 
     var body: some View {
         Circle()
-            .fill(Color.red)
+            .fill(AppColor.liveRed)
             .frame(width: 6, height: 6)
             .opacity(dimmed ? 0.38 : 1)
             .onAppear {

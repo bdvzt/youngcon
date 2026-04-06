@@ -3,10 +3,6 @@ import SwiftUI
 struct GradientProgressBar: View {
     let progress: Double
 
-    private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
-    private let accentPurple = YoungConAsset.accentPurple.swiftUIColor
-    private let accentPink = YoungConAsset.accentPink.swiftUIColor
-
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
@@ -15,7 +11,7 @@ struct GradientProgressBar: View {
                 Rectangle()
                     .fill(
                         LinearGradient(
-                            colors: [accentYellow, accentPurple, accentPink],
+                            colors: [AppColor.accentYellow, AppColor.accentPurple, AppColor.accentPink],
                             startPoint: .leading,
                             endPoint: .trailing
                         )

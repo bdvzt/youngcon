@@ -6,12 +6,9 @@ struct LoadingScreen: View {
     @State private var isPulsing = false
     @State private var glowRotation: Double = 0.0
 
-    private let background = YoungConAsset.appBackground.swiftUIColor
-    private let accentColor = YoungConAsset.accentYellow.swiftUIColor
-
     var body: some View {
         ZStack {
-            background.ignoresSafeArea()
+            AppColor.appBackground.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Image(asset: YoungConAsset.logo)
@@ -23,11 +20,11 @@ struct LoadingScreen: View {
                             .fill(
                                 AngularGradient(
                                     gradient: Gradient(colors: [
-                                        accentColor.opacity(0.6),
-                                        Color.cyan.opacity(0.4),
-                                        accentColor.opacity(0.6),
-                                        Color.cyan.opacity(0.4),
-                                        accentColor.opacity(0.6),
+                                        AppColor.accentYellow.opacity(0.6),
+                                        AppColor.glowCyan.opacity(0.4),
+                                        AppColor.accentYellow.opacity(0.6),
+                                        AppColor.glowCyan.opacity(0.4),
+                                        AppColor.accentYellow.opacity(0.6),
                                     ]),
                                     center: .center
                                 )
@@ -36,7 +33,7 @@ struct LoadingScreen: View {
                             .blur(radius: 40)
                             .rotationEffect(.degrees(glowRotation))
                     )
-                    .shadow(color: accentColor.opacity(0.15), radius: 10)
+                    .shadow(color: AppColor.accentYellow.opacity(0.15), radius: 10)
                     .scaleEffect(isPulsing ? 1.15 : 0.85)
             }
             .animation(
