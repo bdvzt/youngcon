@@ -120,6 +120,9 @@ struct ScheduleView: View {
                 .font(.system(size: 48, weight: .black))
                 .tracking(-1)
                 .textCase(.uppercase)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+                .allowsTightening(true)
                 .foregroundStyle(
                     LinearGradient(
                         colors: [yellow, purple, pink, yellow],
