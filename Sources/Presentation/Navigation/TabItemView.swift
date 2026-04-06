@@ -5,9 +5,6 @@ struct TabItemView: View {
     let isActive: Bool
     let action: () -> Void
 
-    private let activeColor = YoungConAsset.accentYellow.swiftUIColor
-    private let inactiveColor = YoungConAsset.gray500.swiftUIColor
-
     var body: some View {
         Button(action: action) {
             VStack(spacing: 6) {
@@ -17,8 +14,8 @@ struct TabItemView: View {
                             .fill(
                                 RadialGradient(
                                     gradient: Gradient(colors: [
-                                        activeColor.opacity(0.55),
-                                        activeColor.opacity(0),
+                                        AppColor.accentYellow.opacity(0.55),
+                                        AppColor.accentYellow.opacity(0),
                                     ]),
                                     center: .center,
                                     startRadius: 0,
@@ -31,9 +28,9 @@ struct TabItemView: View {
 
                     Image(systemName: tab.icon)
                         .font(.system(size: 22, weight: isActive ? .semibold : .regular))
-                        .foregroundColor(isActive ? activeColor : inactiveColor)
+                        .foregroundColor(isActive ? AppColor.accentYellow : AppColor.gray500)
                         .shadow(
-                            color: isActive ? activeColor.opacity(0.6) : .clear,
+                            color: isActive ? AppColor.accentYellow.opacity(0.6) : .clear,
                             radius: 6
                         )
                 }
@@ -43,7 +40,7 @@ struct TabItemView: View {
                     .font(.system(size: 10, weight: .bold))
                     .kerning(0.8)
                     .textCase(.uppercase)
-                    .foregroundColor(isActive ? activeColor : inactiveColor)
+                    .foregroundColor(isActive ? AppColor.accentYellow : AppColor.gray500)
             }
             .offset(y: isActive ? -4 : 0)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isActive)

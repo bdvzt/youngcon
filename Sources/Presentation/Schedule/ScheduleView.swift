@@ -4,11 +4,6 @@ struct ScheduleView: View {
     @State private var activeFilter: String = "Все"
     @State private var gradientOffset: CGFloat = 0
 
-    private let background = YoungConAsset.appBackground.swiftUIColor
-    private let yellow = YoungConAsset.accentYellow.swiftUIColor
-    private let purple = YoungConAsset.accentPurple.swiftUIColor
-    private let pink = YoungConAsset.accentPink.swiftUIColor
-
     let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
 
     var filteredEvents: [ScheduleEntry] {
@@ -28,7 +23,7 @@ struct ScheduleView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            background.ignoresSafeArea()
+            AppColor.appBackground.ignoresSafeArea()
             ambientGlows
 
             ScrollView(.vertical, showsIndicators: false) {
@@ -42,11 +37,11 @@ struct ScheduleView: View {
             }
 
             VStack(spacing: 0) {
-                background.ignoresSafeArea(edges: .top)
+                AppColor.appBackground.ignoresSafeArea(edges: .top)
                     .frame(height: 0)
-                background.frame(height: 52)
+                AppColor.appBackground.frame(height: 52)
                 LinearGradient(
-                    colors: [background, background.opacity(0)],
+                    colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -76,7 +71,7 @@ struct ScheduleView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 16)
                 .fill(RadialGradient(
-                    colors: [yellow, .clear],
+                    colors: [AppColor.accentYellow, .clear],
                     center: .center, startRadius: 5, endRadius: 40
                 ))
                 .frame(width: 80, height: 60)
@@ -88,7 +83,7 @@ struct ScheduleView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 36)
-                .shadow(color: yellow.opacity(0.3), radius: 8)
+                .shadow(color: AppColor.accentYellow.opacity(0.3), radius: 8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -96,7 +91,7 @@ struct ScheduleView: View {
     private var ambientGlows: some View {
         ZStack {
             Circle()
-                .fill(purple)
+                .fill(AppColor.accentPurple)
                 .frame(width: 320, height: 320)
                 .blur(radius: 100)
                 .opacity(0.3)
@@ -104,7 +99,7 @@ struct ScheduleView: View {
                 .allowsHitTesting(false)
 
             Circle()
-                .fill(yellow)
+                .fill(AppColor.accentYellow)
                 .frame(width: 288, height: 288)
                 .blur(radius: 90)
                 .opacity(0.2)
@@ -125,7 +120,7 @@ struct ScheduleView: View {
                 .allowsTightening(true)
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [yellow, purple, pink, yellow],
+                        colors: [AppColor.accentYellow, AppColor.accentPurple, AppColor.accentPink, AppColor.accentYellow],
                         startPoint: UnitPoint(x: gradientOffset * 0.5, y: 0),
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )

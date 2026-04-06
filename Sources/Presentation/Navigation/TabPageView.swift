@@ -6,8 +6,6 @@ struct TabPageView: View {
     @Binding var isOverlayPresented: Bool
 
     private let allTabs = AppTab.allCases
-    private let background = YoungConAsset.appBackground.swiftUIColor
-
     private var slideDirection: CGFloat {
         activeTab.index > previousTab.index ? 1 : -1
     }
@@ -21,7 +19,7 @@ struct TabPageView: View {
 
     var body: some View {
         ZStack {
-            background.ignoresSafeArea()
+            AppColor.appBackground.ignoresSafeArea()
 
             switch activeTab {
             case .schedule:

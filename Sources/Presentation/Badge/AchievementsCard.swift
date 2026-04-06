@@ -5,9 +5,6 @@ struct AchievementsCard: View {
     let unlockedCount: Int
     @Binding var selectedSticker: Sticker?
 
-    private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
-    private let accentPink = YoungConAsset.accentPink.swiftUIColor
-
     var body: some View {
         GradientBorderCard(cornerRadius: 28) {
             VStack(alignment: .leading, spacing: 20) {
@@ -41,7 +38,7 @@ struct AchievementsCard: View {
                 .padding(.vertical, 6)
                 .background(
                     LinearGradient(
-                        colors: [accentYellow, accentPink],
+                        colors: [AppColor.accentYellow, AppColor.accentPink],
                         startPoint: .leading,
                         endPoint: .trailing
                     )
