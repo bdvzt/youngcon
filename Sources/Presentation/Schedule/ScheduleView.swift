@@ -1,22 +1,25 @@
+import Observation
 import SwiftUI
 
 struct ScheduleView: View {
+    @Bindable var viewModel: ScheduleViewModel
+
     @State private var activeFilter: String = "Все"
     @State private var gradientOffset: CGFloat = 0
 
     let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
 
-    var filteredEvents: [Event] {
+    private var filteredEntries: [ScheduleEntry] {
         switch activeFilter {
         case "Все":
-            scheduleData
+            viewModel.entries
         case "Live":
-            scheduleData.filter { $0.streamURL != nil }
+            viewModel.entries.filter { $0.streamURL != nil }
         case "Избранное":
             []
         default:
-            scheduleData.filter {
-                $0.category.lowercased() == activeFilter.lowercased()
+            viewModel.entries.filter {
+                $0.event.category.lowercased() == activeFilter.lowercased()
             }
         }
     }
@@ -139,15 +142,27 @@ struct ScheduleView: View {
 
     private var eventList: some View {
         VStack(spacing: 14) {
-            if filteredEvents.isEmpty {
+            if viewModel.isLoading {
+                ProgressView()
+                    .tint(.white.opacity(0.6))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+            } else if let loadError = viewModel.loadError {
+                Text(loadError)
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.55))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+            } else if filteredEntries.isEmpty {
                 ScheduleEmptyState(activeFilter: activeFilter)
             } else {
-                ForEach(filteredEvents) { event in
+                ForEach(filteredEntries) { entry in
                     EventCard(
-                        event: event,
-                        zone: nil,
-                        speakers: [],
-                        streamURL: event.streamURL
+                        event: entry.event,
+                        zone: entry.zone,
+                        speakers: entry.speakers,
+                        streamURL: entry.streamURL
                     )
                 }
             }
@@ -157,6 +172,33 @@ struct ScheduleView: View {
 }
 
 #Preview {
-    ScheduleView()
+    SchedulePreviewHost()
         .preferredColorScheme(.dark)
+}
+
+private struct SchedulePreviewHost: View {
+    @State private var viewModel: ScheduleViewModel?
+    @Environment(\.dependencyContainer) private var container
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                ScheduleView(viewModel: viewModel)
+            } else {
+                ProgressView()
+            }
+        }
+        .task {
+            if viewModel == nil {
+                let model = ScheduleViewModel(
+                    festivalsRepository: container.festivalsRepository,
+                    eventsRepository: container.eventsRepository,
+                    zoneRepository: container.zoneRepository,
+                    speakersRepository: container.speakersRepository
+                )
+                viewModel = model
+                await model.load()
+            }
+        }
+    }
 }
