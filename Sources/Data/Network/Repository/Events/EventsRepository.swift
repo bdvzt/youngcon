@@ -21,6 +21,15 @@ final class EventsRepository: EventsRepositoryProtocol {
         )
     }
 
+    func getEventSpeakers(eventID: String) async throws -> [Speaker] {
+        let endpoint = GetEventSpeakersEndpoint(eventID)
+        let dto = try await networkService.requestDecodable(
+            endpoint,
+            as: EventSpeakersDTO.self
+        )
+        return dto.speakers ?? []
+    }
+
     func getZoneEvents(zoneID: String) async throws -> [Event] {
         let endpoint = GetZoneEventsEndpoint(zoneID)
         return try await networkService.requestDecodable(

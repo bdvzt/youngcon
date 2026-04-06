@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @Environment(\.dependencyContainer) private var container
+
+    @State private var scheduleViewModel: ScheduleViewModel?
     @State private var activeTab: AppTab = .schedule
     @State private var previousTab: AppTab = .schedule
     @State private var isOverlayPresented = false
@@ -14,7 +17,10 @@ struct MainTabView: View {
             TabPageView(
                 activeTab: $activeTab,
                 previousTab: $previousTab,
-                isOverlayPresented: $isOverlayPresented
+                isOverlayPresented: $isOverlayPresented,
+                scheduleTab: {
+                    ScheduleRootView(viewModel: scheduleViewModel)
+                }
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .zIndex(0)
@@ -34,6 +40,12 @@ struct MainTabView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .zIndex(1)
+        }
+        .task {
+            if scheduleViewModel == nil {
+                scheduleViewModel = container.makeScheduleViewModel()
+            }
+            await scheduleViewModel?.load()
         }
     }
 }

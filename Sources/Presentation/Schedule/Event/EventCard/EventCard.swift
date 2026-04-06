@@ -33,28 +33,28 @@ struct EventCard: View {
     }
 
     private var cardGradient: LinearGradient {
-        switch event.id {
-        case "event-001":
-            LinearGradient(
-                colors: [YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor],
-                startPoint: .top, endPoint: .bottom
-            )
-        case "event-002":
-            LinearGradient(
-                colors: [YoungConAsset.accentPink.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor],
-                startPoint: .top, endPoint: .bottom
-            )
-        case "event-003":
-            LinearGradient(
-                colors: [YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPink.swiftUIColor],
-                startPoint: .top, endPoint: .bottom
-            )
-        default:
-            LinearGradient(
-                colors: [YoungConAsset.accentPurple.swiftUIColor, YoungConAsset.accentYellow.swiftUIColor],
-                startPoint: .top, endPoint: .bottom
-            )
+        let pairs: [(Color, Color)] = [
+            (YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor),
+            (YoungConAsset.accentPink.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor),
+            (YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPink.swiftUIColor),
+            (YoungConAsset.accentPurple.swiftUIColor, YoungConAsset.accentYellow.swiftUIColor),
+        ]
+        let index = Self.stableGradientIndex(for: event.id) % pairs.count
+        let colors = pairs[index]
+        return LinearGradient(
+            colors: [colors.0, colors.1],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+
+    /// Детерминированный индекс по строке id (без `hashValue`, он недетерминирован между запусками).
+    private static func stableGradientIndex(for id: String) -> Int {
+        var hash: UInt64 = 5381
+        for byte in id.utf8 {
+            hash = ((hash << 5) &+ hash) &+ UInt64(byte)
         }
+        return Int(truncatingIfNeeded: hash)
     }
 
     var body: some View {

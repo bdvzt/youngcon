@@ -1,9 +1,23 @@
 import SwiftUI
 
-struct TabPageView: View {
+struct TabPageView<ScheduleTab: View>: View {
     @Binding var activeTab: AppTab
     @Binding var previousTab: AppTab
     @Binding var isOverlayPresented: Bool
+
+    private let scheduleTab: () -> ScheduleTab
+
+    init(
+        activeTab: Binding<AppTab>,
+        previousTab: Binding<AppTab>,
+        isOverlayPresented: Binding<Bool>,
+        @ViewBuilder scheduleTab: @escaping () -> ScheduleTab
+    ) {
+        _activeTab = activeTab
+        _previousTab = previousTab
+        _isOverlayPresented = isOverlayPresented
+        self.scheduleTab = scheduleTab
+    }
 
     private let allTabs = AppTab.allCases
     private let background = YoungConAsset.appBackground.swiftUIColor
@@ -25,7 +39,7 @@ struct TabPageView: View {
 
             switch activeTab {
             case .schedule:
-                ScheduleView()
+                scheduleTab()
                     .transition(slideTransition)
             case .map:
                 LocationsView()

@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct ScheduleEmptyState: View {
-    let activeFilter: String
+    let activeFilter: ScheduleFilter
 
     var body: some View {
         VStack(spacing: 12) {
-            Image(systemName: activeFilter == "Избранное" ? "star" : "calendar")
+            Image(systemName: activeFilter == .favorites ? "star" : "calendar")
                 .font(.system(size: 36))
                 .foregroundColor(.white.opacity(0.06))
 
-            Text(activeFilter == "Избранное" ? "Нажмите ★ чтобы добавить" : "Ничего не найдено")
+            Text(activeFilter == .favorites ? "Нажмите ★ чтобы добавить" : "Ничего не найдено")
                 .font(.system(size: 14, weight: .medium))
                 .foregroundColor(.white.opacity(0.2))
         }

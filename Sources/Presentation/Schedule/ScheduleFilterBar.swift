@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct ScheduleFilterBar: View {
-    let filters: [String]
-    @Binding var activeFilter: String
+    let filters: [ScheduleFilter]
+    @Binding var activeFilter: ScheduleFilter
 
     private let yellow = YoungConAsset.accentYellow.swiftUIColor
     private let liveRed = Color(red: 0.99, green: 0.25, blue: 0.11)
@@ -10,7 +10,7 @@ struct ScheduleFilterBar: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                ForEach(filters, id: \.self) { filter in
+                ForEach(filters) { filter in
                     filterChip(filter)
                 }
             }
@@ -20,22 +20,22 @@ struct ScheduleFilterBar: View {
     }
 
     @ViewBuilder
-    private func filterChip(_ filter: String) -> some View {
+    private func filterChip(_ filter: ScheduleFilter) -> some View {
         let isActive = activeFilter == filter
         Button {
             withAnimation(.easeInOut(duration: 0.2)) { activeFilter = filter }
         } label: {
             HStack(spacing: 5) {
-                if filter == "Live" {
+                if filter == .live {
                     Circle()
                         .fill(liveRed)
                         .frame(width: 6, height: 6)
                 }
-                if filter == "Избранное" {
+                if filter == .favorites {
                     Image(systemName: isActive ? "star.fill" : "star")
                         .font(.system(size: 10, weight: .bold))
                 }
-                Text(filter)
+                Text(filter.rawValue)
                     .font(.system(size: 11, weight: .bold))
                     .tracking(0.5)
                     .textCase(.uppercase)
@@ -54,24 +54,24 @@ struct ScheduleFilterBar: View {
         .shadow(color: isActive ? yellow.opacity(0.25) : .clear, radius: 12)
     }
 
-    private func chipBackground(_ filter: String, isActive: Bool) -> Color {
+    private func chipBackground(_ filter: ScheduleFilter, isActive: Bool) -> Color {
         if isActive { return yellow }
-        if filter == "Избранное" { return yellow.opacity(0.04) }
-        if filter == "Live" { return liveRed.opacity(0.04) }
+        if filter == .favorites { return yellow.opacity(0.04) }
+        if filter == .live { return liveRed.opacity(0.04) }
         return Color.white.opacity(0.02)
     }
 
-    private func chipForeground(_ filter: String, isActive: Bool) -> Color {
+    private func chipForeground(_ filter: ScheduleFilter, isActive: Bool) -> Color {
         if isActive { return .black }
-        if filter == "Избранное" { return yellow.opacity(0.7) }
-        if filter == "Live" { return liveRed.opacity(0.7) }
+        if filter == .favorites { return yellow.opacity(0.7) }
+        if filter == .live { return liveRed.opacity(0.7) }
         return .white.opacity(0.35)
     }
 
-    private func chipStroke(_ filter: String, isActive: Bool) -> Color {
+    private func chipStroke(_ filter: ScheduleFilter, isActive: Bool) -> Color {
         if isActive { return yellow.opacity(0.4) }
-        if filter == "Избранное" { return yellow.opacity(0.15) }
-        if filter == "Live" { return liveRed.opacity(0.15) }
+        if filter == .favorites { return yellow.opacity(0.15) }
+        if filter == .live { return liveRed.opacity(0.15) }
         return Color.white.opacity(0.06)
     }
 }

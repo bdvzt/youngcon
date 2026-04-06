@@ -1,7 +1,10 @@
+import Observation
 import SwiftUI
 
 struct ScheduleView: View {
-    @State private var activeFilter: String = "Все"
+    @Bindable var viewModel: ScheduleViewModel
+
+    @State private var activeFilter: ScheduleFilter = .all
     @State private var gradientOffset: CGFloat = 0
 
     private let background = YoungConAsset.appBackground.swiftUIColor
@@ -9,21 +12,20 @@ struct ScheduleView: View {
     private let purple = YoungConAsset.accentPurple.swiftUIColor
     private let pink = YoungConAsset.accentPink.swiftUIColor
 
-    let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
+    private var filters: [ScheduleFilter] {
+        ScheduleFilter.allCases
+    }
+
+    private var scheduleEntries: [ScheduleEntry] {
+        viewModel.entries
+    }
+
+    private var isScheduleLoading: Bool {
+        viewModel.isLoading
+    }
 
     var filteredEvents: [ScheduleEntry] {
-        switch activeFilter {
-        case "Все":
-            scheduleData
-        case "Live":
-            scheduleData.filter { $0.streamURL != nil }
-        case "Избранное":
-            []
-        default:
-            scheduleData.filter {
-                $0.event.category.lowercased() == activeFilter.lowercased()
-            }
-        }
+        scheduleEntries.filter { activeFilter.matches($0) }
     }
 
     var body: some View {
@@ -144,7 +146,19 @@ struct ScheduleView: View {
 
     private var eventList: some View {
         VStack(spacing: 14) {
-            if filteredEvents.isEmpty {
+            if isScheduleLoading {
+                ProgressView()
+                    .tint(.white.opacity(0.6))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+            } else if let error = viewModel.loadError {
+                Text(error.userFacingMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.55))
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
+            } else if filteredEvents.isEmpty {
                 ScheduleEmptyState(activeFilter: activeFilter)
             } else {
                 ForEach(filteredEvents) { entry in
@@ -162,6 +176,27 @@ struct ScheduleView: View {
 }
 
 #Preview {
-    ScheduleView()
+    SchedulePreviewHost()
         .preferredColorScheme(.dark)
+}
+
+private struct SchedulePreviewHost: View {
+    @State private var viewModel: ScheduleViewModel?
+    private let dependencyContainer = DependencyContainer.live()
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                ScheduleView(viewModel: viewModel)
+            } else {
+                ScheduleLoadingPlaceholder()
+            }
+        }
+        .environment(\.dependencyContainer, dependencyContainer)
+        .task {
+            let model = dependencyContainer.makeScheduleViewModel()
+            viewModel = model
+            await model.load()
+        }
+    }
 }
