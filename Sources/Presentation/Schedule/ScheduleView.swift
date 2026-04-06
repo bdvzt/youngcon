@@ -5,12 +5,10 @@ struct ScheduleView: View {
     @Bindable var viewModel: ScheduleViewModel
 
     @State private var activeFilter: ScheduleFilter = .all
-    @State private var gradientOffset: CGFloat = 0
 
     private let background = YoungConAsset.appBackground.swiftUIColor
     private let yellow = YoungConAsset.accentYellow.swiftUIColor
     private let purple = YoungConAsset.accentPurple.swiftUIColor
-    private let pink = YoungConAsset.accentPink.swiftUIColor
 
     private var filters: [ScheduleFilter] {
         ScheduleFilter.allCases
@@ -36,30 +34,18 @@ struct ScheduleView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     Color.clear.frame(height: 52)
-                    headerSection
+                    AppScreenHeading(title: "Расписание", subtitle: "Программа мероприятий")
                     ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
                     eventList
                     Color.clear.frame(height: 120)
                 }
             }
 
-            VStack(spacing: 0) {
-                background.ignoresSafeArea(edges: .top)
-                    .frame(height: 0)
-                background.frame(height: 52)
-                LinearGradient(
-                    colors: [background, background.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 32)
-                Spacer()
-            }
-            .zIndex(20)
-            .allowsHitTesting(false)
+            AppScreenTopFadeOverlay(background: background)
+                .zIndex(20)
 
             VStack(spacing: 0) {
-                logoView
+                AppScreenLogoBar()
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
                 Spacer()
@@ -67,32 +53,6 @@ struct ScheduleView: View {
             .zIndex(21)
             .allowsHitTesting(false)
         }
-        .onAppear {
-            withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
-                gradientOffset = 1
-            }
-        }
-    }
-
-    private var logoView: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(RadialGradient(
-                    colors: [yellow, .clear],
-                    center: .center, startRadius: 5, endRadius: 40
-                ))
-                .frame(width: 80, height: 60)
-                .blur(radius: 20)
-                .opacity(0.35)
-                .allowsHitTesting(false)
-
-            Image("logo")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 36)
-                .shadow(color: yellow.opacity(0.3), radius: 8)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var ambientGlows: some View {
@@ -114,34 +74,6 @@ struct ScheduleView: View {
                 .allowsHitTesting(false)
         }
         .ignoresSafeArea()
-    }
-
-    private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Расписание")
-                .font(.system(size: 48, weight: .black))
-                .tracking(-1)
-                .textCase(.uppercase)
-                .lineLimit(1)
-                .minimumScaleFactor(0.65)
-                .allowsTightening(true)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [yellow, purple, pink, yellow],
-                        startPoint: UnitPoint(x: gradientOffset * 0.5, y: 0),
-                        endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
-                    )
-                )
-
-            Text("Программа мероприятий")
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(2)
-                .textCase(.uppercase)
-                .foregroundColor(.white.opacity(0.25))
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 32)
-        .padding(.bottom, 12)
     }
 
     private var eventList: some View {

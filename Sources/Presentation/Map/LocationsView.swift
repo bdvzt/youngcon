@@ -3,13 +3,11 @@ import SwiftUI
 struct LocationsView: View {
     @State private var floor: Int = 1
     @State private var focusedLocId: String?
-    @State private var gradientOffset: CGFloat = 0
 
     private let background = YoungConAsset.appBackground.swiftUIColor
     private let cardBg = YoungConAsset.cardBackground.swiftUIColor
     private let yellow = YoungConAsset.accentYellow.swiftUIColor
     private let purple = YoungConAsset.accentPurple.swiftUIColor
-    private let pink = YoungConAsset.accentPink.swiftUIColor
 
     private var currentLocations: [LocationModel] {
         mapLocationsData.filter { $0.floor == floor }
@@ -23,44 +21,24 @@ struct LocationsView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     Color.clear.frame(height: 52)
-                    headerSection
+                    AppScreenHeading(title: "Локации", subtitle: "Навигация по площадке")
                     mapSection
                     Color.clear.frame(height: 120)
                 }
             }
 
-            VStack {
-                logoView.padding(.horizontal, 20)
+            AppScreenTopFadeOverlay(background: background)
+                .zIndex(20)
+
+            VStack(spacing: 0) {
+                AppScreenLogoBar()
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
                 Spacer()
             }
-            .zIndex(20)
+            .zIndex(21)
+            .allowsHitTesting(false)
         }
-        .onAppear {
-            withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
-                gradientOffset = 1
-            }
-        }
-    }
-
-    private var logoView: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(RadialGradient(
-                    colors: [yellow, .clear],
-                    center: .center, startRadius: 5, endRadius: 40
-                ))
-                .frame(width: 80, height: 60)
-                .blur(radius: 20)
-                .opacity(0.35)
-                .allowsHitTesting(false)
-
-            YoungConAsset.logo.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(height: 36)
-                .shadow(color: yellow.opacity(0.3), radius: 8)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var ambientGlows: some View {
@@ -82,31 +60,6 @@ struct LocationsView: View {
                 .allowsHitTesting(false)
         }
         .ignoresSafeArea()
-    }
-
-    private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Локации")
-                .font(.system(size: 48, weight: .black))
-                .tracking(-1)
-                .textCase(.uppercase)
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [yellow, purple, pink, yellow],
-                        startPoint: UnitPoint(x: gradientOffset * 0.5, y: 0),
-                        endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
-                    )
-                )
-
-            Text("Навигация по площадке")
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(2)
-                .textCase(.uppercase)
-                .foregroundColor(.white.opacity(0.25))
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
-        .padding(.bottom, 12)
     }
 
     private var mapSection: some View {
