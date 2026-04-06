@@ -12,7 +12,7 @@ let example = Speaker(
     и знают, как построить сервисы, которыми будут пользоваться 
     миллионы людей каждый день.
     """,
-    avatarURL: ""
+    avatarImageURL: nil
 )
 
 // MARK: - SpeakerCardView
@@ -251,9 +251,7 @@ struct SpeakerCardView: View {
 
     @ViewBuilder
     private var speakerAvatarImage: some View {
-        if let photoURLString = speaker.avatarURL, !photoURLString.isEmpty,
-           let photoURL = URL(string: photoURLString)
-        {
+        if let photoURL = speaker.avatarImageURL {
             AsyncImage(url: photoURL) { image in
                 image
                     .resizable()
@@ -277,7 +275,7 @@ struct SpeakerCardView: View {
     private var avatarPlaceholder: some View {
         Image(systemName: "person.circle.fill")
             .resizable()
-            .foregroundColor(whiteText.opacity(speaker.avatarURL == nil ? 0.3 : 0.5))
+            .foregroundColor(whiteText.opacity(speaker.avatarImageURL == nil ? 0.3 : 0.5))
     }
 
     private var starBadge: some View {
