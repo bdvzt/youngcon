@@ -5,6 +5,8 @@ struct TabPageView: View {
     @Binding var previousTab: AppTab
     @Binding var isOverlayPresented: Bool
 
+    var scheduleViewModel: ScheduleViewModel?
+
     private let allTabs = AppTab.allCases
     private var slideDirection: CGFloat {
         activeTab.index > previousTab.index ? 1 : -1
@@ -23,8 +25,14 @@ struct TabPageView: View {
 
             switch activeTab {
             case .schedule:
-                ScheduleView()
-                    .transition(slideTransition)
+                if let scheduleViewModel {
+                    ScheduleView(viewModel: scheduleViewModel)
+                        .transition(slideTransition)
+                } else {
+                    ProgressView()
+                        .tint(.white.opacity(0.6))
+                        .transition(slideTransition)
+                }
             case .map:
                 LocationsView()
                     .transition(slideTransition)
