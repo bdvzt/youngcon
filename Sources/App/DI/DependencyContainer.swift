@@ -1,7 +1,6 @@
 import Foundation
 
 final class DependencyContainer {
-
     private lazy var tokenStorage: TokenStorageProtocol = KeychainTokenStorage()
 
     private lazy var networkService: NetworkServiceProtocol = NetworkService(

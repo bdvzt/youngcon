@@ -22,7 +22,7 @@ enum URLRequestBuilder {
 
         case let .requestBody(data):
             do {
-                request.httpBody = try JSONCoding.encoder.encode(data)
+                request.httpBody = try JSONEncoder().encode(data)
 
                 if request.value(forHTTPHeaderField: HTTPHeader.contentType) == nil {
                     request.setValue(

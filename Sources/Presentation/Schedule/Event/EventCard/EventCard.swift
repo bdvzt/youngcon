@@ -19,12 +19,12 @@ struct EventCard: View {
     }
 
     private var timeRangeText: String {
-        guard let start = event.startDate, let end = event.endDate else {
+        guard let start = event.startDate, let end = event.endDate, end >= start else {
             return "—"
         }
-        let startText = start.formatted(date: .omitted, time: .shortened)
-        let endText = end.formatted(date: .omitted, time: .shortened)
-        return "\(startText) – \(endText)"
+        let interval = DateInterval(start: start, end: end)
+        let style = Date.IntervalFormatStyle(date: .omitted, time: .shortened)
+        return interval.formatted(style)
     }
 
     private var primarySpeaker: Speaker? {
