@@ -19,17 +19,14 @@ struct BadgeView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     Color.clear.frame(height: 52)
-                    AppScreenHeading(title: "Бейдж", subtitle: "Профиль участника")
-                    VStack(spacing: 24) {
-                        BadgeCard(isQRModalOpen: $isQRModalOpen)
-                        AchievementsCard(
-                            stickers: stickers,
-                            unlockedCount: unlockedCount,
-                            selectedSticker: $selectedSticker
-                        )
-                    }
-                    .padding(.horizontal, 20)
+                    BadgeCard(isQRModalOpen: $isQRModalOpen)
+                    AchievementsCard(
+                        stickers: stickers,
+                        unlockedCount: unlockedCount,
+                        selectedSticker: $selectedSticker
+                    )
                 }
+                .padding(.horizontal, 20)
                 .padding(.bottom, 110)
             }
 
