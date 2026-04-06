@@ -16,7 +16,3 @@ struct EventCardStreamButton: View {
         .shadow(color: YoungConAsset.accentYellow.swiftUIColor, radius: 7)
     }
 }
-
-#Preview {
-    EventCardStreamButton()
-}

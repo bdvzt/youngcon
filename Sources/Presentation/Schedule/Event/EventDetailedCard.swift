@@ -217,7 +217,3 @@ struct EventDetailedCard: View {
         .buttonStyle(.plain)
     }
 }
-
-#Preview {
-    EventDetailedCard()
-}
