@@ -26,7 +26,6 @@ struct SpeakerCardView: View {
     // MARK: - Colors
 
     private let whiteText = Color.white
-    private let cardBackgroundColor = YoungConAsset.cardBackground.swiftUIColor
 
     // MARK: - Body
 
@@ -69,11 +68,11 @@ struct SpeakerCardView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
                 .padding(.bottom, 12)
-                .background(cardBackgroundColor)
+                .background(AppColor.cardBackground)
 
             scrollableContent
         }
-        .background(cardBackgroundColor.preferredColorScheme(.dark))
+        .background(AppColor.cardBackground.preferredColorScheme(.dark))
         .clipShape(RoundedRectangle(cornerRadius: 30))
         .overlay(
             RoundedRectangle(cornerRadius: 42)
@@ -228,7 +227,7 @@ struct SpeakerCardView: View {
             label: {
                 Text("вопрос спикеру")
                     .font(.system(size: 16, weight: .heavy))
-                    .foregroundColor(cardBackgroundColor)
+                    .foregroundColor(AppColor.cardBackground)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
                     .background(
@@ -288,12 +287,12 @@ struct SpeakerCardView: View {
                 .frame(width: 32, height: 32)
                 .overlay(
                     Circle()
-                        .stroke(cardBackgroundColor, lineWidth: 4.0)
+                        .stroke(AppColor.cardBackground, lineWidth: 4.0)
                 )
 
             Image(systemName: "star.fill")
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(cardBackgroundColor)
+                .foregroundColor(AppColor.cardBackground)
         }
         .offset(x: 4, y: 4)
     }
