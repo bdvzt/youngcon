@@ -12,7 +12,7 @@ final class AuthRepository: AuthRepositoryProtocol {
         let endpoint = LoginEndpoint(body: dto)
         let response = try await networkService.requestDecodable(
             endpoint,
-            as: AccessToken.self
+            as: AccessTokenDTO.self
         )
         tokenStorage.accessToken = response.token
     }

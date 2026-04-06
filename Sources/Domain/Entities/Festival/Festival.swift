@@ -1,17 +1,9 @@
 import Foundation
 
-struct Festival: Decodable {
+struct Festival: Identifiable {
     let id: String
     let title: String
     let description: String
-    let startDateTime: String
-    let endDateTime: String
-
-    var startDate: Date? {
-        startDateTime.toISODate()
-    }
-
-    var endDate: Date? {
-        endDateTime.toISODate()
-    }
+    let startDate: Date
+    let endDate: Date
 }

@@ -7,17 +7,21 @@ final class SpeakersRepository: SpeakersRepositoryProtocol {
 
     func getSpeaker(speakerID: String) async throws -> Speaker {
         let endpoint = GetSpeakerByIDEndpoint(speakerID)
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: Speaker.self
+            as: SpeakerDTO.self
         )
+        guard let speaker = response.toEntity() else {
+            throw NetworkError.decodingFailed
+        }
+        return speaker
     }
 
     func getAllSpeakers() async throws -> [Speaker] {
         let endpoint = GetSpeakersEndpoint()
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Speaker].self
-        )
+            as: [SpeakerDTO].self
+        ).compactMap { $0.toEntity() }
     }
 }

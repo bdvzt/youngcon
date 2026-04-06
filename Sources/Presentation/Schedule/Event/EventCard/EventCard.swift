@@ -1,4 +1,5 @@
 import Foundation
+import Kingfisher
 import SwiftUI
 
 struct EventCard: View {
@@ -8,7 +9,8 @@ struct EventCard: View {
     var streamURL: URL?
 
     private var isLive: Bool {
-        guard let start = event.startDate, let end = event.endDate else { return false }
+        let start = event.startDate
+        let end = event.endDate
         let now = Date()
         return now >= start && now <= end
     }
@@ -18,13 +20,19 @@ struct EventCard: View {
     }
 
     private var timeRangeText: String {
-        guard let start = event.startDate, let end = event.endDate, end >= start else {
+        let start = event.startDate
+        let end = event.endDate
+
+        guard end >= start else {
             return "—"
         }
+
         let style = Date.IntervalFormatStyle(date: .omitted, time: .shortened)
+
         if end == start {
             return start.formatted(date: .omitted, time: .shortened)
         }
+
         return style.format(start ..< end)
     }
 
@@ -136,9 +144,9 @@ struct EventCard: View {
         HStack(alignment: .center, spacing: 12) {
             if let zone {
                 HStack(spacing: 6) {
-                    Image(systemName: zone.icon)
+                    KFImage(zone.icon)
                         .font(.footnote.weight(.bold))
-                        .foregroundStyle(zoneAccentColor(zone.color))
+                        .foregroundStyle(zone.color)
                     Text(zone.title)
                         .font(.footnote)
                         .fontWeight(.bold)
@@ -169,16 +177,17 @@ struct EventCard: View {
             }
     }
 
-    private func zoneAccentColor(_ name: String) -> Color {
-        switch name.lowercased() {
-        case "pink", "red":
-            AppColor.accentPink
-        case "orange", "yellow":
-            AppColor.accentYellow
-        case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
-            AppColor.accentPurple
-        default:
-            AppColor.accentPurple
-        }
-    }
+    // TODO: - добавить в бэк эти цвета, чтобы у зоны приходил hex цвета
+//    private func zoneAccentColor(_ name: String) -> Color {
+//        switch name.lowercased() {
+//        case "pink", "red":
+//            AppColor.accentPink
+//        case "orange", "yellow":
+//            AppColor.accentYellow
+//        case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
+//            AppColor.accentPurple
+//        default:
+//            AppColor.accentPurple
+//        }
+//    }
 }

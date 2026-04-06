@@ -1,11 +1,7 @@
 import Foundation
 
-struct Floor: Identifiable, Decodable {
+struct Floor: Identifiable {
     let id: String
     let title: String
-    let mapURL: String
-
-    var mapImageURL: URL? {
-        URL(string: mapURL)
-    }
+    let mapImageURL: URL
 }

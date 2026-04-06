@@ -7,9 +7,13 @@ final class FestivalsRepository: FestivalsRepositoryProtocol {
 
     func getLastFestival() async throws -> Festival {
         let endpoint = GetLastFestivalEndpoint()
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: Festival.self
+            as: FestivalDTO.self
         )
+        guard let festival = response.toEntity() else {
+            throw NetworkError.decodingFailed
+        }
+        return festival
     }
 }

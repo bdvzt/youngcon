@@ -9,7 +9,7 @@ final class AchievementsRepository: AchievementsRepositoryProtocol {
         let endpoint = GetAchievmentsEndpoint()
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Achievement].self
-        )
+            as: [AchievementDTO].self
+        ).compactMap { $0.toEntity() }
     }
 }
