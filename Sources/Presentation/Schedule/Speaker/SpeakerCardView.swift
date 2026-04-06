@@ -253,7 +253,8 @@ struct SpeakerCardView: View {
     @ViewBuilder
     private var speakerAvatarImage: some View {
         if let photoURLString = speaker.avatarURL, !photoURLString.isEmpty,
-           let photoURL = URL(string: photoURLString) {
+           let photoURL = URL(string: photoURLString)
+        {
             AsyncImage(url: photoURL) { image in
                 image
                     .resizable()
