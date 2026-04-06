@@ -6,7 +6,7 @@ struct ScheduleView: View {
 
     let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
 
-    var filteredEvents: [ScheduleEntry] {
+    var filteredEvents: [Event] {
         switch activeFilter {
         case "Все":
             scheduleData
@@ -16,7 +16,7 @@ struct ScheduleView: View {
             []
         default:
             scheduleData.filter {
-                $0.event.category.lowercased() == activeFilter.lowercased()
+                $0.category.lowercased() == activeFilter.lowercased()
             }
         }
     }
@@ -142,12 +142,12 @@ struct ScheduleView: View {
             if filteredEvents.isEmpty {
                 ScheduleEmptyState(activeFilter: activeFilter)
             } else {
-                ForEach(filteredEvents) { entry in
+                ForEach(filteredEvents) { event in
                     EventCard(
-                        event: entry.event,
-                        zone: entry.zone,
-                        speakers: entry.speakers,
-                        streamURL: entry.streamURL
+                        event: event,
+                        zone: nil,
+                        speakers: [],
+                        streamURL: event.streamURL
                     )
                 }
             }

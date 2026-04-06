@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 // MARK: - Mocks (данные для карточки события)
 
@@ -17,8 +18,10 @@ enum EventCardMocks {
         floorID: IDs.floor,
         title: "Главная сцена",
         description: "Основная сцена фестиваля",
-        icon: "theatermasks.fill",
-        color: "indigo"
+        cordX: 100,
+        cordY: 200,
+        icon: URL(string: "https://example.com/icons/main-stage.png")!,
+        color: .indigo
     )
 
     static let speakers: [Speaker] = [
@@ -27,14 +30,14 @@ enum EventCardMocks {
             fullName: "Иван Петров",
             job: "Lead iOS Developer",
             bio: "Иван работает в Яндексе более 5 лет.",
-            avatarURL: "https://example.com/photos/ivan-petrov.jpg"
+            avatarImageURL: URL(string: "https://example.com/photos/ivan-petrov.jpg")
         ),
         Speaker(
             id: IDs.speaker2,
             fullName: "Мария Соколова",
             job: "Staff Engineer, Mobile Platform",
             bio: "Архитектура и производительность больших iOS-клиентов.",
-            avatarURL: "https://example.com/photos/maria-sokolova.jpg"
+            avatarImageURL: URL(string: "https://example.com/photos/maria-sokolova.jpg")
         ),
     ]
 
@@ -45,11 +48,12 @@ enum EventCardMocks {
             id: "event-001",
             title: "Открытие YoungCon: Будущее бигтеха",
             description: "Ежегодное открытие фестиваля.",
-            startDateTime: EventDateParser.string(from: start),
-            endDateTime: EventDateParser.string(from: end),
+            startDate: start,
+            endDate: end,
             category: "talk",
             zoneID: "zone-mock-001",
-            festivalID: "youngcon-2026"
+            festivalID: "youngcon-2026",
+            streamURL: nil
         )
     }
 
@@ -60,11 +64,12 @@ enum EventCardMocks {
             id: "event-002",
             title: "Как мы переписали бэкенд на Go и выжили",
             description: "Реальный кейс перехода с монолита на микросервисы.",
-            startDateTime: EventDateParser.string(from: start),
-            endDateTime: EventDateParser.string(from: end),
+            startDate: start,
+            endDate: end,
             category: "development",
             zoneID: "",
-            festivalID: IDs.festival
+            festivalID: IDs.festival,
+            streamURL: nil
         )
     }
 }

@@ -11,7 +11,7 @@ struct UserProfileDTO: Decodable {
 }
 
 extension UserProfileDTO {
-    func toEntity() -> UserProfile {
+    func toEntity() -> UserProfile? {
         UserProfile(
             id: id,
             firstName: firstName,

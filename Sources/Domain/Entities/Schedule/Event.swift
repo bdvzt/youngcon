@@ -9,4 +9,5 @@ struct Event: Identifiable {
     let category: String
     let zoneID: String
     let festivalID: String
+    let streamURL: URL?
 }

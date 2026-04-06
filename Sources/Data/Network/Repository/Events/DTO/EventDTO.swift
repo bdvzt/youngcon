@@ -9,6 +9,7 @@ struct EventDTO: Decodable {
     let category: String
     let zoneID: String
     let festivalID: String
+    let streamURL: String?
 }
 
 extension EventDTO {
@@ -35,7 +36,8 @@ extension EventDTO {
             endDate: endDate,
             category: category,
             zoneID: zoneID,
-            festivalID: festivalID
+            festivalID: festivalID,
+            streamURL: streamURL.flatMap { URL(string: $0) }
         )
     }
 }

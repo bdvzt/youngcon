@@ -5,6 +5,8 @@ struct ZoneDTO: Decodable {
     let floorID: String
     let title: String
     let description: String
+    let cordX: Int
+    let cordY: Int
     let icon: String
     let color: String
 }
@@ -20,6 +22,8 @@ extension ZoneDTO {
             floorID: floorID,
             title: title,
             description: description,
+            cordX: cordX,
+            cordY: cordY,
             icon: iconURL,
             color: color.toColor()
         )
