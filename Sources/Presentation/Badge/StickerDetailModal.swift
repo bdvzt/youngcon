@@ -3,10 +3,6 @@ import SwiftUI
 struct StickerDetailModal: View {
     @Binding var selectedSticker: Sticker?
 
-    private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
-    private let accentPurple = YoungConAsset.accentPurple.swiftUIColor
-    private let cardBackground = YoungConAsset.cardBackground.swiftUIColor
-
     var body: some View {
         ZStack {
             Color.black.opacity(0.9)
@@ -52,7 +48,7 @@ struct StickerDetailModal: View {
                         .tracking(0.05)
                         .textCase(.uppercase)
                         .foregroundColor(
-                            sticker.isUnlocked ? accentYellow : .white.opacity(0.2)
+                            sticker.isUnlocked ? AppColor.accentYellow : .white.opacity(0.2)
                         )
                 }
             }
@@ -77,16 +73,16 @@ struct StickerDetailModal: View {
 
     private var modalBackground: some View {
         RoundedRectangle(cornerRadius: 32)
-            .fill(cardBackground)
+            .fill(AppColor.cardBackground)
             .overlay(
                 RoundedRectangle(cornerRadius: 32)
                     .stroke(
                         LinearGradient(
                             colors: [
-                                accentYellow.opacity(0.2),
+                                AppColor.accentYellow.opacity(0.2),
                                 Color.clear,
                                 Color.clear,
-                                accentPurple.opacity(0.2),
+                                AppColor.accentPurple.opacity(0.2),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing

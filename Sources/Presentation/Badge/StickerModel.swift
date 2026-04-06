@@ -17,7 +17,7 @@ extension Sticker {
             name: "Ранняя пташка",
             icon: "bolt.fill",
             isUnlocked: true,
-            bgColor: YoungConAsset.accentYellow.swiftUIColor,
+            bgColor: AppColor.accentYellow,
             fgColor: .black,
             description: "Пришел на площадку в первые 30 минут после открытия фестиваля."
         ),
@@ -26,7 +26,7 @@ extension Sticker {
             name: "Слушатель",
             icon: "mic.fill",
             isUnlocked: true,
-            bgColor: YoungConAsset.accentPurple.swiftUIColor,
+            bgColor: AppColor.accentPurple,
             fgColor: .white,
             description: "Посетил минимум 3 доклада и сохранил их в расписании."
         ),
@@ -35,8 +35,8 @@ extension Sticker {
             name: "Кофеман",
             icon: "cup.and.saucer.fill",
             isUnlocked: false,
-            bgColor: YoungConAsset.gray700.swiftUIColor,
-            fgColor: YoungConAsset.gray500.swiftUIColor,
+            bgColor: AppColor.gray700,
+            fgColor: AppColor.gray500,
             description: "Забрал фирменный кофе в партнерской зоне и отсканировал бейдж."
         ),
         Sticker(
@@ -44,7 +44,7 @@ extension Sticker {
             name: "Нетворкер",
             icon: "person.2.fill",
             isUnlocked: true,
-            bgColor: YoungConAsset.accentPink.swiftUIColor,
+            bgColor: AppColor.accentPink,
             fgColor: .black,
             description: "Познакомился с 5 участниками и обменялся контактами в приложении."
         ),
@@ -53,8 +53,8 @@ extension Sticker {
             name: "Квест пройден",
             icon: "star.fill",
             isUnlocked: false,
-            bgColor: YoungConAsset.gray700.swiftUIColor,
-            fgColor: YoungConAsset.gray500.swiftUIColor,
+            bgColor: AppColor.gray700,
+            fgColor: AppColor.gray500,
             description: "Закрыл все задания квеста и нашел секретную локацию на карте."
         ),
         Sticker(
@@ -62,8 +62,8 @@ extension Sticker {
             name: "Оффер в кармане!",
             icon: "briefcase.fill",
             isUnlocked: false,
-            bgColor: YoungConAsset.gray700.swiftUIColor,
-            fgColor: YoungConAsset.gray500.swiftUIColor,
+            bgColor: AppColor.gray700,
+            fgColor: AppColor.gray500,
             description: "Успешно прошел Fast Track и получил приглашение на собеседование."
         ),
     ]

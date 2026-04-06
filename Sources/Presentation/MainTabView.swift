@@ -5,11 +5,9 @@ struct MainTabView: View {
     @State private var previousTab: AppTab = .schedule
     @State private var isOverlayPresented = false
 
-    private let background = YoungConAsset.appBackground.swiftUIColor
-
     var body: some View {
         ZStack(alignment: .bottom) {
-            background.ignoresSafeArea()
+            AppColor.appBackground.ignoresSafeArea()
 
             TabPageView(
                 activeTab: $activeTab,

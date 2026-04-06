@@ -36,22 +36,22 @@ struct EventCard: View {
         switch event.id {
         case "event-001":
             LinearGradient(
-                colors: [YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor],
+                colors: [AppColor.accentYellow, AppColor.accentPurple],
                 startPoint: .top, endPoint: .bottom
             )
         case "event-002":
             LinearGradient(
-                colors: [YoungConAsset.accentPink.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor],
+                colors: [AppColor.accentPink, AppColor.accentPurple],
                 startPoint: .top, endPoint: .bottom
             )
         case "event-003":
             LinearGradient(
-                colors: [YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPink.swiftUIColor],
+                colors: [AppColor.accentYellow, AppColor.accentPink],
                 startPoint: .top, endPoint: .bottom
             )
         default:
             LinearGradient(
-                colors: [YoungConAsset.accentPurple.swiftUIColor, YoungConAsset.accentYellow.swiftUIColor],
+                colors: [AppColor.accentPurple, AppColor.accentYellow],
                 startPoint: .top, endPoint: .bottom
             )
         }
@@ -119,7 +119,7 @@ struct EventCard: View {
                     .foregroundStyle(.white)
                 Text(speaker.job)
                     .font(.caption)
-                    .foregroundStyle(YoungConAsset.gray500.swiftUIColor)
+                    .foregroundStyle(AppColor.gray500)
                     .lineLimit(2)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -128,7 +128,7 @@ struct EventCard: View {
 
     private var separatorLine: some View {
         Rectangle()
-            .fill(YoungConAsset.gray500.swiftUIColor.opacity(0.35))
+            .fill(AppColor.gray500.opacity(0.35))
             .frame(height: 1)
     }
 
@@ -162,23 +162,23 @@ struct EventCard: View {
 
     private var cardBackground: some View {
         RoundedRectangle(cornerRadius: 20, style: .continuous)
-            .fill(Color(red: 21 / 255, green: 22 / 255, blue: 33 / 255))
+            .fill(AppColor.eventCardBackground)
             .overlay {
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .strokeBorder(YoungConAsset.gray500.swiftUIColor.opacity(0.22), lineWidth: 1)
+                    .strokeBorder(AppColor.gray500.opacity(0.22), lineWidth: 1)
             }
     }
 
     private func zoneAccentColor(_ name: String) -> Color {
         switch name.lowercased() {
         case "pink", "red":
-            YoungConAsset.accentPink.swiftUIColor
+            AppColor.accentPink
         case "orange", "yellow":
-            YoungConAsset.accentYellow.swiftUIColor
+            AppColor.accentYellow
         case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
-            YoungConAsset.accentPurple.swiftUIColor
+            AppColor.accentPurple
         default:
-            YoungConAsset.accentPurple.swiftUIColor
+            AppColor.accentPurple
         }
     }
 }
