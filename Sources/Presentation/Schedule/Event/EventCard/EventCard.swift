@@ -22,9 +22,11 @@ struct EventCard: View {
         guard let start = event.startDate, let end = event.endDate, end >= start else {
             return "—"
         }
-        let interval = DateInterval(start: start, end: end)
         let style = Date.IntervalFormatStyle(date: .omitted, time: .shortened)
-        return interval.formatted(style)
+        if end == start {
+            return start.formatted(date: .omitted, time: .shortened)
+        }
+        return style.format(start..<end)
     }
 
     private var primarySpeaker: Speaker? {
