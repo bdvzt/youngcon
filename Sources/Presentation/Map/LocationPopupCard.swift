@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LocationPopupCard: View {
-    let loc: LocationModal
+    let loc: LocationModel
     let background: Color
     let yellow: Color
     let onClose: () -> Void

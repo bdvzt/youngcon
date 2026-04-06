@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LocationPinView: View {
-    let loc: LocationModal
+    let loc: LocationModel
     let isFocused: Bool
     let focusedLocId: String?
     let background: Color

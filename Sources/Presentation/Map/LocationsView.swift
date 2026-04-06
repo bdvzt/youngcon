@@ -11,7 +11,7 @@ struct LocationsView: View {
     private let purple = YoungConAsset.accentPurple.swiftUIColor
     private let pink = YoungConAsset.accentPink.swiftUIColor
 
-    private var currentLocations: [LocationModal] {
+    private var currentLocations: [LocationModel] {
         mapLocationsData.filter { $0.floor == floor }
     }
 
@@ -54,7 +54,7 @@ struct LocationsView: View {
                 .opacity(0.35)
                 .allowsHitTesting(false)
 
-            Image("logo")
+            YoungConAsset.logo.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(height: 36)
