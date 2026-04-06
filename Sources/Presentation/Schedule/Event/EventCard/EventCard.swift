@@ -5,7 +5,6 @@ struct EventCard: View {
     let event: Event
     let zone: Zone?
     let speakers: [Speaker]
-    /// streamURL передаётся снаружи — поля нет в модели Event
     var streamURL: URL?
 
     private var isLive: Bool {
@@ -15,7 +14,7 @@ struct EventCard: View {
     }
 
     private var showsStreamControl: Bool {
-        isLive && streamURL != nil
+        streamURL != nil
     }
 
     private var timeRangeText: String {
@@ -33,14 +32,46 @@ struct EventCard: View {
         speakers.first
     }
 
-    // MARK: - Body
+    private var cardGradient: LinearGradient {
+        switch event.id {
+        case "event-001":
+            LinearGradient(
+                colors: [YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor],
+                startPoint: .top, endPoint: .bottom
+            )
+        case "event-002":
+            LinearGradient(
+                colors: [YoungConAsset.accentPink.swiftUIColor, YoungConAsset.accentPurple.swiftUIColor],
+                startPoint: .top, endPoint: .bottom
+            )
+        case "event-003":
+            LinearGradient(
+                colors: [YoungConAsset.accentYellow.swiftUIColor, YoungConAsset.accentPink.swiftUIColor],
+                startPoint: .top, endPoint: .bottom
+            )
+        default:
+            LinearGradient(
+                colors: [YoungConAsset.accentPurple.swiftUIColor, YoungConAsset.accentYellow.swiftUIColor],
+                startPoint: .top, endPoint: .bottom
+            )
+        }
+    }
 
     var body: some View {
-        cardStack
-            .padding(22)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background { cardBackground }
-            .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
+        HStack(alignment: .top, spacing: 0) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(cardGradient)
+                .frame(width: 3)
+                .opacity(0.45)
+                .padding(.vertical, 14)
+
+            cardStack
+                .padding(.horizontal, 18)
+                .padding(.vertical, 22)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background { cardBackground }
+        .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
     }
 
     private var cardStack: some View {
@@ -54,8 +85,6 @@ struct EventCard: View {
             metaRow
         }
     }
-
-    // MARK: - Subviews
 
     private var scheduleRow: some View {
         HStack(alignment: .center, spacing: 6) {
@@ -83,7 +112,6 @@ struct EventCard: View {
     private func speakerRow(_ speaker: Speaker) -> some View {
         HStack(alignment: .center, spacing: 12) {
             SpeakerAvatar(url: speaker.avatarImageURL)
-
             VStack(alignment: .leading, spacing: 2) {
                 Text(speaker.fullName)
                     .font(.callout)
@@ -121,6 +149,13 @@ struct EventCard: View {
             Spacer(minLength: 8)
             if showsStreamControl {
                 EventCardStreamButton()
+            } else {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.20))
+                    .frame(width: 32, height: 32)
+                    .background(Color.white.opacity(0.05))
+                    .clipShape(Circle())
             }
         }
     }
@@ -146,30 +181,4 @@ struct EventCard: View {
             YoungConAsset.accentPurple.swiftUIColor
         }
     }
-}
-
-// MARK: - Previews
-
-#Preview("Карточка") {
-    EventCard(
-        event: EventCardMocks.event,
-        zone: EventCardMocks.zone,
-        speakers: EventCardMocks.speakers,
-        streamURL: URL(string: "https://example.com/stream")
-    )
-    .padding()
-    .background(YoungConAsset.appBackground.swiftUIColor)
-    .preferredColorScheme(.dark)
-}
-
-#Preview("Без зоны и эфира") {
-    EventCard(
-        event: EventCardMocks.shortEvent,
-        zone: nil,
-        speakers: [EventCardMocks.speakers[0]],
-        streamURL: nil
-    )
-    .padding()
-    .background(YoungConAsset.appBackground.swiftUIColor)
-    .preferredColorScheme(.dark)
 }

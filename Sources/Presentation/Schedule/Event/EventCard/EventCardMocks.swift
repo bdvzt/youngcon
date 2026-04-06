@@ -26,55 +26,43 @@ enum EventCardMocks {
             id: IDs.speaker1,
             fullName: "Иван Петров",
             job: "Lead iOS Developer",
-            bio: """
-            Иван работает в Яндексе более 5 лет. Руководит разработкой мобильного приложения Яндекс.Карт.
-            Спикер конференций Mobius и RIW. Увлекается SwiftUI и анимациями.
-            """,
+            bio: "Иван работает в Яндексе более 5 лет.",
             avatarURL: "https://example.com/photos/ivan-petrov.jpg"
         ),
         Speaker(
             id: IDs.speaker2,
             fullName: "Мария Соколова",
             job: "Staff Engineer, Mobile Platform",
-            bio: """
-            Архитектура и производительность больших iOS-клиентов. Ранее — лид мобильной разработки в e-commerce.
-            """,
+            bio: "Архитектура и производительность больших iOS-клиентов.",
             avatarURL: "https://example.com/photos/maria-sokolova.jpg"
         ),
     ]
 
-    /// Интервал относительно «сейчас», чтобы в превью были live-точка и кнопка эфира при переданном `streamURL`.
-    static var event: Event {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
-        let now = Date()
-        let start = now.addingTimeInterval(-30 * 60)
-        let end = now.addingTimeInterval(2 * 60 * 60)
+    static var liveEvent: Event {
+        let start = Date().addingTimeInterval(-30 * 60)
+        let end = Date().addingTimeInterval(90 * 60)
         return Event(
-            id: IDs.event,
-            title: "Разработка на Swift: современные подходы и best practices",
-            description: "Глубокое погружение в современный Swift. Concurrency, SwiftUI, архитектура.",
-            startDateTime: formatter.string(from: start),
-            endDateTime: formatter.string(from: end),
-            category: "development",
-            zoneID: IDs.zone,
-            festivalID: IDs.festival
+            id: "event-001",
+            title: "Открытие YoungCon: Будущее бигтеха",
+            description: "Ежегодное открытие фестиваля.",
+            startDateTime: EventDateParser.string(from: start),
+            endDateTime: EventDateParser.string(from: end),
+            category: "talk",
+            zoneID: "zone-mock-001",
+            festivalID: "youngcon-2026"
         )
     }
 
-    /// Короткий доклад без зоны и трансляции.
-    static var shortEvent: Event {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime]
+    static var upcomingEvent: Event {
         let start = Date().addingTimeInterval(60 * 60)
         let end = Date().addingTimeInterval(2 * 60 * 60)
         return Event(
-            id: "event-mock-002",
-            title: "Короткий доклад",
-            description: "Краткое выступление без трансляции.",
-            startDateTime: formatter.string(from: start),
-            endDateTime: formatter.string(from: end),
-            category: "talk",
+            id: "event-002",
+            title: "Как мы переписали бэкенд на Go и выжили",
+            description: "Реальный кейс перехода с монолита на микросервисы.",
+            startDateTime: EventDateParser.string(from: start),
+            endDateTime: EventDateParser.string(from: end),
+            category: "development",
             zoneID: "",
             festivalID: IDs.festival
         )
