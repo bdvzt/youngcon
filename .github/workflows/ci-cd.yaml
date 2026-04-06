@@ -24,7 +24,7 @@ env:
   TUIST_PATH: .
   XCODE_VERSION: "26.1.1"
   IOS_DEPLOYMENT_TARGET: "17.0"
-  DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro,OS=26.2"
+  DESTINATION: "platform=iOS Simulator,name=iPhone 16 Pro,OS=17"
   DERIVED_DATA: DerivedData
   ARTIFACTS_DIR: build_artifacts
 
@@ -69,10 +69,16 @@ jobs:
 
       - name: Run SwiftFormat (check only)
         run: |
-          swiftformat . \
+           swiftformat . \
             --lint \
-            --config .swiftformat \
-            --swiftversion 6.0
+            --swiftversion 6.0 \
+            --indent 4 \
+            --linebreaks lf \
+            --semicolons never \
+            --trailingcommas always \
+            --importgrouping alphabetized \
+            --exclude "Tuist,Project.swift,Tuist.swift,**/Project.swift,**/Tuist.swift,YoungCon/YoungCon.xcodeproj,YoungConTests/YoungConTests.swift,YoungConUITests/YoungConUITests.swift,YoungConUITests/YoungConUITestsLaunchTests.swift" \
+            --wrapmultiline none
 
   build:
     name: "Build (Debug)"
