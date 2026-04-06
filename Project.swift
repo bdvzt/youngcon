@@ -13,19 +13,6 @@ let swiftFormatScript: TargetScript = .pre(
     basedOnDependencyAnalysis: false
 )
 
-let swiftLintScript: TargetScript = .pre(
-    script: """
-        export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-        if command -v swiftlint >/dev/null; then
-            swiftlint
-        else
-            echo "warning: SwiftLint not installed"
-        fi
-    """,
-    name: "SwiftLint",
-    basedOnDependencyAnalysis: false
-)
-
 let project = Project(
     name: "YoungCon",
     options: .options(
@@ -47,7 +34,7 @@ let project = Project(
             infoPlist: .file(path: "SupportingFiles/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            scripts: [swiftFormatScript, swiftLintScript],
+            scripts: [swiftFormatScript],
             dependencies: [
                 .external(name: "SnapKit"),
                 .external(name: "Kingfisher")

@@ -3,11 +3,9 @@ import SwiftUI
 struct ContentView: View {
     @State private var isLoading = true
 
-    private let background = YoungConAsset.appBackground.swiftUIColor
-
     var body: some View {
         ZStack {
-            background.ignoresSafeArea()
+            AppColor.appBackground.ignoresSafeArea()
 
             if isLoading {
                 LoadingScreen(isLoading: $isLoading)

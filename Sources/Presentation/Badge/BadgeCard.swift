@@ -3,21 +3,17 @@ import SwiftUI
 struct BadgeCard: View {
     @Binding var isQRModalOpen: Bool
 
-    private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
-    private let accentPurple = YoungConAsset.accentPurple.swiftUIColor
-    private let accentPink = YoungConAsset.accentPink.swiftUIColor
-
     var body: some View {
         GradientBorderCard(cornerRadius: 28) {
             ZStack {
                 Circle()
-                    .fill(accentPurple)
+                    .fill(AppColor.accentPurple)
                     .frame(width: 192, height: 192)
                     .blur(radius: 60)
                     .opacity(0.2)
                     .offset(x: 64, y: -64)
                 Circle()
-                    .fill(accentPink)
+                    .fill(AppColor.accentPink)
                     .frame(width: 144, height: 144)
                     .blur(radius: 50)
                     .opacity(0.15)
@@ -66,7 +62,7 @@ struct BadgeCard: View {
             }
         } label: {
             ZStack {
-                CornerMarks(color: accentYellow.opacity(0.5))
+                CornerMarks(color: AppColor.accentYellow.opacity(0.5))
                 Image(systemName: "qrcode")
                     .resizable()
                     .scaledToFit()
@@ -98,7 +94,7 @@ struct BadgeCard: View {
                 .padding(.vertical, 4)
                 .background(
                     LinearGradient(
-                        colors: [accentYellow, accentPurple],
+                        colors: [AppColor.accentYellow, AppColor.accentPurple],
                         startPoint: .leading,
                         endPoint: .trailing
                     )

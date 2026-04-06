@@ -12,7 +12,7 @@ struct EventDetailedCard: View {
 
     var body: some View {
         ZStack {
-            YoungConAsset.navBackground.swiftUIColor
+            AppColor.navBackground
                 .ignoresSafeArea()
 
             cardContent
@@ -58,7 +58,7 @@ struct EventDetailedCard: View {
         .frame(maxWidth: 420, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-                .fill(YoungConAsset.appBackground.swiftUIColor)
+                .fill(AppColor.appBackground)
         )
         .overlay(
             RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
@@ -75,7 +75,7 @@ struct EventDetailedCard: View {
             .padding(.vertical, 10)
             .background(
                 Capsule(style: .continuous)
-                    .fill(YoungConAsset.navBackground.swiftUIColor)
+                    .fill(AppColor.navBackground)
             )
             .overlay(
                 Capsule(style: .continuous)
@@ -87,7 +87,7 @@ struct EventDetailedCard: View {
         HStack(spacing: 8) {
             Image(systemName: "mappin.circle.fill")
                 .font(.system(size: 14, weight: .medium))
-                .foregroundColor(YoungConAsset.accentPurple.swiftUIColor)
+                .foregroundColor(AppColor.accentPurple)
 
             Text(model.location)
                 .foregroundColor(.white.opacity(0.62))
@@ -97,7 +97,7 @@ struct EventDetailedCard: View {
         .padding(.vertical, 12)
         .background(
             Capsule(style: .continuous)
-                .fill(YoungConAsset.navBackground.swiftUIColor)
+                .fill(AppColor.navBackground)
         )
     }
 
@@ -106,7 +106,7 @@ struct EventDetailedCard: View {
             HStack(spacing: 14) {
                 ZStack {
                     Circle()
-                        .fill(YoungConAsset.gray700.swiftUIColor)
+                        .fill(AppColor.gray700)
                         .overlay(
                             Circle()
                                 .stroke(Color.white.opacity(0.10), lineWidth: 1)
@@ -126,7 +126,7 @@ struct EventDetailedCard: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text(model.speakerRole)
-                        .foregroundColor(YoungConAsset.accentYellow.swiftUIColor)
+                        .foregroundColor(AppColor.accentYellow)
                         .font(.system(size: 14, weight: .black))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -144,7 +144,7 @@ struct EventDetailedCard: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(YoungConAsset.cardBackground.swiftUIColor)
+                    .fill(AppColor.cardBackground)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -170,10 +170,10 @@ struct EventDetailedCard: View {
                 .frame(height: 52)
                 .background(
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(YoungConAsset.accentYellow.swiftUIColor)
+                        .fill(AppColor.accentYellow)
                 )
                 .shadow(
-                    color: YoungConAsset.accentYellow.swiftUIColor.opacity(0.28),
+                    color: AppColor.accentYellow.opacity(0.28),
                     radius: 18,
                     y: 6
                 )
@@ -185,16 +185,16 @@ struct EventDetailedCard: View {
             } label: {
                 Image(systemName: "star.fill")
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(isFavorite ? YoungConAsset.accentYellow.swiftUIColor : .white.opacity(0.55))
+                    .foregroundColor(isFavorite ? AppColor.accentYellow : .white.opacity(0.55))
                     .frame(width: 64, height: 52)
                     .background(
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(YoungConAsset.gray700.swiftUIColor)
+                            .fill(AppColor.gray700)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 16, style: .continuous)
                             .stroke(
-                                isFavorite ? YoungConAsset.accentYellow.swiftUIColor.opacity(0.32) : Color.white.opacity(0.06),
+                                isFavorite ? AppColor.accentYellow.opacity(0.32) : Color.white.opacity(0.06),
                                 lineWidth: 1
                             )
                     )

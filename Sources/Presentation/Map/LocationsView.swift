@@ -5,19 +5,13 @@ struct LocationsView: View {
     @State private var focusedLocId: String?
     @State private var gradientOffset: CGFloat = 0
 
-    private let background = YoungConAsset.appBackground.swiftUIColor
-    private let cardBg = YoungConAsset.cardBackground.swiftUIColor
-    private let yellow = YoungConAsset.accentYellow.swiftUIColor
-    private let purple = YoungConAsset.accentPurple.swiftUIColor
-    private let pink = YoungConAsset.accentPink.swiftUIColor
-
     private var currentLocations: [LocationModel] {
         mapLocationsData.filter { $0.floor == floor }
     }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            background.ignoresSafeArea()
+            AppColor.appBackground.ignoresSafeArea()
             ambientGlows
 
             ScrollView(showsIndicators: false) {
@@ -46,7 +40,7 @@ struct LocationsView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 16)
                 .fill(RadialGradient(
-                    colors: [yellow, .clear],
+                    colors: [AppColor.accentYellow, .clear],
                     center: .center, startRadius: 5, endRadius: 40
                 ))
                 .frame(width: 80, height: 60)
@@ -58,7 +52,7 @@ struct LocationsView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 36)
-                .shadow(color: yellow.opacity(0.3), radius: 8)
+                .shadow(color: AppColor.accentYellow.opacity(0.3), radius: 8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -66,7 +60,7 @@ struct LocationsView: View {
     private var ambientGlows: some View {
         ZStack {
             Circle()
-                .fill(purple)
+                .fill(AppColor.accentPurple)
                 .frame(width: 320, height: 320)
                 .blur(radius: 100)
                 .opacity(0.3)
@@ -74,7 +68,7 @@ struct LocationsView: View {
                 .allowsHitTesting(false)
 
             Circle()
-                .fill(yellow)
+                .fill(AppColor.accentYellow)
                 .frame(width: 288, height: 288)
                 .blur(radius: 90)
                 .opacity(0.2)
@@ -92,7 +86,7 @@ struct LocationsView: View {
                 .textCase(.uppercase)
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [yellow, purple, pink, yellow],
+                        colors: [AppColor.accentYellow, AppColor.accentPurple, AppColor.accentPink, AppColor.accentYellow],
                         startPoint: UnitPoint(x: gradientOffset * 0.5, y: 0),
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )
@@ -112,7 +106,7 @@ struct LocationsView: View {
     private var mapSection: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(cardBg.opacity(0.6))
+                .fill(AppColor.cardBackground.opacity(0.6))
                 .overlay(
                     RoundedRectangle(cornerRadius: 28, style: .continuous)
                         .stroke(Color.white.opacity(0.06), lineWidth: 1)
@@ -124,7 +118,9 @@ struct LocationsView: View {
                 ZStack {
                     LocationFloorSwitcher(
                         floor: $floor,
-                        background: background, yellow: yellow, purple: purple
+                        background: AppColor.appBackground,
+                        yellow: AppColor.accentYellow,
+                        purple: AppColor.accentPurple
                     ) {
                         focusedLocId = nil
                     }
@@ -158,8 +154,8 @@ struct LocationsView: View {
                     loc: loc,
                     isFocused: focusedLocId == loc.id,
                     focusedLocId: focusedLocId,
-                    background: background,
-                    yellow: yellow
+                    background: AppColor.appBackground,
+                    yellow: AppColor.accentYellow
                 ) {
                     withAnimation(.easeInOut(duration: 0.2)) {
                         focusedLocId = (focusedLocId == loc.id) ? nil : loc.id
