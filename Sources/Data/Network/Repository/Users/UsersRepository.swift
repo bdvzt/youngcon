@@ -7,25 +7,29 @@ final class UsersRepository: UsersRepositoryProtocol {
 
     func getMyProfile() async throws -> UserProfile {
         let endpoint = GetUserProfileEndpoint()
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: UserProfile.self
+            as: UserProfileDTO.self
         )
+        guard let user = response.toEntity() else {
+            throw NetworkError.decodingFailed
+        }
+        return user
     }
 
     func getUserLikedEvents(userID: String) async throws -> [Event] {
         let endpoint = GetUserLikedEventsEndpoint(userID)
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Event].self
-        )
+            as: [EventDTO].self
+        ).compactMap { $0.toEntity() }
     }
 
     func getUserAchievements(userID: String) async throws -> [Achievement] {
         let endpoint = GetUserAchievmentsEndpoint(userID)
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Achievement].self
-        )
+            as: [AchievementDTO].self
+        ).compactMap { $0.toEntity() }
     }
 }

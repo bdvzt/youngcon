@@ -1,4 +1,4 @@
-struct UserProfile: Decodable {
+struct UserProfile: Identifiable {
     let id: String
     let firstName: String
     let lastName: String

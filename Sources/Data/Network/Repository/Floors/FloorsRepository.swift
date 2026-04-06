@@ -7,17 +7,21 @@ final class FloorsRepository: FloorsRepositoryProtocol {
 
     func getFloor(id: String) async throws -> Floor {
         let endpoint = GetFloorByIDEndpoint(id)
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: Floor.self
+            as: FloorDTO.self
         )
+        guard let floor = response.toEntity() else {
+            throw NetworkError.decodingFailed
+        }
+        return floor
     }
 
     func getFloors() async throws -> [Floor] {
         let endpoint = GetFloorsEndpoint()
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Floor].self
-        )
+            as: [FloorDTO].self
+        ).compactMap { $0.toEntity() }
     }
 }

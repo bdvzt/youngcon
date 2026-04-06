@@ -7,17 +7,25 @@ final class ZoneRepository: ZoneRepositoryProtocol {
 
     func getZone(zoneID: String) async throws -> Zone {
         let endpoint = GetZoneByIDEndpoint(zoneID)
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: Zone.self
+            as: ZoneDTO.self
         )
+        guard let zone = response.toEntity() else {
+            throw NetworkError.decodingFailed
+        }
+        return zone
     }
 
     func getZone(floorID: String) async throws -> Zone {
         let endpoint = GetZonesByFloorIDEndpoint(floorID)
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: Zone.self
+            as: ZoneDTO.self
         )
+        guard let zone = response.toEntity() else {
+            throw NetworkError.decodingFailed
+        }
+        return zone
     }
 }

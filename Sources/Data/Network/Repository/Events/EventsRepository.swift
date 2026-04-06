@@ -9,32 +9,36 @@ final class EventsRepository: EventsRepositoryProtocol {
         let endpoint = GetEventsEndpoint(festivalID)
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Event].self
-        )
+            as: [EventDTO].self
+        ).compactMap { $0.toEntity() }
     }
 
     func getEvent(eventID: String) async throws -> Event {
         let endpoint = GetEventByIDEndpoint(eventID)
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: Event.self
+            as: EventDTO.self
         )
+        guard let event = response.toEntity() else {
+            throw NetworkError.decodingFailed
+        }
+        return event
     }
 
     func getZoneEvents(zoneID: String) async throws -> [Event] {
         let endpoint = GetZoneEventsEndpoint(zoneID)
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Event].self
-        )
+            as: [EventDTO].self
+        ).compactMap { $0.toEntity() }
     }
 
     func getSpeakerEvents(speakerID: String) async throws -> [Event] {
         let endpoint = GetSpeakerEventsEndpoint(speakerID)
         return try await networkService.requestDecodable(
             endpoint,
-            as: [Event].self
-        )
+            as: [EventDTO].self
+        ).compactMap { $0.toEntity() }
     }
 
     func likeEvent(eventID: String) async throws -> LikeEventResponse {
