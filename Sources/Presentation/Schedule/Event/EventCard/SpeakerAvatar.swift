@@ -26,13 +26,13 @@ struct SpeakerAvatar: View {
         .clipShape(Circle())
         .overlay {
             Circle()
-                .strokeBorder(EventCardPalette.speakerAvatar.opacity(0.55), lineWidth: 1)
+                .strokeBorder(AppColor.gray700.opacity(0.55), lineWidth: 1)
         }
     }
 
     private var placeholder: some View {
         ZStack {
-            EventCardPalette.speakerAvatar.opacity(0.35)
+            AppColor.gray700.opacity(0.35)
             Image(systemName: "person.fill")
                 .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(.white.opacity(0.5))
