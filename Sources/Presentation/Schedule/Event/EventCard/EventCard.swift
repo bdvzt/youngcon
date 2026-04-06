@@ -26,7 +26,7 @@ struct EventCard: View {
         if end == start {
             return start.formatted(date: .omitted, time: .shortened)
         }
-        return style.format(start..<end)
+        return style.format(start ..< end)
     }
 
     private var primarySpeaker: Speaker? {
