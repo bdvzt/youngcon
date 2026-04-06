@@ -79,7 +79,6 @@ jobs:
             --importgrouping alphabetized \
             --disable openingBrace \
             --exclude "Tuist,Project.swift,Tuist.swift,**/Project.swift,**/Tuist.swift,YoungCon/YoungCon.xcodeproj,YoungConTests/YoungConTests.swift,YoungConUITests/YoungConUITests.swift,YoungConUITests/YoungConUITestsLaunchTests.swift" \
-            --wrapmultiline none
 
   build:
     name: "Build (Debug)"
