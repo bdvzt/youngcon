@@ -6,12 +6,23 @@ struct TabPageView: View {
     @Binding var isOverlayPresented: Bool
     let container: DependencyContainer
 
+    var mapViewModel: MapViewModel?
     var scheduleViewModel: ScheduleViewModel?
 
     var body: some View {
         TabView(selection: $activeTab) {
-            LocationsView()
-                .tag(AppTab.map)
+            Group {
+                if let mapViewModel {
+                    LocationsView(viewModel: mapViewModel)
+                } else {
+                    ZStack {
+                        AppColor.appBackground.ignoresSafeArea()
+                        ProgressView()
+                            .tint(.white.opacity(0.6))
+                    }
+                }
+            }
+            .tag(AppTab.map)
 
             Group {
                 if let scheduleViewModel {

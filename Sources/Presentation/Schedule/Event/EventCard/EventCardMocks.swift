@@ -16,8 +16,8 @@ enum EventCardMocks {
         floorID: IDs.floor,
         title: "Главная сцена",
         description: "Основная сцена фестиваля",
-        cordX: 100,
-        cordY: 200,
+        cordX: nil,
+        cordY: nil,
         icon: URL(string: "https://example.com/icon.png")!,
         color: .indigo
     )

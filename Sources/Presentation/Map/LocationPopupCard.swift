@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LocationPopupCard: View {
-    let loc: LocationModel
+    let zone: Zone
     let background: Color
     let yellow: Color
     let onClose: () -> Void
@@ -18,7 +18,7 @@ struct LocationPopupCard: View {
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             cardHeader
-            Text(loc.description)
+            Text(zone.description)
                 .font(.system(size: 10))
                 .foregroundColor(.white.opacity(0.5))
                 .fixedSize(horizontal: false, vertical: true)
@@ -40,13 +40,12 @@ struct LocationPopupCard: View {
             HStack(spacing: 8) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 7)
-                        .fill(loc.color)
+                        .fill(zone.color)
                         .frame(width: 28, height: 28)
-                    Image(systemName: loc.iconName)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.black)
+                    ZoneIconImage(url: zone.icon, placeholderFontSize: 12)
+                        .frame(width: 14, height: 14)
                 }
-                Text(loc.title)
+                Text(zone.title)
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
