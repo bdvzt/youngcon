@@ -3,10 +3,6 @@ import SwiftUI
 struct StickerCell: View {
     let sticker: Sticker
 
-    private var isURL: Bool {
-        sticker.icon.hasPrefix("http://") || sticker.icon.hasPrefix("https://")
-    }
-
     var body: some View {
         VStack(spacing: 10) {
             ZStack {
@@ -14,8 +10,8 @@ struct StickerCell: View {
                     .fill(sticker.bgColor)
                     .frame(width: 44, height: 44)
 
-                if isURL {
-                    AsyncImage(url: URL(string: sticker.icon)) { image in
+                if let iconURL = sticker.icon {
+                    AsyncImage(url: iconURL) { image in
                         image
                             .resizable()
                             .scaledToFit()
@@ -27,7 +23,7 @@ struct StickerCell: View {
                     .frame(width: 24, height: 24)
                     .foregroundColor(sticker.fgColor)
                 } else {
-                    Image(systemName: sticker.icon)
+                    Image(systemName: "star.fill")
                         .font(.system(size: 18))
                         .foregroundColor(sticker.fgColor)
                 }

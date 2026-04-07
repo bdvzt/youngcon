@@ -18,7 +18,7 @@ enum EventCardMocks {
         description: "Основная сцена фестиваля",
         cordX: 100,
         cordY: 200,
-        icon: "sparkles.rectangle.stack.fill",
+        icon: URL(string: "https://example.com/icon.png")!,
         color: .indigo
     )
 

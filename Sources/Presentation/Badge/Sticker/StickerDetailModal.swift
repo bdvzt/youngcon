@@ -47,8 +47,8 @@ struct StickerDetailModal: View {
                         .fill(sticker.bgColor)
                         .frame(width: 48, height: 48)
 
-                    if sticker.icon.hasPrefix("http://") || sticker.icon.hasPrefix("https://") {
-                        AsyncImage(url: URL(string: sticker.icon)) { image in
+                    if let iconURL = sticker.icon {
+                        AsyncImage(url: iconURL) { image in
                             image
                                 .resizable()
                                 .scaledToFit()
@@ -60,7 +60,7 @@ struct StickerDetailModal: View {
                         .frame(width: 26, height: 26)
                         .foregroundColor(sticker.fgColor)
                     } else {
-                        Image(systemName: sticker.icon)
+                        Image(systemName: "star.fill")
                             .font(.system(size: 20))
                             .foregroundColor(sticker.fgColor)
                     }

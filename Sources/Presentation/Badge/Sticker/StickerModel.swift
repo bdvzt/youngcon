@@ -15,14 +15,7 @@ extension Sticker {
         id = achievement.id
         name = achievement.name
         description = achievement.description
-
-        // Правильное создание URL из строки
-        if let iconString = achievement.icon, !iconString.isEmpty {
-            icon = URL(string: iconString)
-        } else {
-            icon = nil // или можно создать URL из системного имени, но это не сработает
-        }
-
+        icon = URL(string: achievement.icon ?? "")
         self.isUnlocked = isUnlocked
 
         if isUnlocked {

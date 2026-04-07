@@ -7,6 +7,6 @@ struct Zone: Identifiable {
     let description: String
     let cordX: Double?
     let cordY: Double?
-    let icon: String
+    let icon: URL
     let color: Color
 }
