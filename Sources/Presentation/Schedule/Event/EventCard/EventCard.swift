@@ -145,8 +145,10 @@ struct EventCard: View {
             if let zone {
                 HStack(spacing: 6) {
                     KFImage(zone.icon)
-                        .font(.footnote.weight(.bold))
-                        .foregroundStyle(zone.color)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                        .padding(4)
                     Text(zone.title)
                         .font(.footnote)
                         .fontWeight(.bold)
