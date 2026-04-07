@@ -15,15 +15,15 @@ extension Sticker {
         id = achievement.id
         name = achievement.name
         description = achievement.description
-        icon = URL(string: achievement.icon ?? "")
+        icon = achievement.icon
         self.isUnlocked = isUnlocked
 
         if isUnlocked {
-            bgColor = Color.from(hex: achievement.color, defaultValue: YoungConAsset.gray700.swiftUIColor)
+            bgColor = achievement.color
             fgColor = .white
         } else {
-            bgColor = YoungConAsset.gray700.swiftUIColor
-            fgColor = YoungConAsset.gray500.swiftUIColor
+            bgColor = AppColor.gray700
+            fgColor = AppColor.gray500
         }
     }
 }

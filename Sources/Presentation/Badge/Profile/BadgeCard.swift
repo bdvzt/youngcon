@@ -95,7 +95,7 @@ struct BadgeCard: View {
                 .foregroundColor(.white.opacity(0.25))
                 .monospacedDigit()
                 .lineLimit(1)
-                .minimumScaleFactor(0.8)
+                .minimumScaleFactor(0.1)
             Rectangle()
                 .fill(Color.white.opacity(0.1))
                 .frame(width: 1, height: 12)

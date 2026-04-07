@@ -1,3 +1,5 @@
+import Foundation
+
 struct AchievementDTO: Decodable {
     let id: String
     let name: String
@@ -12,8 +14,8 @@ extension AchievementDTO {
             id: id,
             name: name,
             description: description,
-            icon: icon,
-            color: color
+            icon: URL(string: icon),
+            color: color.toColor()
         )
     }
 }
