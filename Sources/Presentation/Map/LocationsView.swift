@@ -96,7 +96,7 @@ struct LocationsView: View {
                             AppColor.accentYellow,
                             AppColor.accentPurple,
                             AppColor.accentPink,
-                            AppColor.accentYellow
+                            AppColor.accentYellow,
                         ],
                         startPoint: UnitPoint(x: gradientOffset * 0.5, y: 0),
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
@@ -232,7 +232,8 @@ struct LocationsView: View {
             }
 
             if let focusedId = focusedLocId,
-               let loc = currentLocations.first(where: { $0.id == focusedId }) {
+               let loc = currentLocations.first(where: { $0.id == focusedId })
+            {
                 let pinX = offsetX + mapW * loc.leftPercent
                 let pinY = offsetY + mapH * loc.topPercent
                 LocationPopupCard(

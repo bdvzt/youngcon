@@ -20,7 +20,8 @@ struct QRCodeView: View {
         let transform = CGAffineTransform(scaleX: 10, y: 10)
 
         if let outputImage = filter.outputImage?.transformed(by: transform),
-           let cgImage = context.createCGImage(outputImage, from: outputImage.extent) {
+           let cgImage = context.createCGImage(outputImage, from: outputImage.extent)
+        {
             return UIImage(cgImage: cgImage)
         }
 

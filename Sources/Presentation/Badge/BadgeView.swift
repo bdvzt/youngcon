@@ -68,7 +68,10 @@ struct BadgeView: View {
                     .frame(height: 52)
                 if !isOverlayPresented {
                     LinearGradient(
-                        colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
+                        colors: [
+                            AppColor.appBackground,
+                            AppColor.appBackground.opacity(0),
+                        ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -80,7 +83,6 @@ struct BadgeView: View {
             .zIndex(20)
             .allowsHitTesting(false)
 
-            // Логотип
             GeometryReader { geo in
                 VStack(spacing: 0) {
                     glowingLogo
@@ -93,14 +95,12 @@ struct BadgeView: View {
             .zIndex(21)
             .allowsHitTesting(false)
         }
-        .onAppear {
-            Task {
-                await viewModel.loadData()
-            }
+        .task {
+            await viewModel.loadData()
         }
         .onDisappear { isOverlayPresented = false }
-        .onChange(of: isQRModalOpen) { syncOverlay() }
-        .onChange(of: selectedSticker) { syncOverlay() }
+        .onChange(of: isQRModalOpen) { _ in syncOverlay() }
+        .onChange(of: selectedSticker) { _ in syncOverlay() }
     }
 
     private func syncOverlay() {

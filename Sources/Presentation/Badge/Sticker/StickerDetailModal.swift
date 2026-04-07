@@ -112,7 +112,7 @@ struct StickerDetailModal: View {
                                 AppColor.accentYellow.opacity(0.2),
                                 Color.clear,
                                 Color.clear,
-                                AppColor.accentPurple.opacity(0.2)
+                                AppColor.accentPurple.opacity(0.2),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing

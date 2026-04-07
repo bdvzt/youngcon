@@ -42,5 +42,5 @@ let mapLocationsData: [LocationModel] = [
         color: .white,
         topPercent: 0.55, leftPercent: 0.55, floor: 1,
         description: "Стенды университетов и программы стажировок."
-    )
+    ),
 ]

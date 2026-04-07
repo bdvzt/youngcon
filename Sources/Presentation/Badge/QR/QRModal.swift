@@ -5,9 +5,6 @@ struct QRModal: View {
     let userID: String
     @Binding var isOpen: Bool
 
-    private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
-    private let accentPurple = YoungConAsset.accentPurple.swiftUIColor
-    private let cardBackground = YoungConAsset.cardBackground.swiftUIColor
     private var shortNumericID: String {
         let digits = userID.filter(\.isNumber)
         let source = digits.isEmpty ? userID : digits
@@ -23,13 +20,16 @@ struct QRModal: View {
             VStack(spacing: 0) {
                 headerRow
                     .padding(.bottom, 32)
+
                 qrCode
                     .padding(.bottom, 32)
+
                 Text("Покажите этот код на входе или на стендах партнёров")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white.opacity(0.3))
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
+
                 badgeNumber("YY-\(shortNumericID)")
             }
             .padding(32)
@@ -82,30 +82,33 @@ struct QRModal: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
-                            colors: [accentYellow.opacity(0.08), accentPurple.opacity(0.08)],
+                            colors: [
+                                AppColor.accentYellow.opacity(0.08),
+                                AppColor.accentPurple.opacity(0.08),
+                            ],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(accentYellow.opacity(0.1), lineWidth: 1)
+                            .stroke(AppColor.accentYellow.opacity(0.1), lineWidth: 1)
                     )
             )
     }
 
     private var modalBackground: some View {
         RoundedRectangle(cornerRadius: 32)
-            .fill(cardBackground)
+            .fill(AppColor.cardBackground)
             .overlay(
                 RoundedRectangle(cornerRadius: 32)
                     .stroke(
                         LinearGradient(
                             colors: [
-                                accentYellow.opacity(0.2),
+                                AppColor.accentYellow.opacity(0.2),
                                 Color.clear,
                                 Color.clear,
-                                accentPurple.opacity(0.2)
+                                AppColor.accentPurple.opacity(0.2),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing

@@ -26,7 +26,7 @@ struct LocationFloorSwitcher: View {
                             colors: [
                                 Color.white.opacity(0.10),
                                 Color.white.opacity(0.02),
-                                Color.white.opacity(0.05)
+                                Color.white.opacity(0.05),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
@@ -39,7 +39,7 @@ struct LocationFloorSwitcher: View {
                             colors: [
                                 Color.white.opacity(0.25),
                                 Color.white.opacity(0.04),
-                                Color.white.opacity(0.10)
+                                Color.white.opacity(0.10),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing

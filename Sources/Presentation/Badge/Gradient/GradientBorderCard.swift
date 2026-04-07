@@ -18,7 +18,7 @@ struct GradientBorderCard<Content: View>: View {
                                 AppColor.accentYellow.opacity(0.15),
                                 .clear,
                                 .clear,
-                                AppColor.accentPurple.opacity(0.15)
+                                AppColor.accentPurple.opacity(0.15),
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
