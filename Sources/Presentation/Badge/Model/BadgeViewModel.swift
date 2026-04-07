@@ -1,5 +1,4 @@
 import Foundation
-
 @MainActor
 class BadgeViewModel: ObservableObject {
     @Published var profile: UserProfile?
@@ -11,7 +10,6 @@ class BadgeViewModel: ObservableObject {
         self.usersRepository = usersRepository
         self.achievementsRepository = achievementsRepository
     }
-
     func loadData() async {
         isLoading = true
         defer { isLoading = false }
@@ -27,7 +25,6 @@ class BadgeViewModel: ObservableObject {
             }
         } catch {
             print("Error loading badge data: \(error)")
-            // Можно добавить обработку ошибок и показ alert'а
         }
     }
 }

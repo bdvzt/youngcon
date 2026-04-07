@@ -138,11 +138,10 @@ struct LocationsView: View {
                         flatMap(containerW: width, containerH: height)
                     }
                 }
-                .id(floor) // ← пересчитываем layout при смене этажа без лага
+                .id(floor)
             }
             .frame(height: 460)
 
-            // Овальчики локаций
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(currentLocations) { loc in
