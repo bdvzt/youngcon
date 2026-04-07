@@ -32,7 +32,7 @@ struct StickerDetailModal: View {
             displayedSticker = selectedSticker
             isVisible = true
         }
-        .onChange(of: selectedSticker) { newValue in
+        .onChange(of: selectedSticker) { _, newValue in
             guard let newValue else { return }
             displayedSticker = newValue
             isVisible = true
@@ -72,7 +72,7 @@ struct StickerDetailModal: View {
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
 
-                    Text(sticker.isUnlocked ? " Разблокировано" : "Заблокировано")
+                    Text(sticker.isUnlocked ? "Разблокировано" : "Заблокировано")
                         .font(.system(size: 11, weight: .bold))
                         .tracking(0.05)
                         .textCase(.uppercase)

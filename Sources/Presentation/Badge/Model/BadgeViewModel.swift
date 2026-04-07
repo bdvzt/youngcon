@@ -15,26 +15,43 @@ class BadgeViewModel: ObservableObject {
     }
 
     func loadData() async {
-        // Проверка: если загрузка уже идет, выходим из метода
         guard !isLoading else { return }
 
         isLoading = true
         defer { isLoading = false }
 
         do {
-            let profile = try await usersRepository.getMyProfile()
-            self.profile = profile
+            let currentProfile: UserProfile
+            do {
+                currentProfile = try await usersRepository.getMyProfile()
+                profile = currentProfile
+            } catch {
+                throw BadgeError.profileLoadingFailed(error)
+            }
 
-            let allAchievements = try await achievementsRepository.getAchievements()
-            let unlockedAchievements = try await usersRepository.getUserAchievements(userID: profile.id)
-            let unlockedIDs = Set(unlockedAchievements.map(\.id))
+            let allAchievements: [Achievement]
+            do {
+                allAchievements = try await achievementsRepository.getAchievements()
+            } catch {
+                throw BadgeError.achievementsLoadingFailed(error)
+            }
+
+            let unlockedIDs: Set<String>
+            do {
+                let unlockedAchievements = try await usersRepository.getUserAchievements(userID: currentProfile.id)
+                unlockedIDs = Set(unlockedAchievements.map(\.id))
+            } catch {
+                throw BadgeError.userProgressLoadingFailed(error)
+            }
 
             stickers = allAchievements.map { achievement in
                 let isUnlocked = unlockedIDs.contains(achievement.id)
                 return Sticker(from: achievement, isUnlocked: isUnlocked)
             }
+        } catch let error as BadgeError {
+            print(error.description)
         } catch {
-            print("Error loading badge data: \(error)")
+            print("[Badge] Unexpected error: \(error.localizedDescription)")
         }
     }
 }

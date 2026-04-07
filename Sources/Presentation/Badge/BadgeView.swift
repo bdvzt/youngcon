@@ -99,8 +99,8 @@ struct BadgeView: View {
             await viewModel.loadData()
         }
         .onDisappear { isOverlayPresented = false }
-        .onChange(of: isQRModalOpen) { _ in syncOverlay() }
-        .onChange(of: selectedSticker) { _ in syncOverlay() }
+        .onChange(of: isQRModalOpen) { _, _ in syncOverlay() }
+        .onChange(of: selectedSticker) { _, _ in syncOverlay() }
     }
 
     private func syncOverlay() {
