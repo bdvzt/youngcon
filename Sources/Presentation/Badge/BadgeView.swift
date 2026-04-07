@@ -4,28 +4,47 @@ struct BadgeView: View {
     @Binding var isOverlayPresented: Bool
     @State private var isQRModalOpen = false
     @State private var selectedSticker: Sticker?
+    @StateObject private var viewModel: BadgeViewModel
 
-    private let stickers = Sticker.mockData
-    private var unlockedCount: Int {
-        stickers.count(where: { $0.isUnlocked })
+    init(container: DependencyContainer, isOverlayPresented: Binding<Bool>) {
+        _isOverlayPresented = isOverlayPresented
+        _viewModel = StateObject(wrappedValue: BadgeViewModel(
+            usersRepository: container.usersRepository,
+            achievementsRepository: container.achievementsRepository
+        ))
     }
 
     var body: some View {
         ZStack {
-            AppColor.appBackground.ignoresSafeArea()
+            Color.clear
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     Color.clear.frame(height: 52)
-                    BadgeCard(isQRModalOpen: $isQRModalOpen)
+                    if let profile = viewModel.profile {
+                        BadgeCard(user: profile, isQRModalOpen: $isQRModalOpen)
+                    } else {
+                        let fallbackCard = BadgeCard(
+                            user: UserProfile.placeholder,
+                            isQRModalOpen: $isQRModalOpen
+                        )
+                        if viewModel.isLoading {
+                            fallbackCard.redacted(reason: .placeholder)
+                        } else {
+                            fallbackCard
+                        }
+                    }
                     AchievementsCard(
-                        stickers: stickers,
-                        unlockedCount: unlockedCount,
+                        stickers: viewModel.stickers,
+                        unlockedCount: viewModel.stickers.count(where: { $0.isUnlocked }),
                         selectedSticker: $selectedSticker
                     )
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 110)
+            }
+            .refreshable {
+                await viewModel.loadData()
             }
 
             if selectedSticker != nil {
@@ -34,8 +53,11 @@ struct BadgeView: View {
             }
 
             if isQRModalOpen {
-                QRModal(isOpen: $isQRModalOpen)
-                    .zIndex(10)
+                if let profile = viewModel.profile {
+                    let qrString = profile.qrCode.isEmpty ? profile.id : profile.qrCode
+                    QRModal(qrString: qrString, userID: profile.id, isOpen: $isQRModalOpen)
+                        .zIndex(10)
+                }
             }
 
             VStack(spacing: 0) {
@@ -46,7 +68,10 @@ struct BadgeView: View {
                     .frame(height: 52)
                 if !isOverlayPresented {
                     LinearGradient(
-                        colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
+                        colors: [
+                            AppColor.appBackground,
+                            AppColor.appBackground.opacity(0),
+                        ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -58,19 +83,24 @@ struct BadgeView: View {
             .zIndex(20)
             .allowsHitTesting(false)
 
-            VStack(spacing: 0) {
-                glowingLogo
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                Spacer()
+            GeometryReader { geo in
+                VStack(spacing: 0) {
+                    glowingLogo
+                        .padding(.horizontal, 20)
+                        .padding(.top, geo.safeAreaInsets.top + 8)
+                    Spacer()
+                }
             }
+            .ignoresSafeArea(edges: .top)
             .zIndex(21)
             .allowsHitTesting(false)
         }
-        .onAppear { syncOverlay() }
+        .task {
+            await viewModel.loadData()
+        }
         .onDisappear { isOverlayPresented = false }
-        .onChange(of: isQRModalOpen) { syncOverlay() }
-        .onChange(of: selectedSticker) { syncOverlay() }
+        .onChange(of: isQRModalOpen) { _, _ in syncOverlay() }
+        .onChange(of: selectedSticker) { _, _ in syncOverlay() }
     }
 
     private func syncOverlay() {
@@ -91,6 +121,7 @@ struct BadgeView: View {
                 .frame(width: 80, height: 60)
                 .blur(radius: 20)
                 .opacity(0.3)
+                .padding(-30)
                 .allowsHitTesting(false)
             Image("logo")
                 .resizable()
@@ -100,4 +131,16 @@ struct BadgeView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
+
+extension UserProfile {
+    static let placeholder = UserProfile(
+        id: "00000000-0000-0000-0000-000000000000",
+        firstName: "Loading",
+        lastName: "User",
+        email: "loading@example.com",
+        qrCode: "loading",
+        major: .frontend,
+        role: .client
+    )
 }

@@ -15,15 +15,47 @@ struct LocationFloorSwitcher: View {
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(background.opacity(0.9))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
-                )
-        )
-        .shadow(color: .black.opacity(0.5), radius: 12, x: 0, y: 4)
+        .background {
+            ZStack {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color(red: 0.06, green: 0.07, blue: 0.12).opacity(0.95))
+
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.10),
+                                Color.white.opacity(0.02),
+                                Color.white.opacity(0.05),
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.25),
+                                Color.white.opacity(0.04),
+                                Color.white.opacity(0.10),
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+
+                Ellipse()
+                    .fill(Color.white.opacity(0.07))
+                    .frame(width: 28, height: 12)
+                    .blur(radius: 4)
+                    .offset(y: -20)
+            }
+        }
+        .shadow(color: .black.opacity(0.5), radius: 16, x: 0, y: 6)
+        .shadow(color: yellow.opacity(0.08), radius: 20, x: 0, y: 0)
         .frame(width: 44)
     }
 
@@ -37,10 +69,11 @@ struct LocationFloorSwitcher: View {
                         startPoint: .top, endPoint: .bottom
                     )
                 )
+                .shadow(color: yellow.opacity(0.4), radius: 6)
             Text("ЭТАЖ")
                 .font(.system(size: 7, weight: .bold))
                 .tracking(1)
-                .foregroundColor(.white.opacity(0.2))
+                .foregroundColor(.white.opacity(0.3))
         }
     }
 
@@ -57,10 +90,15 @@ struct LocationFloorSwitcher: View {
             }
         } label: {
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .medium))
-                .foregroundColor(isDisabled ? .white.opacity(0.15) : .white.opacity(0.5))
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(isDisabled ? .white.opacity(0.12) : .white.opacity(0.6))
                 .frame(width: 32, height: 32)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(Color.white.opacity(isDisabled ? 0 : 0.06))
+                )
         }
         .disabled(isDisabled)
+        .buttonStyle(.plain)
     }
 }

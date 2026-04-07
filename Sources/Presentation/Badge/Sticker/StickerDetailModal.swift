@@ -2,14 +2,16 @@ import SwiftUI
 
 struct StickerDetailModal: View {
     @Binding var selectedSticker: Sticker?
+    @State private var displayedSticker: Sticker?
+    @State private var isVisible = false
 
     var body: some View {
         ZStack {
-            Color.black.opacity(0.9)
+            Color.black.opacity(isVisible ? 0.9 : 0)
                 .ignoresSafeArea()
                 .onTapGesture { dismiss() }
 
-            if let sticker = selectedSticker {
+            if let sticker = displayedSticker {
                 VStack(alignment: .leading, spacing: 20) {
                     headerRow(sticker: sticker)
                     Text(sticker.description)
@@ -20,10 +22,21 @@ struct StickerDetailModal: View {
                 .padding(24)
                 .frame(maxWidth: 300)
                 .background(modalBackground)
-                .transition(.scale(scale: 0.94).combined(with: .opacity))
+                .scaleEffect(isVisible ? 1 : 0.94)
+                .opacity(isVisible ? 1 : 0)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: selectedSticker)
+        .animation(.easeInOut(duration: 0.25), value: isVisible)
+        .onAppear {
+            guard let selectedSticker else { return }
+            displayedSticker = selectedSticker
+            isVisible = true
+        }
+        .onChange(of: selectedSticker) { _, newValue in
+            guard let newValue else { return }
+            displayedSticker = newValue
+            isVisible = true
+        }
     }
 
     private func headerRow(sticker: Sticker) -> some View {
@@ -33,9 +46,24 @@ struct StickerDetailModal: View {
                     Circle()
                         .fill(sticker.bgColor)
                         .frame(width: 48, height: 48)
-                    Image(systemName: sticker.icon)
-                        .font(.system(size: 20))
+
+                    if let iconURL = sticker.icon {
+                        AsyncImage(url: iconURL) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } placeholder: {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(sticker.fgColor)
+                        }
+                        .frame(width: 26, height: 26)
                         .foregroundColor(sticker.fgColor)
+                    } else {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(sticker.fgColor)
+                    }
                 }
                 .saturation(sticker.isUnlocked ? 1 : 0)
 
@@ -43,7 +71,8 @@ struct StickerDetailModal: View {
                     Text(sticker.name)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
-                    Text(sticker.isUnlocked ? "✓ Разблокировано" : "Заблокировано")
+
+                    Text(sticker.isUnlocked ? "Разблокировано" : "Заблокировано")
                         .font(.system(size: 11, weight: .bold))
                         .tracking(0.05)
                         .textCase(.uppercase)
@@ -52,6 +81,7 @@ struct StickerDetailModal: View {
                         )
                 }
             }
+
             Spacer()
             closeButton
         }
@@ -93,6 +123,11 @@ struct StickerDetailModal: View {
     }
 
     private func dismiss() {
-        withAnimation(.easeInOut(duration: 0.25)) { selectedSticker = nil }
+        guard displayedSticker != nil else { return }
+        isVisible = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            selectedSticker = nil
+            displayedSticker = nil
+        }
     }
 }
