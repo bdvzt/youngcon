@@ -155,8 +155,11 @@ struct EventCard: View {
                     KFImage(zone.icon)
                         .resizable()
                         .scaledToFit()
+                        .colorInvert()
+                        .colorMultiply(AppColor.accentYellow)
                         .frame(width: 16, height: 16)
                         .padding(4)
+
                     Text(zone.title)
                         .font(.footnote)
                         .fontWeight(.bold)
