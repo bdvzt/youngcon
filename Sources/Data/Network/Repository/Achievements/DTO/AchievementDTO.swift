@@ -1,6 +1,3 @@
-import Foundation
-import SwiftUI
-
 struct AchievementDTO: Decodable {
     let id: String
     let name: String

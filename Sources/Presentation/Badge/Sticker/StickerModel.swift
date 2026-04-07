@@ -3,7 +3,7 @@ import SwiftUI
 struct Sticker: Identifiable, Equatable {
     let id: String
     let name: String
-    let icon: String
+    let icon: URL?
     let isUnlocked: Bool
     let bgColor: Color
     let fgColor: Color
@@ -15,7 +15,14 @@ extension Sticker {
         id = achievement.id
         name = achievement.name
         description = achievement.description
-        icon = achievement.icon.isEmpty ? "star.fill" : achievement.icon
+
+        // Правильное создание URL из строки
+        if let iconString = achievement.icon, !iconString.isEmpty {
+            icon = URL(string: iconString)
+        } else {
+            icon = nil // или можно создать URL из системного имени, но это не сработает
+        }
+
         self.isUnlocked = isUnlocked
 
         if isUnlocked {
