@@ -191,20 +191,6 @@ struct EventCard: View {
                     .strokeBorder(AppColor.gray500.opacity(0.22), lineWidth: 1)
             }
     }
-
-    // TODO: - добавить в бэк эти цвета, чтобы у зоны приходил hex цвета
-//    private func zoneAccentColor(_ name: String) -> Color {
-//        switch name.lowercased() {
-//        case "pink", "red":
-//            AppColor.accentPink
-//        case "orange", "yellow":
-//            AppColor.accentYellow
-//        case "indigo", "blue", "purple", "green", "mint", "teal", "cyan":
-//            AppColor.accentPurple
-//        default:
-//            AppColor.accentPurple
-//        }
-//    }
 }
 
 private struct SafariStreamPlayerView: UIViewControllerRepresentable {
