@@ -46,9 +46,24 @@ struct StickerDetailModal: View {
                     Circle()
                         .fill(sticker.bgColor)
                         .frame(width: 48, height: 48)
-                    Image(systemName: sticker.icon)
-                        .font(.system(size: 20))
+
+                    if sticker.icon.hasPrefix("http://") || sticker.icon.hasPrefix("https://") {
+                        AsyncImage(url: URL(string: sticker.icon)) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } placeholder: {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(sticker.fgColor)
+                        }
+                        .frame(width: 26, height: 26)
                         .foregroundColor(sticker.fgColor)
+                    } else {
+                        Image(systemName: sticker.icon)
+                            .font(.system(size: 20))
+                            .foregroundColor(sticker.fgColor)
+                    }
                 }
                 .saturation(sticker.isUnlocked ? 1 : 0)
 
@@ -56,7 +71,8 @@ struct StickerDetailModal: View {
                     Text(sticker.name)
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
-                    Text(sticker.isUnlocked ? "✓ Разблокировано" : "Заблокировано")
+
+                    Text(sticker.isUnlocked ? " Разблокировано" : "Заблокировано")
                         .font(.system(size: 11, weight: .bold))
                         .tracking(0.05)
                         .textCase(.uppercase)
@@ -65,6 +81,7 @@ struct StickerDetailModal: View {
                         )
                 }
             }
+
             Spacer()
             closeButton
         }

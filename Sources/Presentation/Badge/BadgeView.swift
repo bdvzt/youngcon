@@ -19,13 +19,11 @@ struct BadgeView: View {
 
     var body: some View {
         ZStack {
-            appBackground.ignoresSafeArea()
-            ambientGlows
+            Color.clear
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
                     Color.clear.frame(height: 52)
-
                     if let profile = viewModel.profile {
                         BadgeCard(user: profile, isQRModalOpen: $isQRModalOpen)
                     } else {
@@ -39,7 +37,6 @@ struct BadgeView: View {
                             fallbackCard
                         }
                     }
-
                     AchievementsCard(
                         stickers: viewModel.stickers,
                         unlockedCount: viewModel.stickers.count(where: { $0.isUnlocked }),
@@ -86,12 +83,15 @@ struct BadgeView: View {
             .zIndex(20)
             .allowsHitTesting(false)
 
-            VStack(spacing: 0) {
-                glowingLogo
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                Spacer()
+            GeometryReader { geo in
+                VStack(spacing: 0) {
+                    glowingLogo
+                        .padding(.horizontal, 20)
+                        .padding(.top, geo.safeAreaInsets.top + 8)
+                    Spacer()
+                }
             }
+            .ignoresSafeArea(edges: .top)
             .zIndex(21)
             .allowsHitTesting(false)
         }
@@ -131,27 +131,6 @@ struct BadgeView: View {
                 .shadow(color: accentYellow.opacity(0.3), radius: 8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var ambientGlows: some View {
-        ZStack {
-            Circle()
-                .fill(YoungConAsset.accentPurple.swiftUIColor)
-                .frame(width: 320, height: 320)
-                .blur(radius: 100)
-                .opacity(0.24)
-                .offset(x: -130, y: -130)
-                .allowsHitTesting(false)
-
-            Circle()
-                .fill(YoungConAsset.accentYellow.swiftUIColor)
-                .frame(width: 280, height: 280)
-                .blur(radius: 90)
-                .opacity(0.16)
-                .offset(x: 120, y: 320)
-                .allowsHitTesting(false)
-        }
-        .ignoresSafeArea()
     }
 }
 

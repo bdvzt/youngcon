@@ -1,3 +1,10 @@
+import Foundation
+
+private struct UserAchievementsResponse: Decodable {
+    let userId: String
+    let achievments: [AchievementDTO]
+}
+
 final class UsersRepository: UsersRepositoryProtocol {
     private let networkService: NetworkServiceProtocol
 
@@ -7,29 +14,33 @@ final class UsersRepository: UsersRepositoryProtocol {
 
     func getMyProfile() async throws -> UserProfile {
         let endpoint = GetUserProfileEndpoint()
-        let response = try await networkService.requestDecodable(
+        let dto = try await networkService.requestDecodable(
             endpoint,
             as: UserProfileDTO.self
         )
-        guard let user = response.toEntity() else {
-            throw NetworkError.decodingFailed
+        guard let profile = dto.toEntity() else {
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: [], debugDescription: "Failed to map UserProfileDTO to UserProfile")
+            )
         }
-        return user
+        return profile
     }
 
     func getUserLikedEvents(userID: String) async throws -> [Event] {
         let endpoint = GetUserLikedEventsEndpoint(userID)
-        return try await networkService.requestDecodable(
+        let dtos = try await networkService.requestDecodable(
             endpoint,
             as: [EventDTO].self
-        ).compactMap { $0.toEntity() }
+        )
+        return dtos.compactMap { $0.toEntity() }
     }
 
     func getUserAchievements(userID: String) async throws -> [Achievement] {
         let endpoint = GetUserAchievmentsEndpoint(userID)
-        return try await networkService.requestDecodable(
+        let response = try await networkService.requestDecodable(
             endpoint,
-            as: [AchievementDTO].self
-        ).compactMap { $0.toEntity() }
+            as: UserAchievementsResponse.self
+        )
+        return response.achievments.map { $0.toEntity() }
     }
 }

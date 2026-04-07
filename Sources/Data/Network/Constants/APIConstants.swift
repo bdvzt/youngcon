@@ -69,8 +69,6 @@ enum APIConstants {
         static let assignAchievementByQR = "users/achievements/assign-by-qr"
         static let profile = "users/myself"
         static let myQR = "users/myself/qr"
-        static let myAchievements = "users/myself/achievements"
-        static let myLikedEvents = "users/myself/liked-events"
         static func achievements(_ id: String) -> String {
             "users/\(id)/achievements"
         }

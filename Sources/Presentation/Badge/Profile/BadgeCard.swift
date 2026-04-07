@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct BadgeCard: View {
-    let user: UserProfile // Принимаем данные пользователя
+    let user: UserProfile
     @Binding var isQRModalOpen: Bool
 
     private let accentYellow = YoungConAsset.accentYellow.swiftUIColor
@@ -20,7 +20,6 @@ struct BadgeCard: View {
     var body: some View {
         GradientBorderCard(cornerRadius: 28) {
             ZStack {
-                // ... ваш код фоновых кругов ...
                 Circle()
                     .fill(accentPurple)
                     .frame(width: 192, height: 192)
@@ -56,7 +55,6 @@ struct BadgeCard: View {
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.2))
 
-            // Используем данные из user
             Text("\(user.firstName)\n\(user.lastName)")
                 .font(.system(size: 30, weight: .black))
                 .tracking(-0.5)
@@ -79,7 +77,6 @@ struct BadgeCard: View {
             ZStack {
                 CornerMarks(color: accentYellow.opacity(0.5))
 
-                // Генерируем реальный QR код
                 QRCodeView(text: qrPayload)
                     .frame(width: 70, height: 70)
                     .padding(10)
@@ -93,7 +90,6 @@ struct BadgeCard: View {
 
     private var footerRow: some View {
         HStack(spacing: 12) {
-            // Можно использовать ID пользователя или хеш
             Text("#YY-\(shortNumericID)")
                 .font(.system(size: 12, weight: .bold))
                 .foregroundColor(.white.opacity(0.25))

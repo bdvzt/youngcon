@@ -16,7 +16,9 @@ struct BottomNavBar: View {
                         tab: tab,
                         isActive: activeTab == tab
                     ) {
-                        activeTab = tab
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            activeTab = tab
+                        }
                     }
                     .allowsHitTesting(!isOverlayPresented)
                 }

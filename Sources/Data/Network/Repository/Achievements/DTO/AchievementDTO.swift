@@ -15,8 +15,8 @@ extension AchievementDTO {
             id: id,
             name: name,
             description: description,
-            icon: URL(string: icon),
-            color: color.toColor()
+            icon: icon,
+            color: color
         )
     }
 }
