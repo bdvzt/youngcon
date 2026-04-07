@@ -143,17 +143,11 @@ struct EventCard: View {
         HStack(alignment: .center, spacing: 12) {
             if let zone {
                 HStack(spacing: 6) {
-                    AsyncImage(url: zone.icon) { image in
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    } placeholder: {
-                        Image(systemName: "mappin.circle.fill")
-                            .font(.footnote.weight(.bold))
-                    }
-                    .frame(width: 16, height: 16)
-                    .foregroundStyle(zone.color)
-
+                    KFImage(zone.icon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                        .padding(4)
                     Text(zone.title)
                         .font(.footnote)
                         .fontWeight(.bold)
