@@ -47,9 +47,23 @@ final class ScheduleViewModel {
                     streamURL: event.streamURL
                 )
             }
+
+            if #available(iOS 16.1, *) {
+                await CurrentEventLiveActivityController.sync(with: entries)
+            }
         } catch {
             entries = []
             loadError = error.localizedDescription
+            if #available(iOS 16.1, *) {
+                await CurrentEventLiveActivityController.sync(with: [])
+            }
+        }
+    }
+
+    /// Call when returning to foreground so the Live Activity tracks the session that is “now”.
+    func syncCurrentEventLiveActivity() async {
+        if #available(iOS 16.1, *) {
+            await CurrentEventLiveActivityController.sync(with: entries)
         }
     }
 

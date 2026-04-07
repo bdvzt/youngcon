@@ -173,6 +173,7 @@ struct ScheduleView: View {
 
 #Preview {
     SchedulePreviewHost()
+        .environment(\.dependencyContainer, .preview)
         .preferredColorScheme(.dark)
 }
 

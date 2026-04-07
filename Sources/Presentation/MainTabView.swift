@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @Environment(\.dependencyContainer) private var container
+    @Environment(\.scenePhase) private var scenePhase
 
     @State private var scheduleViewModel: ScheduleViewModel?
     @State private var activeTab: AppTab = .schedule
@@ -48,6 +49,10 @@ struct MainTabView: View {
                 scheduleViewModel = model
                 await model.load()
             }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active, let scheduleViewModel else { return }
+            Task { await scheduleViewModel.syncCurrentEventLiveActivity() }
         }
     }
 }
