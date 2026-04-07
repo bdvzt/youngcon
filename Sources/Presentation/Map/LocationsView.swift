@@ -1,15 +1,14 @@
+import Kingfisher
+import Observation
 import SwiftUI
 
 struct LocationsView: View {
-    @State private var floor: Int = 1
-    @State private var focusedLocId: String?
+    @Bindable var viewModel: MapViewModel
+
+    @State private var focusedZoneID: String?
     @State private var gradientOffset: CGFloat = 0
 
     private let appBackground = AppColor.appBackground
-
-    private var currentLocations: [LocationModel] {
-        mapLocationsData.filter { $0.floor == floor }
-    }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -24,22 +23,7 @@ struct LocationsView: View {
                 }
             }
 
-            VStack(spacing: 0) {
-                appBackground
-                    .ignoresSafeArea(edges: .top)
-                    .frame(height: 0)
-                appBackground
-                    .frame(height: 52)
-                LinearGradient(
-                    colors: [appBackground, appBackground.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 32)
-                Spacer()
-            }
-            .zIndex(20)
-            .allowsHitTesting(false)
+            topOverlay
 
             GeometryReader { geo in
                 VStack(spacing: 0) {
@@ -53,11 +37,33 @@ struct LocationsView: View {
             .zIndex(21)
             .allowsHitTesting(false)
         }
+        .task {
+            await viewModel.load()
+        }
         .onAppear {
             withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
                 gradientOffset = 1
             }
         }
+    }
+
+    private var topOverlay: some View {
+        VStack(spacing: 0) {
+            appBackground
+                .ignoresSafeArea(edges: .top)
+                .frame(height: 0)
+            appBackground
+                .frame(height: 52)
+            LinearGradient(
+                colors: [appBackground, appBackground.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 32)
+            Spacer()
+        }
+        .zIndex(20)
+        .allowsHitTesting(false)
     }
 
     private var logoView: some View {
@@ -126,41 +132,81 @@ struct LocationsView: View {
                     let width = geo.size.width
                     let height = geo.size.height
                     ZStack {
-                        LocationFloorSwitcher(
-                            floor: $floor,
-                            background: AppColor.appBackground,
-                            yellow: AppColor.accentYellow,
-                            purple: AppColor.accentPurple
-                        ) {
-                            focusedLocId = nil
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .tint(.white.opacity(0.6))
+                        } else if let loadError = viewModel.loadError {
+                            Text(loadError)
+                                .font(.footnote)
+                                .foregroundStyle(.white.opacity(0.55))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                        } else if let floor = viewModel.selectedFloor {
+                            LocationFloorSwitcher(
+                                floorNumber: viewModel.selectedFloorNumber,
+                                canSelectNextFloor: viewModel.canSelectNextFloor,
+                                canSelectPreviousFloor: viewModel.canSelectPreviousFloor,
+                                background: AppColor.appBackground,
+                                yellow: AppColor.accentYellow,
+                                purple: AppColor.accentPurple,
+                                onNextFloor: {
+                                    viewModel.selectNextFloor()
+                                    focusedZoneID = nil
+                                },
+                                onPreviousFloor: {
+                                    viewModel.selectPreviousFloor()
+                                    focusedZoneID = nil
+                                }
+                            )
+                            .position(x: 32, y: height / 2)
+                            .zIndex(2)
+
+                            flatMap(
+                                containerW: width,
+                                containerH: height,
+                                floor: floor,
+                                zones: viewModel.selectedZones
+                            )
+                        } else {
+                            Text("Карта пока недоступна")
+                                .font(.footnote)
+                                .foregroundStyle(.white.opacity(0.55))
+                                .multilineTextAlignment(.center)
                         }
-                        .position(x: 32, y: height / 2)
-                        flatMap(containerW: width, containerH: height)
                     }
                 }
-                .id(floor)
+                .id(viewModel.selectedFloor?.id)
             }
             .frame(height: 460)
 
+            zoneSelector
+        }
+        .padding(.horizontal, 20)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.selectedFloor?.id)
+        .animation(.easeInOut(duration: 0.2), value: focusedZoneID)
+    }
+
+    @ViewBuilder
+    private var zoneSelector: some View {
+        if !viewModel.selectedZones.isEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(currentLocations) { loc in
-                        let isSelected = focusedLocId == loc.id
+                    ForEach(viewModel.selectedZones) { zone in
+                        let isSelected = focusedZoneID == zone.id
                         Button {
                             withAnimation(.easeInOut(duration: 0.2)) {
-                                focusedLocId = isSelected ? nil : loc.id
+                                focusedZoneID = isSelected ? nil : zone.id
                             }
                         } label: {
                             HStack(spacing: 6) {
                                 ZStack {
                                     Circle()
-                                        .fill(isSelected ? loc.color : loc.color.opacity(0.15))
+                                        .fill(isSelected ? zone.color : zone.color.opacity(0.15))
                                         .frame(width: 22, height: 22)
-                                    Image(systemName: loc.iconName)
-                                        .font(.system(size: 10, weight: .semibold))
-                                        .foregroundColor(isSelected ? .black : loc.color)
+                                    ZoneIconImage(url: zone.icon, placeholderFontSize: 10)
+                                        .frame(width: 10, height: 10)
                                 }
-                                Text(loc.title)
+                                Text(zone.title)
                                     .font(.system(size: 11, weight: .bold))
                                     .tracking(0.3)
                                     .foregroundColor(
@@ -173,21 +219,21 @@ struct LocationsView: View {
                                 Capsule()
                                     .fill(
                                         isSelected
-                                            ? loc.color
+                                            ? zone.color
                                             : Color.white.opacity(0.04)
                                     )
                                     .overlay(
                                         Capsule()
                                             .stroke(
                                                 isSelected
-                                                    ? loc.color.opacity(0.6)
+                                                    ? zone.color.opacity(0.6)
                                                     : Color.white.opacity(0.08),
                                                 lineWidth: 1
                                             )
                                     )
                             )
                             .shadow(
-                                color: isSelected ? loc.color.opacity(0.35) : .clear,
+                                color: isSelected ? zone.color.opacity(0.35) : .clear,
                                 radius: 8, x: 0, y: 2
                             )
                         }
@@ -199,50 +245,50 @@ struct LocationsView: View {
                 .padding(.vertical, 14)
             }
         }
-        .padding(.horizontal, 20)
-        .animation(.easeInOut(duration: 0.25), value: floor)
-        .animation(.easeInOut(duration: 0.2), value: focusedLocId)
     }
 
     @ViewBuilder
-    private func flatMap(containerW: CGFloat, containerH: CGFloat) -> some View {
-        let mapW: CGFloat = containerW * 0.73
-        let mapH: CGFloat = containerH * 0.82
+    private func flatMap(containerW: CGFloat, containerH: CGFloat, floor: Floor, zones: [Zone]) -> some View {
+        let mapH: CGFloat = containerH * 0.90
+        let mapW: CGFloat = mapH * Self.mapAspectRatio
         let mapX: CGFloat = containerW / 2 + 28
         let mapY: CGFloat = containerH / 2
-        let offsetX: CGFloat = mapX - mapW / 2
-        let offsetY: CGFloat = mapY - mapH / 2
 
         ZStack {
-            ForEach(currentLocations) { loc in
-                let pinX = offsetX + mapW * loc.leftPercent
-                let pinY = offsetY + mapH * loc.topPercent
-                LocationPinView(
-                    loc: loc,
-                    isFocused: focusedLocId == loc.id,
-                    focusedLocId: focusedLocId,
-                    background: AppColor.appBackground,
-                    yellow: AppColor.accentYellow
-                ) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        focusedLocId = (focusedLocId == loc.id) ? nil : loc.id
+            mapImage(floor)
+
+            ForEach(zones) { zone in
+                if let coordinate = coordinate(for: zone) {
+                    let pinX = mapW * coordinate.x
+                    let pinY = mapH * coordinate.y
+                    LocationPinView(
+                        zone: zone,
+                        isFocused: focusedZoneID == zone.id,
+                        focusedZoneID: focusedZoneID,
+                        background: AppColor.appBackground,
+                        yellow: AppColor.accentYellow
+                    ) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            focusedZoneID = (focusedZoneID == zone.id) ? nil : zone.id
+                        }
                     }
+                    .position(x: pinX, y: pinY)
                 }
-                .position(x: pinX, y: pinY)
             }
 
-            if let focusedId = focusedLocId,
-               let loc = currentLocations.first(where: { $0.id == focusedId })
+            if let focusedZoneID,
+               let zone = zones.first(where: { $0.id == focusedZoneID }),
+               let coordinate = coordinate(for: zone)
             {
-                let pinX = offsetX + mapW * loc.leftPercent
-                let pinY = offsetY + mapH * loc.topPercent
+                let pinX = mapW * coordinate.x
+                let pinY = mapH * coordinate.y
                 LocationPopupCard(
-                    loc: loc,
+                    zone: zone,
                     background: AppColor.appBackground,
                     yellow: AppColor.accentYellow
                 ) {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        focusedLocId = nil
+                        self.focusedZoneID = nil
                     }
                 }
                 .position(x: pinX, y: pinY - 90)
@@ -250,11 +296,89 @@ struct LocationsView: View {
                 .zIndex(100)
             }
         }
+        .frame(width: mapW, height: mapH)
         .position(x: mapX, y: mapY)
     }
+
+    private func mapImage(_ floor: Floor) -> some View {
+        KFImage(floor.mapImageURL)
+            .placeholder {
+                mapImageFallback
+                    .overlay {
+                        ProgressView()
+                            .tint(.white.opacity(0.6))
+                    }
+            }
+            .resizable()
+            .scaledToFill()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.35), radius: 18, y: 12)
+    }
+
+    private var mapImageFallback: some View {
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        AppColor.accentPurple.opacity(0.26),
+                        AppColor.cardBackground.opacity(0.9),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+    }
+
+    private func normalizedCoordinate(_ value: Double) -> CGFloat {
+        min(max(CGFloat(value), 0), 1)
+    }
+
+    private func coordinate(for zone: Zone) -> CGPoint? {
+        guard let cordX = zone.cordX, let cordY = zone.cordY else {
+            return nil
+        }
+
+        return CGPoint(
+            x: normalizedCoordinate(cordX),
+            y: normalizedCoordinate(cordY)
+        )
+    }
+
+    private static let mapAspectRatio: CGFloat = 501 / 981
 }
 
 #Preview {
-    LocationsView()
+    LocationsPreviewHost()
         .preferredColorScheme(.dark)
+}
+
+private struct LocationsPreviewHost: View {
+    @State private var viewModel: MapViewModel?
+    @Environment(\.dependencyContainer) private var container
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                LocationsView(viewModel: viewModel)
+            } else {
+                ProgressView()
+            }
+        }
+        .task {
+            if viewModel == nil {
+                let model = MapViewModel(
+                    floorsRepository: container.floorsRepository,
+                    zoneRepository: container.zoneRepository
+                )
+                viewModel = model
+                await model.load()
+            }
+        }
+    }
 }

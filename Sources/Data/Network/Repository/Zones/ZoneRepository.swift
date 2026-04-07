@@ -17,15 +17,11 @@ final class ZoneRepository: ZoneRepositoryProtocol {
         return zone
     }
 
-    func getZone(floorID: String) async throws -> Zone {
+    func getZones(floorID: String) async throws -> [Zone] {
         let endpoint = GetZonesByFloorIDEndpoint(floorID)
-        let response = try await networkService.requestDecodable(
+        return try await networkService.requestDecodable(
             endpoint,
-            as: ZoneDTO.self
-        )
-        guard let zone = response.toEntity() else {
-            throw NetworkError.decodingFailed
-        }
-        return zone
+            as: [ZoneDTO].self
+        ).compactMap { $0.toEntity() }
     }
 }

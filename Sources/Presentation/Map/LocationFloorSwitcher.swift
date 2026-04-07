@@ -1,11 +1,14 @@
 import SwiftUI
 
 struct LocationFloorSwitcher: View {
-    @Binding var floor: Int
+    let floorNumber: Int
+    let canSelectNextFloor: Bool
+    let canSelectPreviousFloor: Bool
     let background: Color
     let yellow: Color
     let purple: Color
-    let onFloorChange: () -> Void
+    let onNextFloor: () -> Void
+    let onPreviousFloor: () -> Void
 
     var body: some View {
         VStack(spacing: 4) {
@@ -61,7 +64,7 @@ struct LocationFloorSwitcher: View {
 
     private var floorLabel: some View {
         VStack(spacing: 2) {
-            Text("\(floor)")
+            Text("\(floorNumber)")
                 .font(.system(size: 22, weight: .black))
                 .foregroundStyle(
                     LinearGradient(
@@ -80,13 +83,17 @@ struct LocationFloorSwitcher: View {
     private enum FloorDirection { case upfloor, downfloor }
 
     private func floorButton(direction: FloorDirection) -> some View {
-        let isDisabled = direction == .upfloor ? floor == 2 : floor == 1
+        let isDisabled = direction == .upfloor ? !canSelectNextFloor : !canSelectPreviousFloor
         let icon = direction == .upfloor ? "chevron.up" : "chevron.down"
 
         return Button {
             withAnimation(.easeInOut(duration: 0.25)) {
-                floor = direction == .upfloor ? 2 : 1
-                onFloorChange()
+                switch direction {
+                case .upfloor:
+                    onNextFloor()
+                case .downfloor:
+                    onPreviousFloor()
+                }
             }
         } label: {
             Image(systemName: icon)

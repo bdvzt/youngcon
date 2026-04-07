@@ -3,6 +3,7 @@ import SwiftUI
 struct MainTabView: View {
     @Environment(\.dependencyContainer) private var container
 
+    @State private var mapViewModel: MapViewModel?
     @State private var scheduleViewModel: ScheduleViewModel?
     @State private var activeTab: AppTab = .schedule
     @State private var previousTab: AppTab = .schedule
@@ -30,6 +31,7 @@ struct MainTabView: View {
                 previousTab: $previousTab,
                 isOverlayPresented: $isOverlayPresented,
                 container: container,
+                mapViewModel: mapViewModel,
                 scheduleViewModel: scheduleViewModel
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -72,6 +74,15 @@ struct MainTabView: View {
                     speakersRepository: container.speakersRepository
                 )
                 scheduleViewModel = model
+                await model.load()
+            }
+
+            if mapViewModel == nil {
+                let model = MapViewModel(
+                    floorsRepository: container.floorsRepository,
+                    zoneRepository: container.zoneRepository
+                )
+                mapViewModel = model
                 await model.load()
             }
         }
