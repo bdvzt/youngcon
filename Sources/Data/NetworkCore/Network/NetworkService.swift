@@ -39,21 +39,49 @@ final class NetworkService: NetworkServiceProtocol {
             requirement: endpoint.authorization
         )
 
-        let (data, response) = try await session.data(for: request)
+        NetworkLogger.logRequest(request)
 
-        guard let http = response as? HTTPURLResponse else {
-            throw NetworkError.noResponse
+        let startDate = Date()
+
+        do {
+            let (data, response) = try await session.data(for: request)
+            let duration = Date().timeIntervalSince(startDate)
+
+            NetworkLogger.logResponse(
+                request: request,
+                data: data,
+                response: response,
+                error: nil,
+                duration: duration
+            )
+
+            guard let http = response as? HTTPURLResponse else {
+                throw NetworkError.noResponse
+            }
+
+            if HTTPStatusCode.isSuccess(http.statusCode) {
+                return data
+            }
+
+            if http.statusCode == HTTPStatusCode.unauthorized.rawValue {
+                throw NetworkError.unauthorized
+            }
+
+            let message = String(data: data, encoding: .utf8)
+            throw NetworkError.serverError(code: http.statusCode, message: message)
+
+        } catch {
+            let duration = Date().timeIntervalSince(startDate)
+
+            NetworkLogger.logResponse(
+                request: request,
+                data: nil,
+                response: nil,
+                error: error,
+                duration: duration
+            )
+
+            throw error
         }
-
-        if HTTPStatusCode.isSuccess(http.statusCode) {
-            return data
-        }
-
-        if http.statusCode == HTTPStatusCode.unauthorized.rawValue {
-            throw NetworkError.unauthorized
-        }
-
-        let message = String(data: data, encoding: .utf8)
-        throw NetworkError.serverError(code: http.statusCode, message: message)
     }
 }

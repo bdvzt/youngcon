@@ -2,7 +2,7 @@ import Foundation
 
 struct ZoneDTO: Decodable {
     let id: String
-    let floorID: String
+    let floorId: String
     let title: String
     let description: String
     let cordX: Double?
@@ -48,7 +48,7 @@ extension ZoneDTO {
     func toEntity() -> Zone? {
         Zone(
             id: id,
-            floorID: floorID,
+            floorID: floorId,
             title: title,
             description: description,
             cordX: cordX,

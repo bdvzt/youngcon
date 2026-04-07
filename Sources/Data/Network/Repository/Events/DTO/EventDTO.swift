@@ -7,8 +7,8 @@ struct EventDTO: Decodable {
     let startDateTime: String
     let endDateTime: String
     let category: String
-    let zoneID: String
-    let festivalID: String
+    let zoneId: String
+    let festivalId: String
     let streamURL: String?
     private enum CodingKeys: String, CodingKey {
         case id
@@ -64,8 +64,8 @@ extension EventDTO {
             startDate: startDate,
             endDate: endDate,
             category: category,
-            zoneID: zoneID,
-            festivalID: festivalID,
+            zoneID: zoneId,
+            festivalID: festivalId,
             streamURL: streamURL.flatMap { URL(string: $0) }
         )
     }
