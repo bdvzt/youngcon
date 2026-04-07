@@ -9,21 +9,11 @@ struct LocationPinView: View {
     let onTap: () -> Void
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            if isFocused {
-                LocationPopupCard(loc: loc, background: background, yellow: yellow) {
-                    onTap()
-                }
-                .offset(y: -56)
-                .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .bottom)))
-            }
-
-            VStack(spacing: 4) {
-                pinIcon
-                if !isFocused { pinLabel }
-            }
-            .opacity(focusedLocId != nil && !isFocused ? 0.5 : 1)
+        VStack(spacing: 4) {
+            pinIcon
+            if !isFocused { pinLabel }
         }
+        .opacity(focusedLocId != nil && !isFocused ? 0.5 : 1)
         .onTapGesture { onTap() }
     }
 
@@ -42,7 +32,6 @@ struct LocationPinView: View {
                 )
                 .shadow(color: .black.opacity(0.4), radius: 6, x: 0, y: 3)
                 .shadow(color: isFocused ? yellow.opacity(0.4) : .clear, radius: 14)
-
             Image(systemName: loc.iconName)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.black)

@@ -9,9 +9,24 @@ struct StickerCell: View {
                 Circle()
                     .fill(sticker.bgColor)
                     .frame(width: 44, height: 44)
-                Image(systemName: sticker.icon)
-                    .font(.system(size: 18))
+
+                if let iconURL = sticker.icon {
+                    AsyncImage(url: iconURL) { image in
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } placeholder: {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 18))
+                            .foregroundColor(sticker.fgColor)
+                    }
+                    .frame(width: 24, height: 24)
                     .foregroundColor(sticker.fgColor)
+                } else {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(sticker.fgColor)
+                }
             }
             .opacity(sticker.isUnlocked ? 1 : 0.3)
             .saturation(sticker.isUnlocked ? 1 : 0)
