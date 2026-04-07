@@ -1,4 +1,5 @@
 import Foundation
+import Kingfisher
 import SwiftUI
 
 struct EventCard: View {
