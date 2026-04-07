@@ -1,5 +1,6 @@
 import Foundation
 import Kingfisher
+import SafariServices
 import SwiftUI
 
 struct EventCard: View {
@@ -7,6 +8,7 @@ struct EventCard: View {
     let zone: Zone?
     let speakers: [Speaker]
     var streamURL: URL?
+    @State private var isShowingStreamPlayer = false
 
     private var isLive: Bool {
         let start = event.startDate
@@ -80,6 +82,12 @@ struct EventCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background { cardBackground }
         .shadow(color: .black.opacity(0.35), radius: 12, y: 6)
+        .sheet(isPresented: $isShowingStreamPlayer) {
+            if let streamURL {
+                SafariStreamPlayerView(url: streamURL)
+                    .ignoresSafeArea()
+            }
+        }
     }
 
     private var cardStack: some View {
@@ -158,7 +166,12 @@ struct EventCard: View {
             }
             Spacer(minLength: 8)
             if showsStreamControl {
-                EventCardStreamButton()
+                Button {
+                    isShowingStreamPlayer = true
+                } label: {
+                    EventCardStreamButton()
+                }
+                .buttonStyle(.plain)
             } else {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 15, weight: .semibold))
@@ -192,4 +205,14 @@ struct EventCard: View {
 //            AppColor.accentPurple
 //        }
 //    }
+}
+
+private struct SafariStreamPlayerView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context _: Context) -> SFSafariViewController {
+        SFSafariViewController(url: url)
+    }
+
+    func updateUIViewController(_: SFSafariViewController, context _: Context) {}
 }
