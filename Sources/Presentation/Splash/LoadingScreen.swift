@@ -24,7 +24,7 @@ struct LoadingScreen: View {
                                         AppColor.glowCyan.opacity(0.4),
                                         AppColor.accentYellow.opacity(0.6),
                                         AppColor.glowCyan.opacity(0.4),
-                                        AppColor.accentYellow.opacity(0.6),
+                                        AppColor.accentYellow.opacity(0.6)
                                     ]),
                                     center: .center
                                 )

@@ -15,7 +15,7 @@ struct TabItemView: View {
                                 RadialGradient(
                                     gradient: Gradient(colors: [
                                         AppColor.accentYellow.opacity(0.55),
-                                        AppColor.accentYellow.opacity(0),
+                                        AppColor.accentYellow.opacity(0)
                                     ]),
                                     center: .center,
                                     startRadius: 0,

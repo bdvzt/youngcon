@@ -21,7 +21,7 @@ final class KeychainStore: KeyValueStoreProtocol {
 
         let attributes: [String: Any] = [
             kSecValueData as String: data,
-            kSecAttrAccessible as String: accessibility,
+            kSecAttrAccessible as String: accessibility
         ]
 
         let exists = SecItemCopyMatching(query as CFDictionary, nil) == errSecSuccess
@@ -69,7 +69,7 @@ private extension KeychainStore {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key
         ]
 
         if let group = accessGroup {

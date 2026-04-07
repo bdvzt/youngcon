@@ -60,5 +60,5 @@ let scheduleData: [Event] = [
         zoneID: "zone-004",
         festivalID: "youngcon-2026",
         streamURL: nil
-    ),
+    )
 ]

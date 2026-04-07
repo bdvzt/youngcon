@@ -36,7 +36,7 @@ enum EventCardMocks {
             job: "Staff Engineer, Mobile Platform",
             bio: "Архитектура и производительность больших iOS-клиентов.",
             avatarImageURL: URL(string: "https://example.com/photos/maria-sokolova.jpg")
-        ),
+        )
     ]
 
     static var liveEvent: Event {

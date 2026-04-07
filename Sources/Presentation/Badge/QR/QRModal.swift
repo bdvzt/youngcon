@@ -105,7 +105,7 @@ struct QRModal: View {
                                 accentYellow.opacity(0.2),
                                 Color.clear,
                                 Color.clear,
-                                accentPurple.opacity(0.2),
+                                accentPurple.opacity(0.2)
                             ],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
