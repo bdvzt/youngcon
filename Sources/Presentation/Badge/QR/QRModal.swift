@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct QRModal: View {
-    let qrString: String // Принимаем строку
+    let qrString: String
     let userID: String
     @Binding var isOpen: Bool
 
@@ -62,7 +62,6 @@ struct QRModal: View {
     }
 
     private var qrCode: some View {
-        // Используем QRCodeView без декоративной рамки по запросу
         QRCodeView(text: qrString)
             .frame(width: 200, height: 200)
             .padding(12)
