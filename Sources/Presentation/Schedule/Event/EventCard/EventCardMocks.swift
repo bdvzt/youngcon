@@ -1,8 +1,6 @@
 import Foundation
 import SwiftUI
 
-// MARK: - Mocks (данные для карточки события)
-
 enum EventCardMocks {
     enum IDs {
         static let event = "11111111-1111-1111-1111-111111111111"
@@ -20,7 +18,7 @@ enum EventCardMocks {
         description: "Основная сцена фестиваля",
         cordX: 100,
         cordY: 200,
-        icon: URL(string: "https://example.com/icons/main-stage.png")!,
+        icon: URL(string: "https://example.com/icon.png")!,
         color: .indigo
     )
 

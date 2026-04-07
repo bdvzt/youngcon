@@ -1,7 +1,15 @@
 import SwiftUI
 
 struct QRModal: View {
+    let qrString: String
+    let userID: String
     @Binding var isOpen: Bool
+
+    private var shortNumericID: String {
+        let digits = userID.filter(\.isNumber)
+        let source = digits.isEmpty ? userID : digits
+        return String(source.prefix(4))
+    }
 
     var body: some View {
         ZStack {
@@ -11,15 +19,18 @@ struct QRModal: View {
 
             VStack(spacing: 0) {
                 headerRow
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 32)
+
                 qrCode
-                    .padding(.bottom, 24)
+                    .padding(.bottom, 32)
+
                 Text("Покажите этот код на входе или на стендах партнёров")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundColor(.white.opacity(0.3))
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
-                badgeNumber
+
+                badgeNumber("YY-\(shortNumericID)")
             }
             .padding(32)
             .frame(maxWidth: 300)
@@ -51,21 +62,16 @@ struct QRModal: View {
     }
 
     private var qrCode: some View {
-        ZStack {
-            CornerMarks(color: AppColor.accentYellow)
-            Image(systemName: "qrcode")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 200, height: 200)
-                .padding(12)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-        }
-        .frame(width: 224, height: 224)
+        QRCodeView(text: qrString)
+            .frame(width: 200, height: 200)
+            .padding(12)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .frame(width: 224, height: 224)
     }
 
-    private var badgeNumber: some View {
-        Text("#YY-1024")
+    private func badgeNumber(_ text: String) -> some View {
+        Text(text)
             .font(.system(size: 14, weight: .bold))
             .tracking(0.1)
             .textCase(.uppercase)
@@ -76,7 +82,10 @@ struct QRModal: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
-                            colors: [AppColor.accentYellow.opacity(0.08), AppColor.accentPurple.opacity(0.08)],
+                            colors: [
+                                AppColor.accentYellow.opacity(0.08),
+                                AppColor.accentPurple.opacity(0.08),
+                            ],
                             startPoint: .leading,
                             endPoint: .trailing
                         )

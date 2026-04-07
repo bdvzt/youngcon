@@ -26,8 +26,7 @@ struct ScheduleView: View {
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            AppColor.appBackground.ignoresSafeArea()
-            ambientGlows
+            Color.clear
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
@@ -64,7 +63,7 @@ struct ScheduleView: View {
             .allowsHitTesting(false)
         }
         .onAppear {
-            withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
+            withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
                 gradientOffset = 1
             }
         }
@@ -89,27 +88,6 @@ struct ScheduleView: View {
                 .shadow(color: AppColor.accentYellow.opacity(0.3), radius: 8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var ambientGlows: some View {
-        ZStack {
-            Circle()
-                .fill(AppColor.accentPurple)
-                .frame(width: 320, height: 320)
-                .blur(radius: 100)
-                .opacity(0.3)
-                .offset(x: -130, y: -130)
-                .allowsHitTesting(false)
-
-            Circle()
-                .fill(AppColor.accentYellow)
-                .frame(width: 288, height: 288)
-                .blur(radius: 90)
-                .opacity(0.2)
-                .offset(x: 130, y: 300)
-                .allowsHitTesting(false)
-        }
-        .ignoresSafeArea()
     }
 
     private var headerSection: some View {
