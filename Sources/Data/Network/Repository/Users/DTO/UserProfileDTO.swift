@@ -6,8 +6,8 @@ struct UserProfileDTO: Decodable {
     let lastName: String
     let email: String
     let qrCode: String
-    let major: Major
-    let role: UserRole
+    let major: MajorDTO
+    let role: UserRoleDTO
 }
 
 extension UserProfileDTO {
@@ -18,8 +18,8 @@ extension UserProfileDTO {
             lastName: lastName,
             email: email,
             qrCode: qrCode,
-            major: major,
-            role: role
+            major: major.toEntity(),
+            role: role.toEntity()
         )
     }
 }
