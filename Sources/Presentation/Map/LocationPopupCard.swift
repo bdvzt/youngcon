@@ -12,6 +12,7 @@ struct LocationPopupCard: View {
             arrowTip
         }
         .frame(width: 200)
+        .compositingGroup()
         .onTapGesture {}
     }
 
@@ -74,16 +75,26 @@ struct LocationPopupCard: View {
     }
 
     private var arrowTip: some View {
-        Rectangle()
+        ArrowTipShape()
             .fill(background.opacity(0.95))
-            .frame(width: 12, height: 12)
-            .rotationEffect(.degrees(45))
+            .frame(width: 16, height: 8)
             .overlay(
-                Rectangle()
+                ArrowTipShape()
                     .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    .rotationEffect(.degrees(45))
+                    .frame(width: 16, height: 8)
             )
             .frame(maxWidth: .infinity)
-            .offset(y: -6)
+            .offset(y: -1)
+    }
+}
+
+private struct ArrowTipShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX - rect.width / 2, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.midX + rect.width / 2, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.closeSubpath()
+        return path
     }
 }

@@ -1,146 +1,146 @@
 import SwiftUI
 
 struct BadgeView: View {
-    @Binding var isOverlayPresented: Bool
-    @State private var isQRModalOpen = false
-    @State private var selectedSticker: Sticker?
-    @StateObject private var viewModel: BadgeViewModel
+    @ObservedObject var viewModel: BadgeViewModel
+    @Binding var isQRModalOpen: Bool
+    @Binding var selectedSticker: Sticker?
+    var onLogout: (() -> Void)?
 
-    init(container: DependencyContainer, isOverlayPresented: Binding<Bool>) {
-        _isOverlayPresented = isOverlayPresented
-        _viewModel = StateObject(wrappedValue: BadgeViewModel(
-            usersRepository: container.usersRepository,
-            achievementsRepository: container.achievementsRepository
-        ))
-    }
+    @State private var gradientOffset: CGFloat = 0
+
+    private let appBackground = AppColor.appBackground
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             Color.clear
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
-                    Color.clear.frame(height: 52)
+                VStack(alignment: .leading, spacing: 0) {
+                    Color.clear.frame(height: 60)
+
                     if let profile = viewModel.profile {
                         BadgeCard(user: profile, isQRModalOpen: $isQRModalOpen)
-                    } else {
-                        let fallbackCard = BadgeCard(
-                            user: UserProfile.placeholder,
-                            isQRModalOpen: $isQRModalOpen
+                            .padding(.horizontal, 20)
+                            .padding(.top, 16)
+
+                        AchievementsCard(
+                            stickers: viewModel.stickers,
+                            unlockedCount: viewModel.stickers.filter(\.isUnlocked).count,
+                            selectedSticker: $selectedSticker,
+                            newlyUnlockedSticker: $viewModel.newlyUnlockedSticker
                         )
-                        if viewModel.isLoading {
-                            fallbackCard.redacted(reason: .placeholder)
-                        } else {
-                            fallbackCard
-                        }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
+                    } else if viewModel.isLoading {
+                        ProgressView()
+                            .tint(.white.opacity(0.6))
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 100)
                     }
-                    AchievementsCard(
-                        stickers: viewModel.stickers,
-                        unlockedCount: viewModel.stickers.count(where: { $0.isUnlocked }),
-                        selectedSticker: $selectedSticker
-                    )
-                }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 110)
-            }
-            .refreshable {
-                await viewModel.loadData()
-            }
 
-            if selectedSticker != nil {
-                StickerDetailModal(selectedSticker: $selectedSticker)
-                    .zIndex(10)
-            }
-
-            if isQRModalOpen {
-                if let profile = viewModel.profile {
-                    let qrString = profile.qrCode.isEmpty ? profile.id : profile.qrCode
-                    QRModal(qrString: qrString, userID: profile.id, isOpen: $isQRModalOpen)
-                        .zIndex(10)
+                    Color.clear.frame(height: 120)
                 }
             }
+
+            topOverlay
 
             VStack(spacing: 0) {
-                (isOverlayPresented ? Color.clear : AppColor.appBackground)
-                    .ignoresSafeArea(edges: .top)
-                    .frame(height: 0)
-                (isOverlayPresented ? Color.clear : AppColor.appBackground)
-                    .frame(height: 52)
-                if !isOverlayPresented {
-                    LinearGradient(
-                        colors: [
-                            AppColor.appBackground,
-                            AppColor.appBackground.opacity(0),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 32)
+                HStack(alignment: .center) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(RadialGradient(
+                                colors: [AppColor.accentYellow, .clear],
+                                center: .center, startRadius: 5, endRadius: 40
+                            ))
+                            .frame(width: 80, height: 60)
+                            .blur(radius: 20)
+                            .opacity(0.35)
+                            .allowsHitTesting(false)
+
+                        YoungConAsset.logo.swiftUIImage
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 36)
+                            .shadow(color: AppColor.accentYellow.opacity(0.3), radius: 8)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .allowsHitTesting(false)
+
+                    Spacer()
+
+                    if let onLogout {
+                        Button {
+                            onLogout()
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                    .font(.system(size: 10, weight: .bold))
+                                Text("Выйти")
+                                    .font(.system(size: 12, weight: .bold))
+                            }
+                            .foregroundColor(.white.opacity(0.6))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule()
+                                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                                    .background(Capsule().fill(Color.white.opacity(0.05)))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+
                 Spacer()
             }
-            .animation(.easeInOut(duration: 0.2), value: isOverlayPresented)
-            .zIndex(20)
-            .allowsHitTesting(false)
-
-            GeometryReader { geo in
-                VStack(spacing: 0) {
-                    glowingLogo
-                        .padding(.horizontal, 20)
-                        .padding(.top, geo.safeAreaInsets.top + 8)
-                    Spacer()
-                }
-            }
-            .ignoresSafeArea(edges: .top)
             .zIndex(21)
-            .allowsHitTesting(false)
-        }
-        .task {
-            await viewModel.loadData()
-        }
-        .onDisappear { isOverlayPresented = false }
-        .onChange(of: isQRModalOpen) { _, _ in syncOverlay() }
-        .onChange(of: selectedSticker) { _, _ in syncOverlay() }
-    }
+            if let burstSticker = viewModel.newlyUnlockedSticker {
+                ZStack {
+                    Color.black.opacity(0.7)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            withAnimation {
+                                viewModel.newlyUnlockedSticker = nil
+                            }
+                        }
 
-    private func syncOverlay() {
-        isOverlayPresented = isQRModalOpen || (selectedSticker != nil)
-    }
-
-    private var glowingLogo: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(
-                    RadialGradient(
-                        gradient: Gradient(colors: [AppColor.accentYellow, Color.clear]),
-                        center: .center,
-                        startRadius: 5,
-                        endRadius: 40
+                    UnlockBurstEffect(
+                        sticker: burstSticker,
+                        isShowing: Binding(
+                            get: { viewModel.newlyUnlockedSticker != nil },
+                            set: { if !$0 { viewModel.newlyUnlockedSticker = nil } }
+                        )
                     )
-                )
-                .frame(width: 80, height: 60)
-                .blur(radius: 20)
-                .opacity(0.3)
-                .padding(-30)
-                .allowsHitTesting(false)
-            Image("logo")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 36)
-                .shadow(color: AppColor.accentYellow.opacity(0.3), radius: 8)
+                }
+                .zIndex(100)
+                .transition(.opacity)
+            }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .onAppear {
+            withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
+                gradientOffset = 1
+            }
+        }
     }
-}
 
-extension UserProfile {
-    static let placeholder = UserProfile(
-        id: "00000000-0000-0000-0000-000000000000",
-        firstName: "Loading",
-        lastName: "User",
-        email: "loading@example.com",
-        qrCode: "loading",
-        major: .frontend,
-        role: .client
-    )
+    private var topOverlay: some View {
+        VStack(spacing: 0) {
+            appBackground
+                .ignoresSafeArea(edges: .top)
+                .frame(height: 0)
+            appBackground
+                .frame(height: 52)
+            LinearGradient(
+                colors: [appBackground, appBackground.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 32)
+            Spacer()
+        }
+        .zIndex(20)
+        .allowsHitTesting(false)
+    }
 }

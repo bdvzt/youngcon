@@ -77,7 +77,6 @@ struct ZoneIconImage: View {
 
     private var image: KFImage {
         if YandexDiskImageDataProvider.canHandle(url) {
-            // Public Yandex Disk pages return HTML/captcha to image loaders, so resolve them to files first.
             return KFImage.dataProvider(YandexDiskImageDataProvider(publicURL: url))
         }
 

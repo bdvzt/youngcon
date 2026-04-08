@@ -91,9 +91,9 @@ struct ScheduleView: View {
     }
 
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Расписание")
-                .font(.system(size: 48, weight: .black))
+                .font(.system(size: 54, weight: .black))
                 .tracking(-1)
                 .textCase(.uppercase)
                 .lineLimit(1)
