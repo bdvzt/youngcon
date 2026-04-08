@@ -13,6 +13,9 @@ final class MapViewModel {
     private(set) var isLoading = false
     private(set) var loadError: String?
 
+    private var isRefreshing = false
+    private var pollingTask: Task<Void, Never>?
+
     var selectedFloor: Floor? {
         guard let selectedFloorID else {
             return floors.first
@@ -69,20 +72,30 @@ final class MapViewModel {
         loadError = nil
         defer { isLoading = false }
 
-        do {
-            let loadedFloors = try await floorsRepository.getFloors()
-                .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
-            let loadedZonesByFloorID = try await loadZonesByFloorID(for: loadedFloors)
+        await fetchAll(isFirstLoad: true)
+    }
 
-            floors = loadedFloors
-            zonesByFloorID = loadedZonesByFloorID
-            selectedFloorID = selectedFloorID ?? loadedFloors.first?.id
-        } catch {
-            floors = []
-            zonesByFloorID = [:]
-            selectedFloorID = nil
-            loadError = error.localizedDescription
+    func refresh() async {
+        await fetchAll(isFirstLoad: false)
+    }
+
+    func startPolling() {
+        guard pollingTask == nil else { return }
+
+        pollingTask = Task { [weak self] in
+            guard let self else { return }
+
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(30))
+                guard !Task.isCancelled else { break }
+                await self.fetchAll(isFirstLoad: false)
+            }
         }
+    }
+
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
     }
 
     func selectNextFloor() {
@@ -99,7 +112,85 @@ final class MapViewModel {
         selectedFloorID = floors[selectedFloorIndex - 1].id
     }
 
-    private func loadZonesByFloorID(for floors: [Floor]) async throws -> [String: [Zone]] {
+    private func fetchAll(isFirstLoad: Bool) async {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        defer { isRefreshing = false }
+
+        if isFirstLoad {
+            loadError = nil
+        }
+
+        do {
+            let loadedFloors = try await loadFloors()
+            let loadedZonesByFloorID = try await loadZonesByFloorID(for: loadedFloors)
+
+            guard shouldApplyChanges(
+                isFirstLoad: isFirstLoad,
+                newFloors: loadedFloors,
+                newZonesByFloorID: loadedZonesByFloorID
+            ) else {
+                return
+            }
+
+            apply(
+                floors: loadedFloors,
+                zonesByFloorID: loadedZonesByFloorID
+            )
+        } catch {
+            if isFirstLoad {
+                floors = []
+                zonesByFloorID = [:]
+                selectedFloorID = nil
+                loadError = error.localizedDescription
+            } else {
+                print("[Map] Polling error: \(error.localizedDescription)")
+            }
+        }
+    }
+}
+
+// MARK: - Private helpers
+
+private extension MapViewModel {
+    func loadFloors() async throws -> [Floor] {
+        try await floorsRepository.getFloors()
+            .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+
+    func shouldApplyChanges(
+        isFirstLoad: Bool,
+        newFloors: [Floor],
+        newZonesByFloorID: [String: [Zone]]
+    ) -> Bool {
+        if isFirstLoad {
+            return true
+        }
+
+        let floorsChanged = floors != newFloors
+        let zonesChanged = zonesByFloorID != newZonesByFloorID
+
+        return floorsChanged || zonesChanged
+    }
+
+    func apply(
+        floors: [Floor],
+        zonesByFloorID: [String: [Zone]]
+    ) {
+        let previousSelectedFloorID = selectedFloorID
+
+        self.floors = floors
+        self.zonesByFloorID = zonesByFloorID
+
+        if let previousSelectedFloorID,
+           floors.contains(where: { $0.id == previousSelectedFloorID }) {
+            selectedFloorID = previousSelectedFloorID
+        } else {
+            selectedFloorID = floors.first?.id
+        }
+    }
+
+    func loadZonesByFloorID(for floors: [Floor]) async throws -> [String: [Zone]] {
         var zonesByFloorID: [String: [Zone]] = [:]
 
         try await withThrowingTaskGroup(of: (String, [Zone]).self) { group in
@@ -110,6 +201,7 @@ final class MapViewModel {
                     return (floor.id, zones)
                 }
             }
+
             for try await (floorID, zones) in group {
                 zonesByFloorID[floorID] = zones
             }
