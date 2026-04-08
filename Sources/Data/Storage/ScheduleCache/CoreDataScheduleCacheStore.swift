@@ -1,7 +1,7 @@
 import CoreData
 import Foundation
 
-actor CoreDataScheduleCacheStore: ScheduleCacheStoreProtocol {
+actor CoreDataDataCacheStore: DataCacheStoreProtocol {
     private enum Constants {
         static let modelName = "ScheduleCacheModel"
         static let entityName = "CacheRecord"
@@ -10,12 +10,22 @@ actor CoreDataScheduleCacheStore: ScheduleCacheStoreProtocol {
     private let container: NSPersistentContainer
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
+    private let recordService: CoreDataCacheRecordService
 
-    init(inMemory: Bool = false) {
+    init() {
+        self.init(storageType: .persistent)
+    }
+
+    static func inMemory() -> CoreDataDataCacheStore {
+        CoreDataDataCacheStore(storageType: .inMemory)
+    }
+
+    private init(storageType: StorageType) {
         let model = Self.makeModel()
         container = NSPersistentContainer(name: Constants.modelName, managedObjectModel: model)
+        recordService = CoreDataCacheRecordService(entityName: Constants.entityName)
 
-        if inMemory {
+        if storageType == .inMemory {
             let description = NSPersistentStoreDescription()
             description.type = NSInMemoryStoreType
             description.shouldAddStoreAsynchronously = false
@@ -33,11 +43,7 @@ actor CoreDataScheduleCacheStore: ScheduleCacheStoreProtocol {
     func save(_ value: some Encodable & Sendable, for key: String) async throws {
         let payload = try encoder.encode(value)
         try await performBackgroundTask { context in
-            let record = try Self.fetchRecord(for: key, in: context) ?? NSEntityDescription.insertNewObject(
-                forEntityName: Constants.entityName,
-                into: context
-            )
-
+            let record = try self.recordService.upsertRecord(for: key, in: context)
             record.setValue(key, forKey: "key")
             record.setValue(payload, forKey: "payload")
             record.setValue(Date(), forKey: "updatedAt")
@@ -50,7 +56,7 @@ actor CoreDataScheduleCacheStore: ScheduleCacheStoreProtocol {
 
     func load<T: Decodable & Sendable>(_: T.Type, for key: String) async throws -> T? {
         try await performBackgroundTask { context in
-            guard let record = try Self.fetchRecord(for: key, in: context),
+            guard let record = try self.recordService.fetchRecord(for: key, in: context),
                   let payload = record.value(forKey: "payload") as? Data
             else {
                 return nil
@@ -73,13 +79,6 @@ actor CoreDataScheduleCacheStore: ScheduleCacheStoreProtocol {
                 }
             }
         }
-    }
-
-    private static func fetchRecord(for key: String, in context: NSManagedObjectContext) throws -> NSManagedObject? {
-        let request = NSFetchRequest<NSManagedObject>(entityName: Constants.entityName)
-        request.predicate = NSPredicate(format: "key == %@", key)
-        request.fetchLimit = 1
-        return try context.fetch(request).first
     }
 
     private static func makeModel() -> NSManagedObjectModel {
@@ -120,4 +119,11 @@ actor CoreDataScheduleCacheStore: ScheduleCacheStoreProtocol {
         model.entities = [entity]
         return model
     }
+}
+
+typealias CoreDataScheduleCacheStore = CoreDataDataCacheStore
+
+private enum StorageType {
+    case persistent
+    case inMemory
 }
