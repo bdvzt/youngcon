@@ -1,6 +1,6 @@
 import Foundation
 
-struct EventDTO: Decodable {
+struct EventDTO: Codable {
     let id: String
     let title: String
     let description: String
