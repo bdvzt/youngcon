@@ -152,11 +152,15 @@ struct LocationsView: View {
                                 purple: AppColor.accentPurple,
                                 onNextFloor: {
                                     viewModel.selectNextFloor()
-                                    focusedZoneID = nil
+                                    withAnimation(.easeOut(duration: 0.2)) {
+                                        focusedZoneID = nil
+                                    }
                                 },
                                 onPreviousFloor: {
                                     viewModel.selectPreviousFloor()
-                                    focusedZoneID = nil
+                                    withAnimation(.easeOut(duration: 0.2)) {
+                                        focusedZoneID = nil
+                                    }
                                 }
                             )
                             .position(x: 32, y: height / 2)
@@ -179,12 +183,11 @@ struct LocationsView: View {
                 .id(viewModel.selectedFloor?.id)
             }
             .frame(height: 460)
+            .padding(.horizontal, 20)
 
             zoneSelector
         }
-        .padding(.horizontal, 20)
         .animation(.easeInOut(duration: 0.25), value: viewModel.selectedFloor?.id)
-        .animation(.easeInOut(duration: 0.2), value: focusedZoneID)
     }
 
     @ViewBuilder
@@ -195,7 +198,7 @@ struct LocationsView: View {
                     ForEach(viewModel.selectedZones) { zone in
                         let isSelected = focusedZoneID == zone.id
                         Button {
-                            withAnimation(.easeInOut(duration: 0.2)) {
+                            withAnimation(.easeOut(duration: 0.2)) {
                                 focusedZoneID = isSelected ? nil : zone.id
                             }
                         } label: {
@@ -239,12 +242,23 @@ struct LocationsView: View {
                             )
                         }
                         .buttonStyle(.plain)
-                        .animation(.easeInOut(duration: 0.2), value: isSelected)
                     }
                 }
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 24)
                 .padding(.vertical, 14)
             }
+            .mask(
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.06),
+                        .init(color: .black, location: 0.94),
+                        .init(color: .clear, location: 1),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
         }
     }
 
@@ -269,7 +283,7 @@ struct LocationsView: View {
                         background: AppColor.appBackground,
                         yellow: AppColor.accentYellow
                     ) {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(.easeOut(duration: 0.2)) {
                             focusedZoneID = (focusedZoneID == zone.id) ? nil : zone.id
                         }
                     }
@@ -288,13 +302,16 @@ struct LocationsView: View {
                     background: AppColor.appBackground,
                     yellow: AppColor.accentYellow
                 ) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
+                    withAnimation(.easeOut(duration: 0.2)) {
                         self.focusedZoneID = nil
                     }
                 }
                 .position(x: pinX, y: pinY - 90)
-                .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .bottom)))
                 .zIndex(100)
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.9).combined(with: .opacity),
+                    removal: .scale(scale: 0.9).combined(with: .opacity)
+                ))
             }
         }
         .frame(width: mapW, height: mapH)

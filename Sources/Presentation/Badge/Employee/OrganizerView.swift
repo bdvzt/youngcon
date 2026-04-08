@@ -3,15 +3,17 @@ import SwiftUI
 struct OrganizerView: View {
     let container: DependencyContainer
     @ObservedObject var appViewModel: AppViewModel
+    var onLogout: (() -> Void)?
 
     @StateObject private var viewModel: OrganizerViewModel
     @State private var selectedAchievement: Achievement? = nil
     @State private var showScanner = false
     @State private var gradientOffset: CGFloat = 0
 
-    init(container: DependencyContainer, appViewModel: AppViewModel) {
+    init(container: DependencyContainer, appViewModel: AppViewModel, onLogout: (() -> Void)? = nil) {
         self.container = container
         self.appViewModel = appViewModel
+        self.onLogout = onLogout
         _viewModel = StateObject(wrappedValue: OrganizerViewModel(
             achievementsRepository: container.achievementsRepository
         ))
@@ -108,7 +110,7 @@ struct OrganizerView: View {
                         Spacer()
 
                         Button {
-                            appViewModel.logout()
+                            onLogout?()
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: "rectangle.portrait.and.arrow.right")

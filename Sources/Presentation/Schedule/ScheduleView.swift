@@ -32,7 +32,7 @@ struct ScheduleView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Color.clear.frame(height: 52)
                     headerSection
-                    ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
+                    filterBarWithMask
                     eventList
                     Color.clear.frame(height: 120)
                 }
@@ -116,6 +116,23 @@ struct ScheduleView: View {
         .padding(.horizontal, 20)
         .padding(.top, 32)
         .padding(.bottom, 12)
+    }
+
+    private var filterBarWithMask: some View {
+        ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
+            .mask(
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.06),
+                        .init(color: .black, location: 0.94),
+                        .init(color: .clear, location: 1),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .padding(.bottom, 8)
     }
 
     private var eventList: some View {
