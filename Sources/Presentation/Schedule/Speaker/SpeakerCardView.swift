@@ -1,20 +1,5 @@
 import SwiftUI
 
-// MARK: - Mocks
-
-let example = Speaker(
-    id: "",
-    fullName: "Анна Иванова",
-    job: "Директор по продукту, Яндекс",
-    bio: """
-    Лидеры направлений, визионеры и создатели ключевых продуктов.
-    Они задают тренды в индустрии, формируют вектор развития технологий
-    и знают, как построить сервисы, которыми будут пользоваться
-    миллионы людей каждый день.
-    """,
-    avatarImageURL: nil
-)
-
 // MARK: - SpeakerCardView
 
 struct SpeakerCardView: View {
@@ -40,7 +25,7 @@ struct SpeakerCardView: View {
     // MARK: - Background
 
     private var backgroundView: some View {
-        YoungConAsset.navBackground.swiftUIColor
+        AppColor.navBackground
             .ignoresSafeArea()
     }
 
@@ -296,10 +281,4 @@ struct SpeakerCardView: View {
         }
         .offset(x: 4, y: 4)
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    SpeakerCardView(speaker: example)
 }
