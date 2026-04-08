@@ -12,6 +12,19 @@ final class ScheduleViewModel {
     private(set) var entries: [ScheduleEntry] = []
     private(set) var isLoading = false
     private(set) var loadError: String?
+    var filters: [String] {
+        let categories = Set(
+            entries.map {
+                $0.event.category
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .capitalized
+            }
+        )
+        return ["Все", "Live", "Избранное"] + categories.sorted()
+    }
+
+    private var isRefreshing = false
+    private var pollingTask: Task<Void, Never>?
 
     init(
         festivalsRepository: FestivalsRepositoryProtocol,
@@ -31,29 +44,96 @@ final class ScheduleViewModel {
         loadError = nil
         defer { isLoading = false }
 
-        do {
-            let festival = try await festivalsRepository.getLastFestival()
-            let events = try await eventsRepository.getEvents(festivalID: festival.id)
+        await fetchAll(isFirstLoad: true)
+    }
 
-            let zonesByID = await loadZones(for: events)
-            let speakersByEventID = await loadSpeakersByEventID(for: events)
+    func refresh() async {
+        await fetchAll(isFirstLoad: false)
+    }
 
-            entries = events.map { event in
-                ScheduleEntry(
-                    id: event.id,
-                    event: event,
-                    zone: zonesByID[event.zoneID],
-                    speakers: speakersByEventID[event.id] ?? [],
-                    streamURL: event.streamURL
-                )
+    func startPolling() {
+        guard pollingTask == nil else { return }
+
+        pollingTask = Task { [weak self] in
+            guard let self else { return }
+
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(30))
+                guard !Task.isCancelled else { break }
+                await fetchAll(isFirstLoad: false)
             }
-        } catch {
-            entries = []
-            loadError = error.localizedDescription
         }
     }
 
-    private func loadZones(for events: [Event]) async -> [String: Zone] {
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
+    }
+
+    private func fetchAll(isFirstLoad: Bool) async {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        defer { isRefreshing = false }
+
+        if isFirstLoad {
+            loadError = nil
+        }
+
+        do {
+            let newEntries = try await loadScheduleEntries()
+
+            guard shouldApplyChanges(
+                isFirstLoad: isFirstLoad,
+                newEntries: newEntries
+            ) else {
+                return
+            }
+
+            entries = newEntries
+        } catch {
+            if isFirstLoad {
+                entries = []
+                loadError = error.localizedDescription
+            } else {
+                print("[Schedule] Polling error: \(error.localizedDescription)")
+            }
+        }
+    }
+}
+
+private extension ScheduleViewModel {
+    func shouldApplyChanges(
+        isFirstLoad: Bool,
+        newEntries: [ScheduleEntry]
+    ) -> Bool {
+        if isFirstLoad {
+            return true
+        }
+        return entries != newEntries
+    }
+
+    func loadScheduleEntries() async throws -> [ScheduleEntry] {
+        let festival = try await festivalsRepository.getLastFestival()
+        let events = try await eventsRepository.getEvents(festivalID: festival.id)
+
+        async let zonesTask = loadZones(for: events)
+        async let speakersTask = loadSpeakersByEventID(for: events)
+
+        let zonesByID = await zonesTask
+        let speakersByEventID = await speakersTask
+
+        return events.map { event in
+            ScheduleEntry(
+                id: event.id,
+                event: event,
+                zone: zonesByID[event.zoneID],
+                speakers: speakersByEventID[event.id] ?? [],
+                streamURL: event.streamURL
+            )
+        }
+    }
+
+    func loadZones(for events: [Event]) async -> [String: Zone] {
         let zoneIDs = Set(events.map(\.zoneID).filter { !$0.isEmpty })
         var zonesByID: [String: Zone] = [:]
 
@@ -75,7 +155,7 @@ final class ScheduleViewModel {
         return zonesByID
     }
 
-    private func loadSpeakersByEventID(for events: [Event]) async -> [String: [Speaker]] {
+    func loadSpeakersByEventID(for events: [Event]) async -> [String: [Speaker]] {
         let eventIDs = Set(events.map(\.id))
         var speakersByEventID: [String: [Speaker]] = [:]
 
@@ -86,8 +166,11 @@ final class ScheduleViewModel {
         await withTaskGroup(of: [(String, Speaker)].self) { group in
             for speaker in speakers {
                 group.addTask { [eventsRepository] in
-                    guard let speakerEvents = try? await eventsRepository.getSpeakerEvents(speakerID: speaker.id)
-                    else { return [] }
+                    guard let speakerEvents = try? await eventsRepository.getSpeakerEvents(
+                        speakerID: speaker.id
+                    ) else {
+                        return []
+                    }
 
                     return speakerEvents
                         .filter { eventIDs.contains($0.id) }

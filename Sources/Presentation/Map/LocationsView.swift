@@ -224,15 +224,15 @@ struct LocationsView: View {
                                 Capsule()
                                     .fill(
                                         isSelected
-                                        ? zone.color
-                                        : Color.white.opacity(0.04)
+                                            ? zone.color
+                                            : Color.white.opacity(0.04)
                                     )
                                     .overlay(
                                         Capsule()
                                             .stroke(
                                                 isSelected
-                                                ? zone.color.opacity(0.6)
-                                                : Color.white.opacity(0.08),
+                                                    ? zone.color.opacity(0.6)
+                                                    : Color.white.opacity(0.08),
                                                 lineWidth: 1
                                             )
                                     )

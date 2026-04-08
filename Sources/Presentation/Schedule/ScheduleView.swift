@@ -7,8 +7,6 @@ struct ScheduleView: View {
     @State private var activeFilter: String = "Все"
     @State private var gradientOffset: CGFloat = 0
 
-    let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
-
     private var filteredEntries: [ScheduleEntry] {
         switch activeFilter {
         case "Все":
@@ -32,7 +30,10 @@ struct ScheduleView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Color.clear.frame(height: 52)
                     headerSection
-                    ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
+                    ScheduleFilterBar(
+                        filters: viewModel.filters,
+                        activeFilter: $activeFilter
+                    )
                     eventList
                     Color.clear.frame(height: 120)
                 }
@@ -66,6 +67,17 @@ struct ScheduleView: View {
             withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
                 gradientOffset = 1
             }
+        }
+        .task {
+            await viewModel.load()
+            viewModel.startPolling()
+        }
+        .task {
+            await viewModel.load()
+            viewModel.startPolling()
+        }
+        .onDisappear {
+            viewModel.stopPolling()
         }
     }
 
@@ -146,37 +158,5 @@ struct ScheduleView: View {
             }
         }
         .padding(.horizontal, 20)
-    }
-}
-
-#Preview {
-    SchedulePreviewHost()
-        .preferredColorScheme(.dark)
-}
-
-private struct SchedulePreviewHost: View {
-    @State private var viewModel: ScheduleViewModel?
-    @Environment(\.dependencyContainer) private var container
-
-    var body: some View {
-        Group {
-            if let viewModel {
-                ScheduleView(viewModel: viewModel)
-            } else {
-                ProgressView()
-            }
-        }
-        .task {
-            if viewModel == nil {
-                let model = ScheduleViewModel(
-                    festivalsRepository: container.festivalsRepository,
-                    eventsRepository: container.eventsRepository,
-                    zoneRepository: container.zoneRepository,
-                    speakersRepository: container.speakersRepository
-                )
-                viewModel = model
-                await model.load()
-            }
-        }
     }
 }

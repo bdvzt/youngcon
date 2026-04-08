@@ -88,7 +88,7 @@ final class MapViewModel {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(30))
                 guard !Task.isCancelled else { break }
-                await self.fetchAll(isFirstLoad: false)
+                await fetchAll(isFirstLoad: false)
             }
         }
     }
@@ -183,7 +183,8 @@ private extension MapViewModel {
         self.zonesByFloorID = zonesByFloorID
 
         if let previousSelectedFloorID,
-           floors.contains(where: { $0.id == previousSelectedFloorID }) {
+           floors.contains(where: { $0.id == previousSelectedFloorID })
+        {
             selectedFloorID = previousSelectedFloorID
         } else {
             selectedFloorID = floors.first?.id

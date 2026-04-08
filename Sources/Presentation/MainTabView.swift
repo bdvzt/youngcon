@@ -153,11 +153,10 @@ struct MainTabView: View {
                     usersRepository: container.usersRepository,
                     achievementsRepository: container.achievementsRepository,
                     userDefaultsStore: container.userDefaultsStore
-
                 )
                 badgeViewModel = model
                 await model.loadData()
-                model.startPolling()
+                model.startPolling(every: 30)
             }
         }
         .onChange(of: activeTab) { oldValue, newValue in

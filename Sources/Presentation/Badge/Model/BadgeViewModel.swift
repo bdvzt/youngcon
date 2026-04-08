@@ -10,7 +10,7 @@ final class BadgeViewModel: ObservableObject {
 
     private let usersRepository: UsersRepositoryProtocol
     private let achievementsRepository: AchievementsRepositoryProtocol
-    private let userDefaultsStore: KeyValueStoreProtocol
+    private let userDefaultsStore: UserDefaultsStoreProtocol
 
     private var isRefreshing = false
     private var pollingTask: Task<Void, Never>?
@@ -20,7 +20,7 @@ final class BadgeViewModel: ObservableObject {
     init(
         usersRepository: UsersRepositoryProtocol,
         achievementsRepository: AchievementsRepositoryProtocol,
-        userDefaultsStore: KeyValueStoreProtocol
+        userDefaultsStore: UserDefaultsStoreProtocol
     ) {
         self.usersRepository = usersRepository
         self.achievementsRepository = achievementsRepository
@@ -53,7 +53,7 @@ final class BadgeViewModel: ObservableObject {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(interval))
                 guard !Task.isCancelled else { break }
-                await self.fetchAll(isFirstLoad: false)
+                await fetchAll(isFirstLoad: false)
             }
         }
     }
@@ -160,7 +160,8 @@ private extension BadgeViewModel {
         let freshlyUnlocked = newUnlockedIDs.subtracting(knownUnlockedIDs)
 
         guard let firstNewID = freshlyUnlocked.first,
-              let achievement = allAchievements.first(where: { $0.id == firstNewID }) else {
+              let achievement = allAchievements.first(where: { $0.id == firstNewID })
+        else {
             return
         }
 
@@ -181,6 +182,6 @@ private extension BadgeViewModel {
     }
 
     func saveLastUpdateDate() {
-        try? userDefaultsStore.set(Date(), for: UserDefaultsKeys.lastUpdateTimestampBadge)
+        try? userDefaultsStore.setCodable(Date(), for: UserDefaultsKeys.lastUpdateTimestampBadge)
     }
 }
