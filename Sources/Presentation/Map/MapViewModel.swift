@@ -17,7 +17,6 @@ final class MapViewModel {
         guard let selectedFloorID else {
             return floors.first
         }
-
         return floors.first { $0.id == selectedFloorID } ?? floors.first
     }
 
@@ -25,7 +24,6 @@ final class MapViewModel {
         guard let selectedFloorIndex else {
             return 1
         }
-
         return selectedFloorIndex + 1
     }
 
@@ -33,7 +31,6 @@ final class MapViewModel {
         guard let selectedFloor else {
             return []
         }
-
         return zonesByFloorID[selectedFloor.id] ?? []
     }
 
@@ -41,7 +38,6 @@ final class MapViewModel {
         guard let selectedFloorIndex else {
             return false
         }
-
         return selectedFloorIndex < floors.count - 1
     }
 
@@ -49,7 +45,6 @@ final class MapViewModel {
         guard let selectedFloorIndex else {
             return false
         }
-
         return selectedFloorIndex > 0
     }
 
@@ -57,7 +52,6 @@ final class MapViewModel {
         guard let selectedFloor else {
             return nil
         }
-
         return floors.firstIndex { $0.id == selectedFloor.id }
     }
 
@@ -95,7 +89,6 @@ final class MapViewModel {
         guard canSelectNextFloor, let selectedFloorIndex else {
             return
         }
-
         selectedFloorID = floors[selectedFloorIndex + 1].id
     }
 
@@ -103,7 +96,6 @@ final class MapViewModel {
         guard canSelectPreviousFloor, let selectedFloorIndex else {
             return
         }
-
         selectedFloorID = floors[selectedFloorIndex - 1].id
     }
 
@@ -118,7 +110,6 @@ final class MapViewModel {
                     return (floor.id, zones)
                 }
             }
-
             for try await (floorID, zones) in group {
                 zonesByFloorID[floorID] = zones
             }

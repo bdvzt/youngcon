@@ -22,18 +22,16 @@ struct LocationsView: View {
                     Color.clear.frame(height: 120)
                 }
             }
+            .scrollClipDisabled(true)
 
             topOverlay
 
-            GeometryReader { geo in
-                VStack(spacing: 0) {
-                    logoView
-                        .padding(.horizontal, 20)
-                        .padding(.top, geo.safeAreaInsets.top + 8)
-                    Spacer()
-                }
+            VStack(spacing: 0) {
+                logoView
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                Spacer()
             }
-            .ignoresSafeArea(edges: .top)
             .zIndex(21)
             .allowsHitTesting(false)
         }
@@ -76,8 +74,8 @@ struct LocationsView: View {
                 .frame(width: 80, height: 60)
                 .blur(radius: 20)
                 .opacity(0.35)
-                .padding(-30)
                 .allowsHitTesting(false)
+
             YoungConAsset.logo.swiftUIImage
                 .resizable()
                 .scaledToFit()
@@ -108,6 +106,7 @@ struct LocationsView: View {
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )
                 )
+
             Text("Навигация по площадке")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
@@ -128,9 +127,11 @@ struct LocationsView: View {
                         RoundedRectangle(cornerRadius: 28, style: .continuous)
                             .stroke(Color.white.opacity(0.06), lineWidth: 1)
                     )
+
                 GeometryReader { geo in
                     let width = geo.size.width
                     let height = geo.size.height
+
                     ZStack {
                         if viewModel.isLoading {
                             ProgressView()
@@ -335,6 +336,8 @@ struct LocationsView: View {
             )
     }
 
+    // MARK: - Helpers
+
     private func normalizedCoordinate(_ value: Double) -> CGFloat {
         min(max(CGFloat(value), 0), 1)
     }
@@ -343,7 +346,6 @@ struct LocationsView: View {
         guard let cordX = zone.cordX, let cordY = zone.cordY else {
             return nil
         }
-
         return CGPoint(
             x: normalizedCoordinate(cordX),
             y: normalizedCoordinate(cordY)

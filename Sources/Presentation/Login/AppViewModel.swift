@@ -4,6 +4,7 @@ import SwiftUI
 @MainActor
 final class AppViewModel: ObservableObject {
     @Published var isAuthenticated = false
+    @Published var isCheckingSession = true
     @Published var profile: UserProfile?
     @Published var isLoading = false
     @Published var authError: String?
@@ -17,13 +18,17 @@ final class AppViewModel: ObservableObject {
 
     private func checkExistingSession() {
         Task {
+            defer { isCheckingSession = false }
             do {
                 let userProfile = try await authRepository.checkExistingSession()
-                self.profile = userProfile
-                self.isAuthenticated = true
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    self.profile = userProfile
+                    self.isAuthenticated = true
+                }
             } catch {
-                // Токена нет или он протух
-                self.isAuthenticated = false
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    self.isAuthenticated = false
+                }
             }
         }
     }
@@ -31,17 +36,16 @@ final class AppViewModel: ObservableObject {
     func login(email: String, password: String) async {
         isLoading = true
         authError = nil
-
         do {
             try await authRepository.login(email: email, password: password)
-            // После логина тоже проверяем через репозиторий
             let userProfile = try await authRepository.checkExistingSession()
-            profile = userProfile
-            isAuthenticated = true
+            withAnimation(.easeInOut(duration: 0.4)) {
+                self.profile = userProfile
+                self.isAuthenticated = true
+            }
         } catch {
             authError = error.localizedDescription
         }
-
         isLoading = false
     }
 
@@ -49,7 +53,9 @@ final class AppViewModel: ObservableObject {
         Task {
             try? await authRepository.logout()
         }
-        isAuthenticated = false
-        profile = nil
+        withAnimation(.easeInOut(duration: 0.4)) {
+            isAuthenticated = false
+            profile = nil
+        }
     }
 }

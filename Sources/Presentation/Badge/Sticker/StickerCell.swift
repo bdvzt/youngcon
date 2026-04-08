@@ -2,10 +2,32 @@ import SwiftUI
 
 struct StickerCell: View {
     let sticker: Sticker
+    var isNewlyUnlocked: Bool = false
+
+    @State private var glowPulse = false
 
     var body: some View {
         VStack(spacing: 10) {
             ZStack {
+                if isNewlyUnlocked {
+                    Circle()
+                        .stroke(
+                            LinearGradient(
+                                colors: [AppColor.accentYellow, AppColor.accentPink],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: glowPulse ? 2.5 : 1.5
+                        )
+                        .frame(width: 52, height: 52)
+                        .opacity(glowPulse ? 0.9 : 0.4)
+                        .scaleEffect(glowPulse ? 1.12 : 1.0)
+                        .animation(
+                            .easeInOut(duration: 1.2).repeatForever(autoreverses: true),
+                            value: glowPulse
+                        )
+                }
+
                 Circle()
                     .fill(sticker.bgColor)
                     .frame(width: 44, height: 44)
@@ -42,14 +64,33 @@ struct StickerCell: View {
         .frame(maxWidth: .infinity, minHeight: 90)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(sticker.isUnlocked ? 0.02 : 0))
+                .fill(
+                    isNewlyUnlocked
+                        ? AppColor.accentYellow.opacity(0.06)
+                        : Color.white.opacity(sticker.isUnlocked ? 0.02 : 0)
+                )
                 .overlay(
                     RoundedRectangle(cornerRadius: 16)
                         .stroke(
-                            Color.white.opacity(sticker.isUnlocked ? 0.06 : 0.02),
+                            isNewlyUnlocked
+                                ? LinearGradient(
+                                    colors: [AppColor.accentYellow.opacity(0.4), AppColor.accentPink.opacity(0.3)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                                : LinearGradient(
+                                    colors: [Color.white.opacity(sticker.isUnlocked ? 0.06 : 0.02)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
                             lineWidth: 1
                         )
                 )
         )
+        .onAppear {
+            if isNewlyUnlocked {
+                glowPulse = true
+            }
+        }
     }
 }

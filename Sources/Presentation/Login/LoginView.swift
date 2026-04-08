@@ -3,7 +3,6 @@ import SwiftUI
 struct LoginView: View {
     @ObservedObject var appViewModel: AppViewModel
     @Environment(\.dismiss) private var dismiss
-
     @State private var email = ""
     @State private var password = ""
     @State private var showError = false
@@ -40,16 +39,13 @@ struct LoginView: View {
             }
         }
         .onChange(of: appViewModel.isAuthenticated) { _, isAuth in
-            if isAuth {
-                dismiss()
-            }
+            if isAuth { dismiss() }
         }
     }
 
     private var contentView: some View {
         VStack(spacing: 40) {
             headerView
-
             VStack(spacing: 16) {
                 emailTextField
                 if !email.isEmpty, !isEmailValid {
@@ -61,7 +57,6 @@ struct LoginView: View {
                 }
             }
             .padding(.horizontal, 24)
-
             loginButton
             Spacer()
         }
@@ -80,7 +75,7 @@ struct LoginView: View {
     }
 
     private var logoView: some View {
-        Image("logo") // замените на ваше имя ассета
+        Image("logo")
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 150, height: 150)
@@ -155,20 +150,24 @@ struct LoginView: View {
 
     private var loginButton: some View {
         Button(action: performLogin) {
-            if appViewModel.isLoading {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-            } else {
-                Text("Войти")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
+            ZStack {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(loginButtonBackground)
+                    .frame(height: 52)
+
+                if appViewModel.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                } else {
+                    Text("Войти")
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                }
             }
         }
-        .frame(height: 52)
-        .background(loginButtonBackground)
-        .cornerRadius(16)
+        .buttonStyle(.plain)
         .disabled(appViewModel.isLoading || !isFormValid)
         .opacity((appViewModel.isLoading || !isFormValid) ? 0.6 : 1)
         .padding(.horizontal, 24)
@@ -186,7 +185,7 @@ struct LoginView: View {
         )
     }
 
-    private var loginButtonBackground: some View {
+    private var loginButtonBackground: Color {
         Color(red: 0.15, green: 0.15, blue: 0.25)
     }
 

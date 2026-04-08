@@ -17,6 +17,11 @@ final class DependencyContainer {
         networkService: networkService
     )
 
+    private(set) lazy var organizerRepository: OrganizerRepositoryProtocol = OrganizerRepository(
+        networkService: networkService,
+        tokenStorage: tokenStorage
+    )
+
     private(set) lazy var eventsRepository: EventsRepositoryProtocol = EventsRepository(
         networkService: networkService
     )

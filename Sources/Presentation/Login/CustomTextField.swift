@@ -12,8 +12,6 @@ struct CustomTextField: UIViewRepresentable {
         textField.placeholder = placeholder
         textField.text = text
         textField.delegate = context.coordinator
-
-        // Стилизация под проект
         textField.textColor = .white
         textField.backgroundColor = UIColor(AppColor.cardBackground)
         textField.layer.cornerRadius = 16

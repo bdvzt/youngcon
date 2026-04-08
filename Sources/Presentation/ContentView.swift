@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.dependencyContainer) private var container
     @State private var isLoading = true
 
     var body: some View {
@@ -11,7 +12,7 @@ struct ContentView: View {
                 LoadingScreen(isLoading: $isLoading)
                     .transition(.opacity)
             } else {
-                MainTabView()
+                RootView(container: container)
                     .transition(.opacity)
             }
         }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct BottomNavBar: View {
     @Binding var activeTab: AppTab
+    let tabs: [AppTab]
     var isOverlayPresented: Bool = false
 
     var body: some View {
@@ -11,7 +12,7 @@ struct BottomNavBar: View {
                 .frame(height: 0.5)
 
             HStack(alignment: .center) {
-                ForEach(AppTab.allCases, id: \.self) { tab in
+                ForEach(tabs, id: \.self) { tab in
                     TabItemView(
                         tab: tab,
                         isActive: activeTab == tab
