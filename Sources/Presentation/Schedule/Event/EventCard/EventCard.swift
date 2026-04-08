@@ -10,6 +10,9 @@ struct EventCard: View {
     var streamURL: URL?
     @State private var isShowingStreamPlayer = false
 
+    @State private var showingDetail = false
+    @State private var showingSpeakerCard = false
+
     private var isLive: Bool {
         let start = event.startDate
         let end = event.endDate
@@ -68,6 +71,36 @@ struct EventCard: View {
     }
 
     var body: some View {
+        Button(action: {
+            showingDetail = true
+        }) {
+            cardContent
+        }
+        .buttonStyle(.plain)
+        .fullScreenCover(isPresented: $showingDetail) {
+            if let speaker = primarySpeaker {
+                NavigationStack {
+                    EventDetailedCard(
+                        event: event,
+                        zone: zone,
+                        speaker: speaker,
+                        streamURL: streamURL
+                    )
+                }
+                .presentationBackground(.ultraThinMaterial)
+            }
+        }
+        .fullScreenCover(isPresented: $showingSpeakerCard) {
+            if let speaker = primarySpeaker {
+                NavigationStack {
+                    SpeakerCardView(speaker: speaker)
+                }
+                .presentationBackground(.ultraThinMaterial)
+            }
+        }
+    }
+
+    private var cardContent: some View {
         HStack(alignment: .top, spacing: 0) {
             RoundedRectangle(cornerRadius: 2)
                 .fill(cardGradient)
@@ -126,20 +159,25 @@ struct EventCard: View {
     }
 
     private func speakerRow(_ speaker: Speaker) -> some View {
-        HStack(alignment: .center, spacing: 12) {
-            SpeakerAvatar(url: speaker.avatarImageURL)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(speaker.fullName)
-                    .font(.callout)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
-                Text(speaker.job)
-                    .font(.caption)
-                    .foregroundStyle(AppColor.gray500)
-                    .lineLimit(2)
+        Button(action: {
+            showingSpeakerCard = true
+        }) {
+            HStack(alignment: .center, spacing: 12) {
+                SpeakerAvatar(url: speaker.avatarImageURL)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(speaker.fullName)
+                        .font(.callout)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                    Text(speaker.job)
+                        .font(.caption)
+                        .foregroundStyle(AppColor.gray500)
+                        .lineLimit(2)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .buttonStyle(.plain)
     }
 
     private var separatorLine: some View {
