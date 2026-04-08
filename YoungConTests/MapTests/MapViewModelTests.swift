@@ -1,9 +1,9 @@
-import SwiftUI
 import XCTest
 @testable import YoungCon
 
 @MainActor
 final class MapViewModelTests: XCTestCase {
+    /// Проверяет, что до вызова `load()` view model находится в пустом начальном состоянии.
     func testInitialState_beforeLoad_hasExpectedDefaults() {
         let viewModel = MapViewModel(
             floorsRepository: FloorsRepositorySpy(floors: []),
@@ -20,10 +20,11 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoading)
     }
 
+    /// Проверяет, что `load()` сортирует этажи и зоны, выбирает первый этаж и обновляет производное состояние.
     func testLoad_sortsFloorsAndZones_selectsFirstFloorAndUpdatesDerivedState() async {
-        let firstFloor = makeFloor(id: "floor-b", title: "B Floor")
-        let secondFloor = makeFloor(id: "floor-a", title: "A Floor")
-        let thirdFloor = makeFloor(id: "floor-c", title: "C Floor")
+        let firstFloor = MapViewModelTestFactory.makeFloor(id: "floor-b", title: "B Floor")
+        let secondFloor = MapViewModelTestFactory.makeFloor(id: "floor-a", title: "A Floor")
+        let thirdFloor = MapViewModelTestFactory.makeFloor(id: "floor-c", title: "C Floor")
 
         let floorsRepository = FloorsRepositorySpy(
             floors: [firstFloor, secondFloor, thirdFloor]
@@ -31,15 +32,35 @@ final class MapViewModelTests: XCTestCase {
         let zoneRepository = ZoneRepositorySpy(
             zonesByFloorID: [
                 secondFloor.id: [
-                    makeZone(id: "zone-2", floorID: secondFloor.id, title: "Zulu"),
-                    makeZone(id: "zone-1", floorID: secondFloor.id, title: "Alpha"),
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-2",
+                        floorID: secondFloor.id,
+                        title: "Zulu"
+                    ),
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-1",
+                        floorID: secondFloor.id,
+                        title: "Alpha"
+                    ),
                 ],
                 firstFloor.id: [
-                    makeZone(id: "zone-4", floorID: firstFloor.id, title: "Delta"),
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-4",
+                        floorID: firstFloor.id,
+                        title: "Delta"
+                    ),
                 ],
                 thirdFloor.id: [
-                    makeZone(id: "zone-6", floorID: thirdFloor.id, title: "Gamma"),
-                    makeZone(id: "zone-5", floorID: thirdFloor.id, title: "Beta"),
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-6",
+                        floorID: thirdFloor.id,
+                        title: "Gamma"
+                    ),
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-5",
+                        floorID: thirdFloor.id,
+                        title: "Beta"
+                    ),
                 ],
             ]
         )
@@ -63,9 +84,10 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertEqual(Set(requestedFloorIDs), Set([firstFloor.id, secondFloor.id, thirdFloor.id]))
     }
 
+    /// Проверяет, что выбор следующего этажа обновляет и выбранный этаж, и список видимых зон.
     func testSelectNextFloor_movesSelectionAndUpdatesSelectedZones() async {
-        let firstFloor = makeFloor(id: "floor-2", title: "2 Floor")
-        let secondFloor = makeFloor(id: "floor-1", title: "1 Floor")
+        let firstFloor = MapViewModelTestFactory.makeFloor(id: "floor-2", title: "2 Floor")
+        let secondFloor = MapViewModelTestFactory.makeFloor(id: "floor-1", title: "1 Floor")
 
         let floorsRepository = FloorsRepositorySpy(
             floors: [firstFloor, secondFloor]
@@ -73,10 +95,18 @@ final class MapViewModelTests: XCTestCase {
         let zoneRepository = ZoneRepositorySpy(
             zonesByFloorID: [
                 secondFloor.id: [
-                    makeZone(id: "zone-a", floorID: secondFloor.id, title: "Alpha"),
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-a",
+                        floorID: secondFloor.id,
+                        title: "Alpha"
+                    ),
                 ],
                 firstFloor.id: [
-                    makeZone(id: "zone-b", floorID: firstFloor.id, title: "Beta"),
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-b",
+                        floorID: firstFloor.id,
+                        title: "Beta"
+                    ),
                 ],
             ]
         )
@@ -95,16 +125,29 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.canSelectPreviousFloor)
     }
 
+    /// Проверяет, что переключение этажей не выходит за границы первого и последнего этажа.
     func testFloorSelection_stopsAtCollectionBounds() async {
         let floors = [
-            makeFloor(id: "floor-2", title: "2 Floor"),
-            makeFloor(id: "floor-1", title: "1 Floor"),
+            MapViewModelTestFactory.makeFloor(id: "floor-2", title: "2 Floor"),
+            MapViewModelTestFactory.makeFloor(id: "floor-1", title: "1 Floor"),
         ]
         let floorsRepository = FloorsRepositorySpy(floors: floors)
         let zoneRepository = ZoneRepositorySpy(
             zonesByFloorID: [
-                "floor-1": [makeZone(id: "zone-a", floorID: "floor-1", title: "Alpha")],
-                "floor-2": [makeZone(id: "zone-b", floorID: "floor-2", title: "Beta")],
+                "floor-1": [
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-a",
+                        floorID: "floor-1",
+                        title: "Alpha"
+                    ),
+                ],
+                "floor-2": [
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-b",
+                        floorID: "floor-2",
+                        title: "Beta"
+                    ),
+                ],
             ]
         )
         let viewModel = MapViewModel(
@@ -126,6 +169,7 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.selectedFloor?.id, "floor-2")
     }
 
+    /// Проверяет, что ошибка загрузки этажей очищает состояние и сохраняет локализованное сообщение об ошибке.
     func testLoad_whenFloorsRequestFails_clearsStateAndStoresError() async {
         let floorsRepository = FloorsRepositorySpy(
             floors: [],
@@ -147,13 +191,20 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoading)
     }
 
+    /// Проверяет, что ошибка загрузки зон очищает состояние и сохраняет локализованное сообщение об ошибке.
     func testLoad_whenZoneRequestFails_clearsStateAndStoresError() async {
-        let firstFloor = makeFloor(id: "floor-1", title: "1 Floor")
-        let secondFloor = makeFloor(id: "floor-2", title: "2 Floor")
+        let firstFloor = MapViewModelTestFactory.makeFloor(id: "floor-1", title: "1 Floor")
+        let secondFloor = MapViewModelTestFactory.makeFloor(id: "floor-2", title: "2 Floor")
         let floorsRepository = FloorsRepositorySpy(floors: [firstFloor, secondFloor])
         let zoneRepository = ZoneRepositorySpy(
             zonesByFloorID: [
-                firstFloor.id: [makeZone(id: "zone-a", floorID: firstFloor.id, title: "Alpha")],
+                firstFloor.id: [
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-a",
+                        floorID: firstFloor.id,
+                        title: "Alpha"
+                    ),
+                ],
             ],
             failingFloorIDs: [secondFloor.id],
             failureError: .zoneLoadFailed
@@ -175,16 +226,29 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoading)
     }
 
+    /// Проверяет, что повторный вызов `load()` после успешной загрузки не запрашивает этажи и зоны заново.
     func testLoad_afterSuccessfulLoad_doesNotRefetchData() async {
         let floors = [
-            makeFloor(id: "floor-2", title: "2 Floor"),
-            makeFloor(id: "floor-1", title: "1 Floor"),
+            MapViewModelTestFactory.makeFloor(id: "floor-2", title: "2 Floor"),
+            MapViewModelTestFactory.makeFloor(id: "floor-1", title: "1 Floor"),
         ]
         let floorsRepository = FloorsRepositorySpy(floors: floors)
         let zoneRepository = ZoneRepositorySpy(
             zonesByFloorID: [
-                "floor-1": [makeZone(id: "zone-a", floorID: "floor-1", title: "Alpha")],
-                "floor-2": [makeZone(id: "zone-b", floorID: "floor-2", title: "Beta")],
+                "floor-1": [
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-a",
+                        floorID: "floor-1",
+                        title: "Alpha"
+                    ),
+                ],
+                "floor-2": [
+                    MapViewModelTestFactory.makeZone(
+                        id: "zone-b",
+                        floorID: "floor-2",
+                        title: "Beta"
+                    ),
+                ],
             ]
         )
         let viewModel = MapViewModel(
@@ -201,120 +265,5 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertEqual(floorsCallCount, 1)
         XCTAssertEqual(zonesCallCount, 2)
         XCTAssertEqual(viewModel.floors.map(\.id), ["floor-1", "floor-2"])
-    }
-
-    private func makeFloor(id: String, title: String) -> Floor {
-        Floor(
-            id: id,
-            title: title,
-            mapImageURL: URL(string: "https://example.com/\(id).png")!
-        )
-    }
-
-    private func makeZone(id: String, floorID: String, title: String) -> Zone {
-        Zone(
-            id: id,
-            floorID: floorID,
-            title: title,
-            description: "\(title) description",
-            cordX: 0.5,
-            cordY: 0.5,
-            icon: URL(string: "https://example.com/\(id).png")!,
-            color: .blue
-        )
-    }
-}
-
-private actor FloorsRepositorySpy: FloorsRepositoryProtocol {
-    private let floors: [Floor]
-    private let failureError: MapViewModelTestError?
-    private var getFloorsCallCount = 0
-
-    init(floors: [Floor], failureError: MapViewModelTestError? = nil) {
-        self.floors = floors
-        self.failureError = failureError
-    }
-
-    func getFloor(id: String) async throws -> Floor {
-        if let floor = floors.first(where: { $0.id == id }) {
-            return floor
-        }
-        throw MapViewModelTestError.missingStub
-    }
-
-    func getFloors() async throws -> [Floor] {
-        getFloorsCallCount += 1
-
-        if let failureError {
-            throw failureError
-        }
-
-        return floors
-    }
-
-    func recordedGetFloorsCallCount() -> Int {
-        getFloorsCallCount
-    }
-}
-
-private actor ZoneRepositorySpy: ZoneRepositoryProtocol {
-    private let zonesByFloorID: [String: [Zone]]
-    private let failingFloorIDs: Set<String>
-    private let failureError: MapViewModelTestError?
-    private var requestedFloorIDs: [String] = []
-
-    init(
-        zonesByFloorID: [String: [Zone]],
-        failingFloorIDs: Set<String> = [],
-        failureError: MapViewModelTestError? = nil
-    ) {
-        self.zonesByFloorID = zonesByFloorID
-        self.failingFloorIDs = failingFloorIDs
-        self.failureError = failureError
-    }
-
-    func getZone(zoneID: String) async throws -> Zone {
-        for zones in zonesByFloorID.values {
-            if let zone = zones.first(where: { $0.id == zoneID }) {
-                return zone
-            }
-        }
-
-        throw MapViewModelTestError.missingStub
-    }
-
-    func getZones(floorID: String) async throws -> [Zone] {
-        requestedFloorIDs.append(floorID)
-
-        if failingFloorIDs.contains(floorID), let failureError {
-            throw failureError
-        }
-
-        return zonesByFloorID[floorID] ?? []
-    }
-
-    func recordedFloorIDs() -> [String] {
-        requestedFloorIDs
-    }
-
-    func recordedGetZonesCallCount() -> Int {
-        requestedFloorIDs.count
-    }
-}
-
-private enum MapViewModelTestError: LocalizedError {
-    case missingStub
-    case floorsLoadFailed
-    case zoneLoadFailed
-
-    var errorDescription: String? {
-        switch self {
-        case .missingStub:
-            "Missing test stub"
-        case .floorsLoadFailed:
-            "Floors load failed"
-        case .zoneLoadFailed:
-            "Zone load failed"
-        }
     }
 }

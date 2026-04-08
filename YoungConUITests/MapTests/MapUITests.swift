@@ -5,6 +5,7 @@ final class MapUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    /// Проверяет, что экран карты открывается на первом зафиксированном этаже и не уходит ниже него.
     @MainActor
     func testMapScreen_displaysStubbedFirstFloor() {
         let app = launchMapApp()
@@ -30,6 +31,7 @@ final class MapUITests: XCTestCase {
         XCTAssertTrue(careerChip.exists)
     }
 
+    /// Проверяет, что переход на следующий этаж обновляет номер этажа и список видимых зон.
     @MainActor
     func testMapScreen_switchesFloorAndUpdatesZoneList() {
         let app = launchMapApp()
@@ -49,6 +51,7 @@ final class MapUITests: XCTestCase {
         XCTAssertTrue(previousFloorButton.isHittable)
     }
 
+    /// Проверяет, что нажатие на чип зоны открывает попап, а кнопка закрытия скрывает его.
     @MainActor
     func testMapScreen_zoneChipShowsAndHidesPopup() {
         let app = launchMapApp()
@@ -66,6 +69,7 @@ final class MapUITests: XCTestCase {
         XCTAssertTrue(popup.waitForNonExistence(timeout: 2))
     }
 
+    /// Проверяет, что у чипов зон на первом этаже доступны accessibility-элементы для иконок.
     @MainActor
     func testMapScreen_zoneChipsDisplayIcons() {
         let app = launchMapApp()
@@ -76,6 +80,7 @@ final class MapUITests: XCTestCase {
         XCTAssertTrue(careerIcon.exists)
     }
 
+    /// Проверяет, что в попапе отображаются иконка выбранной зоны и её заголовок.
     @MainActor
     func testMapScreen_popupDisplaysZoneIconAndTitle() {
         let app = launchMapApp()
@@ -96,6 +101,9 @@ final class MapUITests: XCTestCase {
     private func launchMapApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["--uitesting-map"]
+        app.launchEnvironment.merge(MapUITestFixture.launchEnvironment) { _, newValue in
+            newValue
+        }
         app.launch()
         return app
     }
