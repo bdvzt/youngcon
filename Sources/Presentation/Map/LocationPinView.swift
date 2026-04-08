@@ -39,6 +39,9 @@ struct LocationPinView: View {
                 .frame(width: 18, height: 18)
         }
         .scaleEffect(isFocused ? 1.1 : (focusedZoneID != nil ? 0.85 : 1.0))
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier("map.pin.icon.\(zone.id)")
+        .accessibilityLabel(zone.title)
     }
 
     private var pinLabel: some View {
@@ -59,6 +62,13 @@ struct LocationPinView: View {
     }
 }
 
+enum ZoneIconURLClassifier {
+    static func usesYandexDiskProvider(for url: URL) -> Bool {
+        guard let host = url.host?.lowercased() else { return false }
+        return host == "disk.yandex.ru" || host == "yadi.sk"
+    }
+}
+
 struct ZoneIconImage: View {
     let url: URL
     let placeholderFontSize: CGFloat
@@ -76,7 +86,7 @@ struct ZoneIconImage: View {
     }
 
     private var image: KFImage {
-        if YandexDiskImageDataProvider.canHandle(url) {
+        if ZoneIconURLClassifier.usesYandexDiskProvider(for: url) {
             return KFImage.dataProvider(YandexDiskImageDataProvider(publicURL: url))
         }
 
@@ -108,8 +118,7 @@ private struct YandexDiskImageDataProvider: ImageDataProvider {
     }
 
     static func canHandle(_ url: URL) -> Bool {
-        guard let host = url.host?.lowercased() else { return false }
-        return host == "disk.yandex.ru" || host == "yadi.sk"
+        ZoneIconURLClassifier.usesYandexDiskProvider(for: url)
     }
 
     func data(handler: @escaping @Sendable (Result<Data, any Error>) -> Void) {
