@@ -88,9 +88,10 @@ struct StickerCell: View {
                 )
         )
         .onAppear {
-            if isNewlyUnlocked {
-                glowPulse = true
-            }
+            glowPulse = isNewlyUnlocked
+        }
+        .onChange(of: isNewlyUnlocked) { _, isActive in
+            glowPulse = isActive
         }
     }
 }

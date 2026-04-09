@@ -86,7 +86,12 @@ struct OrganizerView: View {
                 withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
                     gradientOffset = 1
                 }
-                if viewModel.achievements.isEmpty { viewModel.loadAchievements() }
+
+                if viewModel.achievements.isEmpty {
+                    Task {
+                        await viewModel.loadAchievements()
+                    }
+                }
             }
             .fullScreenCover(isPresented: $showScanner) {
                 if let achievement = selectedAchievement {

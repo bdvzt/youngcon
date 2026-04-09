@@ -192,10 +192,11 @@ struct EventCard: View {
             if let zone {
                 HStack(spacing: 6) {
                     KFImage(zone.icon)
+                        .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
                         .colorInvert()
-                        .colorMultiply(AppColor.accentYellow)
+                        .colorMultiply(zone.color)
                         .frame(width: 16, height: 16)
                         .padding(4)
 

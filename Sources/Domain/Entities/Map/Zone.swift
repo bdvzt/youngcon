@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct Zone: Identifiable {
+struct Zone: Identifiable, Equatable {
     let id: String
     let floorID: String
     let title: String

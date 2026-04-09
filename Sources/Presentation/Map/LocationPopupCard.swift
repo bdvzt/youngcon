@@ -11,8 +11,7 @@ struct LocationPopupCard: View {
             cardContent
             arrowTip
         }
-        .frame(width: 200)
-        .compositingGroup()
+        .frame(width: 240)
         .onTapGesture {}
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("map.popup.\(zone.id)")
@@ -21,6 +20,7 @@ struct LocationPopupCard: View {
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             cardHeader
+
             Text(zone.description)
                 .font(AppFont.geo(10))
                 .foregroundColor(.white.opacity(0.5))
@@ -39,31 +39,38 @@ struct LocationPopupCard: View {
     }
 
     private var cardHeader: some View {
-        HStack(alignment: .top, spacing: 8) {
-            HStack(spacing: 8) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 7)
-                        .fill(zone.color)
-                        .frame(width: 28, height: 28)
-                    ZoneIconImage(url: zone.icon, placeholderFontSize: 12)
-                        .frame(width: 14, height: 14)
-                }
-                .accessibilityElement(children: .ignore)
-                .accessibilityIdentifier("map.popup.icon.\(zone.id)")
-                .accessibilityLabel(zone.title)
-                Text(zone.title)
-                    .font(AppFont.geo(13, weight: .bold))
-                    .foregroundColor(.white)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .accessibilityIdentifier("map.popup.title.\(zone.id)")
+        HStack(alignment: .center, spacing: 8) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 7)
+                    .fill(zone.color)
+                    .frame(width: 28, height: 28)
+
+                ZoneIconImage(url: zone.icon, placeholderFontSize: 12)
+                    .frame(width: 14, height: 14)
             }
-            Spacer(minLength: 0)
+            .accessibilityElement(children: .ignore)
+            .accessibilityIdentifier("map.popup.icon.\(zone.id)")
+            .accessibilityLabel(zone.title)
+
+            Text(zone.title)
+                .font(AppFont.geo(13, weight: .bold))
+                .foregroundColor(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .allowsTightening(true)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .layoutPriority(1)
+                .accessibilityIdentifier("map.popup.title.\(zone.id)")
+
             closeButton
         }
     }
 
     private var closeButton: some View {
-        Button { onClose() } label: {
+        Button {
+            onClose()
+        } label: {
             Image(systemName: "xmark")
                 .font(.system(size: 10, weight: .medium))
                 .foregroundColor(.white.opacity(0.4))

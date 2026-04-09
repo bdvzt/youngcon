@@ -2,7 +2,7 @@ import SwiftUI
 
 @main
 struct YoungConApp: App {
-    private let dependencyContainer = DependencyContainer.live()
+    private let dependencyContainer = DependencyContainer.makeForAppLaunch()
 
     init() {
         AppFont.validateRegistration()

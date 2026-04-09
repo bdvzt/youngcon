@@ -3,6 +3,7 @@ import SwiftUI
 struct LoginView: View {
     @ObservedObject var appViewModel: AppViewModel
     @Environment(\.dismiss) private var dismiss
+
     @State private var email = ""
     @State private var password = ""
     @State private var showError = false
@@ -24,7 +25,9 @@ struct LoginView: View {
 
     var body: some View {
         ZStack {
-            backgroundGradient.ignoresSafeArea()
+            backgroundGradient
+                .ignoresSafeArea()
+
             contentView
         }
         .alert("Ошибка", isPresented: $showError) {
@@ -39,25 +42,33 @@ struct LoginView: View {
             }
         }
         .onChange(of: appViewModel.isAuthenticated) { _, isAuth in
-            if isAuth { dismiss() }
+            if isAuth {
+                dismiss()
+            }
         }
     }
 
     private var contentView: some View {
         VStack(spacing: 40) {
             headerView
+
             VStack(spacing: 16) {
                 emailTextField
+
                 if !email.isEmpty, !isEmailValid {
                     emailErrorText
                 }
+
                 passwordTextField
+
                 if !password.isEmpty, !isPasswordValid {
                     passwordErrorText
                 }
             }
             .padding(.horizontal, 24)
+
             loginButton
+
             Spacer()
         }
         .padding(.vertical, 32)
@@ -66,7 +77,9 @@ struct LoginView: View {
     private var headerView: some View {
         VStack(spacing: 12) {
             logoView
+
             gradientTextView
+
             Text("Войдите, чтобы продолжить")
                 .font(AppFont.geo(14, weight: .medium))
                 .foregroundColor(.white.opacity(0.6))
@@ -87,7 +100,11 @@ struct LoginView: View {
             .font(AppFont.geo(28, weight: .black))
             .overlay {
                 LinearGradient(
-                    colors: [AppColor.accentYellow, AppColor.accentPurple, AppColor.accentPink],
+                    colors: [
+                        AppColor.accentYellow,
+                        AppColor.accentPurple,
+                        AppColor.accentPink,
+                    ],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -105,7 +122,7 @@ struct LoginView: View {
             isSecure: false,
             keyboardType: .emailAddress
         )
-        .frame(height: 52)
+        .frame(maxWidth: .infinity, minHeight: 52, maxHeight: 52)
     }
 
     private var emailErrorText: some View {
@@ -113,9 +130,11 @@ struct LoginView: View {
             Image(systemName: "exclamationmark.circle.fill")
                 .font(.caption)
                 .foregroundColor(AppColor.accentPink)
+
             Text("Неверный формат email")
                 .font(AppFont.geo(12, weight: .medium))
                 .foregroundColor(AppColor.accentPink)
+
             Spacer()
         }
         .padding(.leading, 4)
@@ -129,7 +148,7 @@ struct LoginView: View {
             isSecure: true,
             keyboardType: .asciiCapable
         )
-        .frame(height: 52)
+        .frame(maxWidth: .infinity, minHeight: 52, maxHeight: 52)
     }
 
     private var passwordErrorText: some View {
@@ -137,9 +156,11 @@ struct LoginView: View {
             Image(systemName: "exclamationmark.circle.fill")
                 .font(.caption)
                 .foregroundColor(AppColor.accentPink)
+
             Text("Пароль должен содержать не менее 6 символов")
                 .font(AppFont.geo(12, weight: .medium))
                 .foregroundColor(AppColor.accentPink)
+
             Spacer()
         }
         .padding(.leading, 4)
@@ -155,7 +176,9 @@ struct LoginView: View {
 
                 if appViewModel.isLoading {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .progressViewStyle(
+                            CircularProgressViewStyle(tint: .white)
+                        )
                 } else {
                     Text("Войти")
                         .font(AppFont.geo(16, weight: .bold))
@@ -192,11 +215,13 @@ struct LoginView: View {
             showError = true
             return
         }
+
         guard password.count >= 6 else {
             errorMessage = "Пароль должен содержать не менее 6 символов"
             showError = true
             return
         }
+
         Task {
             await appViewModel.login(email: email, password: password)
         }

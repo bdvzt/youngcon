@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct Achievement: Identifiable {
+struct Achievement: Identifiable, Equatable {
     let id: String
     let name: String
     let description: String

@@ -11,34 +11,17 @@ struct ScheduleView: View {
 
     var hasFixedHeader: Bool = false
 
-    private let filters = ["Все", "Избранное", "Live", "Лекция", "Воркшоп", "Backend", "ML"]
-
     private var filteredEntries: [ScheduleEntry] {
         switch activeFilter {
         case "Все":
             viewModel.entries
+
         case "Live":
             viewModel.entries.filter { $0.streamURL != nil }
+
         case "Избранное":
             viewModel.entries.filter { viewModel.isFavorite(eventID: $0.event.id) }
-        case "Лекция":
-            viewModel.entries.filter {
-                normalizedCategory($0.event.category) == "лекция"
-            }
-        case "Воркшоп":
-            viewModel.entries.filter {
-                normalizedCategory($0.event.category) == "воркшоп"
-            }
-        case "Backend":
-            viewModel.entries.filter {
-                let zoneTitle = $0.zone?.title.lowercased() ?? ""
-                return zoneTitle.contains("бэкенд") || zoneTitle.contains("backend")
-            }
-        case "ML":
-            viewModel.entries.filter {
-                let zoneTitle = $0.zone?.title.lowercased() ?? ""
-                return zoneTitle.contains("ии") || zoneTitle.contains("ml")
-            }
+
         default:
             viewModel.entries.filter {
                 normalizedCategory($0.event.category) == normalizedCategory(activeFilter)
@@ -121,25 +104,28 @@ struct ScheduleView: View {
     }
 
     private var filterBarWithMask: some View {
-        ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
-            .mask(
-                LinearGradient(
-                    gradient: Gradient(stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .black, location: 0.06),
-                        .init(color: .black, location: 0.94),
-                        .init(color: .clear, location: 1),
-                    ]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
+        ScheduleFilterBar(
+            filters: viewModel.filters,
+            activeFilter: $activeFilter
+        )
+        .mask(
+            LinearGradient(
+                gradient: Gradient(stops: [
+                    .init(color: .clear, location: 0),
+                    .init(color: .black, location: 0.06),
+                    .init(color: .black, location: 0.94),
+                    .init(color: .clear, location: 1),
+                ]),
+                startPoint: .leading,
+                endPoint: .trailing
             )
-            .padding(.bottom, 8)
+        )
+        .padding(.bottom, 8)
     }
 
     private var eventList: some View {
         VStack(spacing: 14) {
-            if viewModel.isLoading {
+            if viewModel.isLoading, viewModel.entries.isEmpty {
                 ProgressView()
                     .tint(.white.opacity(0.6))
                     .frame(maxWidth: .infinity)
@@ -190,38 +176,5 @@ private extension ScheduleView {
         let prefetcher = ImagePrefetcher(urls: urls)
         speakerPrefetcher = prefetcher
         prefetcher.start()
-    }
-}
-
-#Preview {
-    SchedulePreviewHost()
-        .preferredColorScheme(.dark)
-}
-
-private struct SchedulePreviewHost: View {
-    @State private var viewModel: ScheduleViewModel?
-    @Environment(\.dependencyContainer) private var container
-
-    var body: some View {
-        Group {
-            if let viewModel {
-                ScheduleView(viewModel: viewModel)
-            } else {
-                ProgressView()
-            }
-        }
-        .task {
-            if viewModel == nil {
-                let model = ScheduleViewModel(
-                    festivalsRepository: container.festivalsRepository,
-                    eventsRepository: container.eventsRepository,
-                    zoneRepository: container.zoneRepository,
-                    speakersRepository: container.speakersRepository,
-                    usersRepository: container.usersRepository
-                )
-                viewModel = model
-                await model.load()
-            }
-        }
     }
 }

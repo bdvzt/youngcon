@@ -271,10 +271,10 @@ final class MapViewModelTests: XCTestCase {
 
 final class CachedFloorsRepositoryTests: XCTestCase {
     func testGetFloors_whenCacheExists_returnsCachedFloorsWithoutNetwork() async throws {
-        let cacheStore = InMemoryScheduleCacheStore()
+        let cacheStore = InMemoryMapCacheStore()
         try await cacheStore.save(
             [makeFloorDTO(id: "floor-cache", title: "Cached Floor")],
-            for: CacheKey.Schedule.allFloors
+            for: CacheKey.Map.allFloors
         )
         let networkService = NetworkServiceSpy()
         networkService.stub(
@@ -286,7 +286,7 @@ final class CachedFloorsRepositoryTests: XCTestCase {
             cacheStore: cacheStore
         )
 
-        let floors = try await repository.getFloors()
+        let floors = try await repository.getFloors(policy: .cacheFirst)
 
         XCTAssertEqual(floors.map(\.id), ["floor-cache"])
         let requestedPaths = networkService.recordedPaths()
@@ -294,7 +294,7 @@ final class CachedFloorsRepositoryTests: XCTestCase {
     }
 
     func testGetFloors_whenCacheMissing_loadsNetworkAndSavesCache() async throws {
-        let cacheStore = InMemoryScheduleCacheStore()
+        let cacheStore = InMemoryMapCacheStore()
         let networkService = NetworkServiceSpy()
         networkService.stub(
             [makeFloorDTO(id: "floor-network", title: "Network Floor")],
@@ -305,8 +305,8 @@ final class CachedFloorsRepositoryTests: XCTestCase {
             cacheStore: cacheStore
         )
 
-        let floors = try await repository.getFloors()
-        let cachedDTOs = try await cacheStore.load([FloorDTO].self, for: CacheKey.Schedule.allFloors)
+        let floors = try await repository.getFloors(policy: .cacheFirst)
+        let cachedDTOs = try await cacheStore.load([FloorDTO].self, for: CacheKey.Map.allFloors)
 
         XCTAssertEqual(floors.map(\.id), ["floor-network"])
         XCTAssertEqual(cachedDTOs?.map(\.id), ["floor-network"])
@@ -315,10 +315,10 @@ final class CachedFloorsRepositoryTests: XCTestCase {
     }
 
     func testGetFloor_whenCacheExists_returnsCachedFloorWithoutNetwork() async throws {
-        let cacheStore = InMemoryScheduleCacheStore()
+        let cacheStore = InMemoryMapCacheStore()
         try await cacheStore.save(
             makeFloorDTO(id: "floor-cache", title: "Cached Floor"),
-            for: CacheKey.Schedule.floor(floorID: "floor-cache")
+            for: CacheKey.Map.floor(floorID: "floor-cache")
         )
         let networkService = NetworkServiceSpy()
         networkService.stub(
@@ -330,7 +330,7 @@ final class CachedFloorsRepositoryTests: XCTestCase {
             cacheStore: cacheStore
         )
 
-        let floor = try await repository.getFloor(id: "floor-cache")
+        let floor = try await repository.getFloor(id: "floor-cache", policy: .cacheFirst)
 
         XCTAssertEqual(floor.id, "floor-cache")
         XCTAssertEqual(floor.title, "Cached Floor")
@@ -347,7 +347,7 @@ final class CachedFloorsRepositoryTests: XCTestCase {
     }
 }
 
-private actor InMemoryScheduleCacheStore: ScheduleCacheStoreProtocol {
+private actor InMemoryMapCacheStore: MapCacheStoreProtocol {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private var payloads: [String: Data] = [:]

@@ -23,29 +23,27 @@ final class MockUsersRepository: UsersRepositoryProtocol {
 
     var mockUnlockedAchievements: [Achievement] = []
 
-    func getMyProfile() async throws -> UserProfile {
+    func getMyProfile(policy _: CachePolicy = .cacheFirst) async throws -> UserProfile {
         getMyProfileCallCount += 1
         if let delay = delayTime { try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000)) }
         if shouldFailProfile { throw NetworkError.generic }
         return mockProfile
     }
 
-    func getUserAchievements(userID _: String) async throws -> [Achievement] {
+    func getUserAchievements(
+        userID _: String,
+        policy _: CachePolicy = .cacheFirst
+    ) async throws -> [Achievement] {
         getUserAchievementsCallCount += 1
         if shouldFailProgress { throw NetworkError.generic }
         return mockUnlockedAchievements
     }
 
-    func getUserLikedEvents(userID _: String) async throws -> [Event] {
+    func getUserLikedEvents(
+        userID _: String,
+        policy _: CachePolicy = .cacheFirst
+    ) async throws -> [Event] {
         []
-    }
-
-    func assignAchievement(qrCode _: String, achievementId _: String) async throws -> AssignResult {
-        .init(userId: "test", achievementId: "test", assignedNow: false)
-    }
-
-    func resolveQR(_: String) async throws -> ResolvedUser {
-        .init(userId: "1", firstName: "", lastName: "", qrCode: "")
     }
 }
 
@@ -59,7 +57,7 @@ final class MockAchievementsRepository: AchievementsRepositoryProtocol {
         Achievement(id: "ach-2", name: "Тест 2", description: "Desc 2", icon: URL(string: "https://test.com/2.png"), color: .black),
     ]
 
-    func getAchievements() async throws -> [Achievement] {
+    func getAchievements(policy _: CachePolicy = .cacheFirst) async throws -> [Achievement] {
         getAchievementsCallCount += 1
         if shouldFail { throw NetworkError.generic }
         return mockAchievements
@@ -144,7 +142,11 @@ final class BadgeViewModelUnitTests: XCTestCase {
         XCTAssertNil(viewModel.profile, "Профиль не должен устанавливаться при ошибке")
         XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны создаваться, если упал профиль")
         XCTAssertFalse(viewModel.isLoading)
-        XCTAssertEqual(mockAchievementsRepo.getAchievementsCallCount, 0, "Список ачивок не должен загружаться")
+        XCTAssertEqual(
+            mockAchievementsRepo.getAchievementsCallCount,
+            1,
+            "Список ачивок теперь загружается параллельно с профилем"
+        )
     }
 
     func testLoadData_AchievementsError_StopsExecutionAndResetsLoading() async {
@@ -152,7 +154,7 @@ final class BadgeViewModelUnitTests: XCTestCase {
 
         await viewModel.loadData()
 
-        XCTAssertNotNil(viewModel.profile, "Профиль должен был загрузиться")
+        XCTAssertNil(viewModel.profile, "Состояние применяется только после полного успешного payload")
         XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны создаваться при ошибке списка")
         XCTAssertFalse(viewModel.isLoading)
     }
@@ -162,7 +164,7 @@ final class BadgeViewModelUnitTests: XCTestCase {
 
         await viewModel.loadData()
 
-        XCTAssertNotNil(viewModel.profile)
+        XCTAssertNil(viewModel.profile, "Состояние применяется только после полной успешной загрузки")
         XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны маппиться, если не смогли получить прогресс")
         XCTAssertFalse(viewModel.isLoading)
     }
