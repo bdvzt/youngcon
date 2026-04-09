@@ -12,6 +12,7 @@ final class ScheduleViewModel {
     private(set) var entries: [ScheduleEntry] = []
     private(set) var isLoading = false
     private(set) var loadError: String?
+    private(set) var isRefreshingUI = false
     var filters: [String] {
         let categories = Set(
             entries.map {
@@ -48,7 +49,17 @@ final class ScheduleViewModel {
     }
 
     func refresh() async {
-        await fetchAll(isFirstLoad: false)
+        guard !isRefreshingUI else { return }
+
+        isRefreshingUI = true
+        defer { isRefreshingUI = false }
+
+        async let refreshTask: Void = fetchAll(isFirstLoad: false)
+        async let delay: Void = {
+            try? await Task.sleep(for: .milliseconds(500))
+        }()
+
+        _ = await (refreshTask, delay)
     }
 
     func startPolling() {
@@ -70,8 +81,11 @@ final class ScheduleViewModel {
         pollingTask = nil
     }
 
-    private func fetchAll(isFirstLoad: Bool) async {
-        guard !isRefreshing else { return }
+    private func fetchAll(isFirstLoad: Bool, force: Bool = false) async {
+        if !force {
+            guard !isRefreshing else { return }
+        }
+
         isRefreshing = true
         defer { isRefreshing = false }
 

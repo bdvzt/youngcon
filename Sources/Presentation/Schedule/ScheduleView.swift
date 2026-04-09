@@ -38,21 +38,11 @@ struct ScheduleView: View {
                     Color.clear.frame(height: 120)
                 }
             }
-
-            VStack(spacing: 0) {
-                AppColor.appBackground.ignoresSafeArea(edges: .top)
-                    .frame(height: 0)
-                AppColor.appBackground.frame(height: 52)
-                LinearGradient(
-                    colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 32)
-                Spacer()
+            .refreshable {
+                await viewModel.refresh()
             }
-            .zIndex(20)
-            .allowsHitTesting(false)
+
+            topOverlay
 
             VStack(spacing: 0) {
                 logoView
@@ -62,6 +52,8 @@ struct ScheduleView: View {
             }
             .zIndex(21)
             .allowsHitTesting(false)
+
+            refreshOverlay
         }
         .onAppear {
             withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
@@ -72,13 +64,48 @@ struct ScheduleView: View {
             await viewModel.load()
             viewModel.startPolling()
         }
-        .task {
-            await viewModel.load()
-            viewModel.startPolling()
-        }
         .onDisappear {
             viewModel.stopPolling()
         }
+    }
+
+    @ViewBuilder
+    private var refreshOverlay: some View {
+        if viewModel.isRefreshingUI {
+            VStack(spacing: 0) {
+                ProgressView()
+                    .tint(.pink)
+                    .scaleEffect(1.05)
+                    .padding(.top, 16)
+
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .zIndex(30)
+            .allowsHitTesting(false)
+        }
+    }
+
+    private var topOverlay: some View {
+        VStack(spacing: 0) {
+            AppColor.appBackground
+                .ignoresSafeArea(edges: .top)
+                .frame(height: 0)
+
+            AppColor.appBackground
+                .frame(height: 52)
+
+            LinearGradient(
+                colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 32)
+
+            Spacer()
+        }
+        .zIndex(20)
+        .allowsHitTesting(false)
     }
 
     private var logoView: some View {

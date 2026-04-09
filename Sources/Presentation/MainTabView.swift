@@ -151,8 +151,7 @@ struct MainTabView: View {
             if badgeViewModel == nil {
                 let model = BadgeViewModel(
                     usersRepository: container.usersRepository,
-                    achievementsRepository: container.achievementsRepository,
-                    userDefaultsStore: container.userDefaultsStore
+                    achievementsRepository: container.achievementsRepository
                 )
                 badgeViewModel = model
                 await model.loadData()

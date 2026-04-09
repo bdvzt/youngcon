@@ -6,11 +6,11 @@ final class BadgeViewModel: ObservableObject {
     @Published var profile: UserProfile?
     @Published var stickers: [Sticker] = []
     @Published var isLoading = false
+    @Published var shouldCloseQR = false
     @Published var newlyUnlockedSticker: Sticker?
 
     private let usersRepository: UsersRepositoryProtocol
     private let achievementsRepository: AchievementsRepositoryProtocol
-    private let userDefaultsStore: UserDefaultsStoreProtocol
 
     private var isRefreshing = false
     private var pollingTask: Task<Void, Never>?
@@ -19,12 +19,10 @@ final class BadgeViewModel: ObservableObject {
 
     init(
         usersRepository: UsersRepositoryProtocol,
-        achievementsRepository: AchievementsRepositoryProtocol,
-        userDefaultsStore: UserDefaultsStoreProtocol
+        achievementsRepository: AchievementsRepositoryProtocol
     ) {
         self.usersRepository = usersRepository
         self.achievementsRepository = achievementsRepository
-        self.userDefaultsStore = userDefaultsStore
     }
 
     func loadData() async {
@@ -93,8 +91,6 @@ final class BadgeViewModel: ObservableObject {
                 achievements: payload.allAchievements,
                 unlockedIDs: newUnlockedIDs
             )
-
-            saveLastUpdateDate()
         } catch let error as BadgeError {
             print(error.description)
         } catch {
@@ -159,16 +155,25 @@ private extension BadgeViewModel {
 
         let freshlyUnlocked = newUnlockedIDs.subtracting(knownUnlockedIDs)
 
-        guard let firstNewID = freshlyUnlocked.first,
-              let achievement = allAchievements.first(where: { $0.id == firstNewID })
-        else {
+        guard let firstNewID = freshlyUnlocked.first else { return }
+
+        let updatedStickers = allAchievements.map { achievement in
+            let isUnlocked = newUnlockedIDs.contains(achievement.id)
+            return Sticker(from: achievement, isUnlocked: isUnlocked)
+        }
+
+        guard let sticker = updatedStickers.first(where: { $0.id == firstNewID }) else {
             return
         }
 
-        let sticker = Sticker(from: achievement, isUnlocked: true)
+        shouldCloseQR = true
 
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
-            newlyUnlockedSticker = sticker
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(300))
+
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+                newlyUnlockedSticker = sticker
+            }
         }
     }
 
@@ -179,9 +184,5 @@ private extension BadgeViewModel {
             let isUnlocked = unlockedIDs.contains(achievement.id)
             return Sticker(from: achievement, isUnlocked: isUnlocked)
         }
-    }
-
-    func saveLastUpdateDate() {
-        try? userDefaultsStore.setCodable(Date(), for: UserDefaultsKeys.lastUpdateTimestampBadge)
     }
 }

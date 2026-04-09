@@ -152,8 +152,14 @@ struct AchievementsCard: View {
         }
         .onChange(of: newlyUnlockedSticker) { _, newVal in
             guard let newVal else { return }
+
             animatedCells.insert(newVal.id)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
+                animatedCells.remove(newVal.id)
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
                 newlyUnlockedSticker = nil
             }
         }

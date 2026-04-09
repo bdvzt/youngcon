@@ -23,6 +23,9 @@ struct LocationsView: View {
                 }
             }
             .scrollClipDisabled(true)
+            .refreshable {
+                await viewModel.refresh()
+            }
 
             topOverlay
 
@@ -357,34 +360,4 @@ struct LocationsView: View {
     }
 
     private static let mapAspectRatio: CGFloat = 501 / 981
-}
-
-#Preview {
-    LocationsPreviewHost()
-        .preferredColorScheme(.dark)
-}
-
-private struct LocationsPreviewHost: View {
-    @State private var viewModel: MapViewModel?
-    @Environment(\.dependencyContainer) private var container
-
-    var body: some View {
-        Group {
-            if let viewModel {
-                LocationsView(viewModel: viewModel)
-            } else {
-                ProgressView()
-            }
-        }
-        .task {
-            if viewModel == nil {
-                let model = MapViewModel(
-                    floorsRepository: container.floorsRepository,
-                    zoneRepository: container.zoneRepository
-                )
-                viewModel = model
-                await model.load()
-            }
-        }
-    }
 }

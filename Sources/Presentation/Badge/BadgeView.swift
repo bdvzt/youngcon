@@ -31,8 +31,11 @@ struct BadgeView: View {
         .onChange(of: isQRModalOpen) { _, isOpen in
             viewModel.startPolling(every: isOpen ? 1 : 30)
         }
-        .refreshable {
-            await viewModel.refresh()
+        .onChange(of: viewModel.shouldCloseQR) { _, shouldClose in
+            guard shouldClose else { return }
+
+            isQRModalOpen = false
+            viewModel.shouldCloseQR = false
         }
         .onDisappear {
             viewModel.stopPolling()
@@ -48,6 +51,9 @@ struct BadgeView: View {
 
                 Color.clear.frame(height: 120)
             }
+        }
+        .refreshable {
+            await viewModel.refresh()
         }
     }
 

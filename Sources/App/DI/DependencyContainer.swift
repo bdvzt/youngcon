@@ -8,8 +8,6 @@ final class DependencyContainer {
         tokenStorage: tokenStorage
     )
 
-    private(set) lazy var userDefaultsStore: UserDefaultsStoreProtocol = UserDefaultsStore()
-
     private(set) lazy var authRepository: AuthRepositoryProtocol = AuthRepository(
         networkService: networkService,
         tokenStorage: tokenStorage
