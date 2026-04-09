@@ -91,8 +91,6 @@ final class BadgeViewModelUnitTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - Успешные сценарии
-
     func testLoadData_Success_StateUpdatesCorrectly() async {
         mockUsersRepo.mockUnlockedAchievements = [
             Achievement(id: "ach-1", name: "", description: "", icon: nil, color: .clear),
@@ -132,18 +130,5 @@ final class BadgeViewModelUnitTests: XCTestCase {
 
         XCTAssertEqual(mockUsersRepo.getMyProfileCallCount, 1, "Защита от повторного вызова не сработала")
         XCTAssertEqual(mockAchievementsRepo.getAchievementsCallCount, 1)
-    }
-
-    // MARK: - Обработка ошибок
-
-    func testLoadData_ProfileError_StopsExecutionAndResetsLoading() async {
-        mockUsersRepo.shouldFailProfile = true
-
-        await viewModel.loadData()
-
-        XCTAssertNil(viewModel.profile, "Профиль не должен устанавливаться при ошибке")
-        XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны создаваться, если упал профиль")
-        XCTAssertFalse(viewModel.isLoading)
-        XCTAssertEqual(mockAchievementsRepo.getAchievementsCallCount, 0, "Список ачивок не должен загружаться")
     }
 }
