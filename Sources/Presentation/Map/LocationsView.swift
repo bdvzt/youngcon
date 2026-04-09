@@ -252,10 +252,22 @@ struct LocationsView: View {
                         .accessibilityIdentifier("map.zoneChip.\(zone.id)")
                     }
                 }
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 24)
                 .padding(.vertical, 14)
             }
             .accessibilityIdentifier("map.zoneSelector")
+            .mask(
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.06),
+                        .init(color: .black, location: 0.94),
+                        .init(color: .clear, location: 1),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
         }
     }
 
