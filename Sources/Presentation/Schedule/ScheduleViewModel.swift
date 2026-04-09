@@ -10,6 +10,8 @@ final class ScheduleViewModel {
     private let speakersRepository: SpeakersRepositoryProtocol
     private let usersRepository: UsersRepositoryProtocol
 
+    private var pollingTask: Task<Void, Never>?
+
     private(set) var entries: [ScheduleEntry] = []
     private(set) var favoriteEventIDs: Set<String> = []
     private(set) var isLoading = false
@@ -30,39 +32,34 @@ final class ScheduleViewModel {
     }
 
     func load() async {
-        guard !isLoading else { return }
-        isLoading = true
-        loadError = nil
-        defer { isLoading = false }
+        await load(policy: .cacheFirst, shouldReplaceOnlyIfChanged: true)
+    }
 
-        do {
-            let festival = try await festivalsRepository.getLastFestival()
-            let events = try await eventsRepository.getEvents(festivalID: festival.id)
+    func refreshFromNetworkIfNeeded() async {
+        await load(policy: .networkFirst, shouldReplaceOnlyIfChanged: true)
+    }
 
-            async let favoriteIDs = loadFavoriteEventIDs()
-            let zonesByID = await loadZones(for: events)
-            let speakersByEventID = await loadSpeakersByEventID(for: events)
-            favoriteEventIDs = await favoriteIDs
+    func startPolling(every seconds: TimeInterval = 60) {
+        stopPolling()
 
-            entries = events.map { event in
-                ScheduleEntry(
-                    id: event.id,
-                    event: event,
-                    zone: zonesByID[event.zoneID],
-                    speakers: speakersByEventID[event.id] ?? [],
-                    streamURL: event.streamURL
-                )
-            }
+        pollingTask = Task { [weak self] in
+            guard let self else { return }
 
-            if #available(iOS 16.1, *) {
-                await CurrentEventLiveActivityController.sync(with: entries)
-            }
-        } catch {
-            loadError = error.localizedDescription
-            if #available(iOS 16.1, *) {
-                await CurrentEventLiveActivityController.sync(with: [])
+            while !Task.isCancelled {
+                await refreshFromNetworkIfNeeded()
+
+                do {
+                    try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                } catch {
+                    break
+                }
             }
         }
+    }
+
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
     }
 
     /// Call when returning to foreground so the Live Activity tracks the session that is “now”.
@@ -90,14 +87,87 @@ final class ScheduleViewModel {
         }
     }
 
-    private func loadZones(for events: [Event]) async -> [String: Zone] {
+    private func load(
+        policy: CachePolicy,
+        shouldReplaceOnlyIfChanged: Bool
+    ) async {
+        guard !isLoading else { return }
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let newState = try await buildScheduleState(policy: policy)
+
+            let entriesChanged = newState.entries != entries
+            let favoritesChanged = newState.favoriteEventIDs != favoriteEventIDs
+
+            if !shouldReplaceOnlyIfChanged || entriesChanged {
+                entries = newState.entries
+
+                if #available(iOS 16.1, *) {
+                    await CurrentEventLiveActivityController.sync(with: entries)
+                }
+            }
+
+            if !shouldReplaceOnlyIfChanged || favoritesChanged {
+                favoriteEventIDs = newState.favoriteEventIDs
+            }
+
+            loadError = nil
+        } catch {
+            loadError = error.localizedDescription
+
+            if entries.isEmpty, #available(iOS 16.1, *) {
+                await CurrentEventLiveActivityController.sync(with: [])
+            }
+        }
+    }
+
+    private func buildScheduleState(policy: CachePolicy) async throws -> ScheduleState {
+        let festival = try await festivalsRepository.getLastFestival(policy: policy)
+        let events = try await eventsRepository.getEvents(
+            festivalID: festival.id,
+            policy: policy
+        )
+
+        async let favoriteIDsTask = loadFavoriteEventIDs()
+        async let zonesByIDTask = loadZones(for: events, policy: policy)
+        async let speakersByEventIDTask = loadSpeakersByEventID(for: events, policy: policy)
+
+        let zonesByID = await zonesByIDTask
+        let speakersByEventID = await speakersByEventIDTask
+        let favoriteIDs = await favoriteIDsTask
+
+        let newEntries = events.map { event in
+            ScheduleEntry(
+                id: event.id,
+                event: event,
+                zone: zonesByID[event.zoneID],
+                speakers: speakersByEventID[event.id] ?? [],
+                streamURL: event.streamURL
+            )
+        }
+
+        return ScheduleState(
+            entries: newEntries,
+            favoriteEventIDs: favoriteIDs
+        )
+    }
+
+    private func loadZones(
+        for events: [Event],
+        policy: CachePolicy
+    ) async -> [String: Zone] {
         let zoneIDs = Set(events.map(\.zoneID).filter { !$0.isEmpty })
         var zonesByID: [String: Zone] = [:]
 
         await withTaskGroup(of: (String, Zone?).self) { group in
             for zoneID in zoneIDs {
                 group.addTask { [zoneRepository] in
-                    let zone = try? await zoneRepository.getZone(zoneID: zoneID)
+                    let zone = try? await zoneRepository.getZone(
+                        zoneID: zoneID,
+                        policy: policy
+                    )
                     return (zoneID, zone)
                 }
             }
@@ -112,11 +182,14 @@ final class ScheduleViewModel {
         return zonesByID
     }
 
-    private func loadSpeakersByEventID(for events: [Event]) async -> [String: [Speaker]] {
+    private func loadSpeakersByEventID(
+        for events: [Event],
+        policy: CachePolicy
+    ) async -> [String: [Speaker]] {
         let eventIDs = Set(events.map(\.id))
         var speakersByEventID: [String: [Speaker]] = [:]
 
-        guard let speakers = try? await speakersRepository.getAllSpeakers() else {
+        guard let speakers = try? await speakersRepository.getAllSpeakers(policy: policy) else {
             return speakersByEventID
         }
 
@@ -154,4 +227,9 @@ final class ScheduleViewModel {
         }
         return Set(likedEvents.map(\.id))
     }
+}
+
+private struct ScheduleState: Equatable {
+    let entries: [ScheduleEntry]
+    let favoriteEventIDs: Set<String>
 }

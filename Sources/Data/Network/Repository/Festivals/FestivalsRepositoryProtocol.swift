@@ -1,3 +1,3 @@
 protocol FestivalsRepositoryProtocol {
-    func getLastFestival() async throws -> Festival
+    func getLastFestival(policy: CachePolicy) async throws -> Festival
 }

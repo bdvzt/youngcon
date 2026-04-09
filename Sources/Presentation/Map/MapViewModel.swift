@@ -123,7 +123,7 @@ final class MapViewModel {
             for floor in floors {
                 group.addTask { [zoneRepository] in
                     let zones = try await Self.sortedZones(
-                        zoneRepository.getZones(floorID: floor.id)
+                        zoneRepository.getZones(floorID: floor.id, policy: .cacheFirst)
                     )
                     return (floor.id, zones)
                 }

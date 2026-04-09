@@ -5,7 +5,7 @@ final class SpeakersRepository: SpeakersRepositoryProtocol {
         self.networkService = networkService
     }
 
-    func getSpeaker(speakerID: String) async throws -> Speaker {
+    func getSpeaker(speakerID: String, policy _: CachePolicy) async throws -> Speaker {
         let endpoint = GetSpeakerByIDEndpoint(speakerID)
         let response = try await networkService.requestDecodable(
             endpoint,
@@ -17,7 +17,7 @@ final class SpeakersRepository: SpeakersRepositoryProtocol {
         return speaker
     }
 
-    func getAllSpeakers() async throws -> [Speaker] {
+    func getAllSpeakers(policy _: CachePolicy) async throws -> [Speaker] {
         let endpoint = GetSpeakersEndpoint()
         return try await networkService.requestDecodable(
             endpoint,
@@ -30,51 +30,97 @@ final class CachedSpeakersRepository: SpeakersRepositoryProtocol {
     private let networkService: NetworkServiceProtocol
     private let cacheStore: ScheduleCacheStoreProtocol
 
-    init(networkService: NetworkServiceProtocol, cacheStore: ScheduleCacheStoreProtocol) {
+    init(
+        networkService: NetworkServiceProtocol,
+        cacheStore: ScheduleCacheStoreProtocol
+    ) {
         self.networkService = networkService
         self.cacheStore = cacheStore
     }
 
-    func getSpeaker(speakerID: String) async throws -> Speaker {
-        if let cachedDTO = try? await cacheStore.load(SpeakerDTO.self, for: CacheKey.Schedule.speaker(speakerID: speakerID)),
-           let speaker = cachedDTO.toEntity()
-        {
-            return speaker
-        }
+    func getSpeaker(speakerID: String, policy: CachePolicy) async throws -> Speaker {
+        let key = CacheKey.Schedule.speaker(speakerID: speakerID)
 
-        do {
-            let endpoint = GetSpeakerByIDEndpoint(speakerID)
-            let dto = try await networkService.requestDecodable(endpoint, as: SpeakerDTO.self)
-            try? await cacheStore.save(dto, for: CacheKey.Schedule.speaker(speakerID: speakerID))
-            if let speaker = dto.toEntity() {
-                return speaker
-            }
-            throw NetworkError.decodingFailed
-        } catch {
-            if let cachedDTO = try? await cacheStore.load(SpeakerDTO.self, for: CacheKey.Schedule.speaker(speakerID: speakerID)),
+        switch policy {
+        case .cacheFirst:
+            if let cachedDTO = try? await cacheStore.load(SpeakerDTO.self, for: key),
                let speaker = cachedDTO.toEntity()
             {
                 return speaker
             }
-            throw error
+
+            let endpoint = GetSpeakerByIDEndpoint(speakerID)
+            let dto = try await networkService.requestDecodable(endpoint, as: SpeakerDTO.self)
+            try? await cacheStore.save(dto, for: key)
+
+            guard let speaker = dto.toEntity() else {
+                throw NetworkError.decodingFailed
+            }
+            return speaker
+
+        case .networkFirst:
+            do {
+                let endpoint = GetSpeakerByIDEndpoint(speakerID)
+                let dto = try await networkService.requestDecodable(endpoint, as: SpeakerDTO.self)
+                try? await cacheStore.save(dto, for: key)
+
+                guard let speaker = dto.toEntity() else {
+                    throw NetworkError.decodingFailed
+                }
+                return speaker
+            } catch {
+                if let cachedDTO = try? await cacheStore.load(SpeakerDTO.self, for: key),
+                   let speaker = cachedDTO.toEntity()
+                {
+                    return speaker
+                }
+                throw error
+            }
+
+        case .ignoreCache:
+            let endpoint = GetSpeakerByIDEndpoint(speakerID)
+            let dto = try await networkService.requestDecodable(endpoint, as: SpeakerDTO.self)
+            try? await cacheStore.save(dto, for: key)
+
+            guard let speaker = dto.toEntity() else {
+                throw NetworkError.decodingFailed
+            }
+            return speaker
         }
     }
 
-    func getAllSpeakers() async throws -> [Speaker] {
-        if let cachedDTOs = try? await cacheStore.load([SpeakerDTO].self, for: CacheKey.Schedule.allSpeakers) {
-            return cachedDTOs.compactMap { $0.toEntity() }
-        }
+    func getAllSpeakers(policy: CachePolicy) async throws -> [Speaker] {
+        let key = CacheKey.Schedule.allSpeakers
 
-        do {
-            let endpoint = GetSpeakersEndpoint()
-            let dtos = try await networkService.requestDecodable(endpoint, as: [SpeakerDTO].self)
-            try? await cacheStore.save(dtos, for: CacheKey.Schedule.allSpeakers)
-            return dtos.compactMap { $0.toEntity() }
-        } catch {
-            if let cachedDTOs = try? await cacheStore.load([SpeakerDTO].self, for: CacheKey.Schedule.allSpeakers) {
+        switch policy {
+        case .cacheFirst:
+            if let cachedDTOs = try? await cacheStore.load([SpeakerDTO].self, for: key) {
                 return cachedDTOs.compactMap { $0.toEntity() }
             }
-            throw error
+
+            let endpoint = GetSpeakersEndpoint()
+            let dtos = try await networkService.requestDecodable(endpoint, as: [SpeakerDTO].self)
+            try? await cacheStore.save(dtos, for: key)
+            return dtos.compactMap { $0.toEntity() }
+
+        case .networkFirst:
+            do {
+                let endpoint = GetSpeakersEndpoint()
+                let dtos = try await networkService.requestDecodable(endpoint, as: [SpeakerDTO].self)
+                try? await cacheStore.save(dtos, for: key)
+                return dtos.compactMap { $0.toEntity() }
+            } catch {
+                if let cachedDTOs = try? await cacheStore.load([SpeakerDTO].self, for: key) {
+                    return cachedDTOs.compactMap { $0.toEntity() }
+                }
+                throw error
+            }
+
+        case .ignoreCache:
+            let endpoint = GetSpeakersEndpoint()
+            let dtos = try await networkService.requestDecodable(endpoint, as: [SpeakerDTO].self)
+            try? await cacheStore.save(dtos, for: key)
+            return dtos.compactMap { $0.toEntity() }
         }
     }
 }

@@ -1,4 +1,4 @@
 protocol SpeakersRepositoryProtocol {
-    func getSpeaker(speakerID: String) async throws -> Speaker
-    func getAllSpeakers() async throws -> [Speaker]
+    func getSpeaker(speakerID: String, policy: CachePolicy) async throws -> Speaker
+    func getAllSpeakers(policy: CachePolicy) async throws -> [Speaker]
 }

@@ -114,7 +114,10 @@ struct MainTabView: View {
                 gradientOffset = 1
             }
         }
-        .onDisappear { badgeViewModel?.stopPolling() }
+        .onDisappear {
+            badgeViewModel?.stopPolling()
+            scheduleViewModel?.stopPolling()
+        }
     }
 
     // MARK: - Header Bar
@@ -278,6 +281,7 @@ struct MainTabView: View {
             )
             scheduleViewModel = model
             await model.load()
+            model.startPolling(every: 60)
         }
 
         if mapViewModel == nil {
