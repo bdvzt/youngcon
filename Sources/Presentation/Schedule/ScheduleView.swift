@@ -1,3 +1,4 @@
+import Kingfisher
 import Observation
 import SwiftUI
 
@@ -6,10 +7,11 @@ struct ScheduleView: View {
 
     @State private var activeFilter: String = "Все"
     @State private var gradientOffset: CGFloat = 0
+    @State private var speakerPrefetcher: ImagePrefetcher?
 
     var hasFixedHeader: Bool = false
 
-    let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
+    private let filters = ["Все", "Избранное", "Live", "Лекция", "Воркшоп", "Backend", "ML"]
 
     private var filteredEntries: [ScheduleEntry] {
         switch activeFilter {
@@ -18,10 +20,28 @@ struct ScheduleView: View {
         case "Live":
             viewModel.entries.filter { $0.streamURL != nil }
         case "Избранное":
-            []
+            viewModel.entries.filter { viewModel.isFavorite(eventID: $0.event.id) }
+        case "Лекция":
+            viewModel.entries.filter {
+                normalizedCategory($0.event.category) == "лекция"
+            }
+        case "Воркшоп":
+            viewModel.entries.filter {
+                normalizedCategory($0.event.category) == "воркшоп"
+            }
+        case "Backend":
+            viewModel.entries.filter {
+                let zoneTitle = $0.zone?.title.lowercased() ?? ""
+                return zoneTitle.contains("бэкенд") || zoneTitle.contains("backend")
+            }
+        case "ML":
+            viewModel.entries.filter {
+                let zoneTitle = $0.zone?.title.lowercased() ?? ""
+                return zoneTitle.contains("ии") || zoneTitle.contains("ml")
+            }
         default:
             viewModel.entries.filter {
-                $0.event.category.lowercased() == activeFilter.lowercased()
+                normalizedCategory($0.event.category) == normalizedCategory(activeFilter)
             }
         }
     }
@@ -44,6 +64,10 @@ struct ScheduleView: View {
             withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
                 gradientOffset = 1
             }
+            prefetchSpeakerAvatars()
+        }
+        .onChange(of: viewModel.entries.map(\.id)) { _, _ in
+            prefetchSpeakerAvatars()
         }
     }
 
@@ -135,12 +159,37 @@ struct ScheduleView: View {
                         event: entry.event,
                         zone: entry.zone,
                         speakers: entry.speakers,
-                        streamURL: entry.streamURL
+                        streamURL: entry.streamURL,
+                        isFavorite: viewModel.isFavorite(eventID: entry.event.id),
+                        onToggleFavorite: { [viewModel] in
+                            await viewModel.toggleFavorite(eventID: entry.event.id)
+                        }
                     )
                 }
             }
         }
         .padding(.horizontal, 20)
+    }
+}
+
+private func normalizedCategory(_ category: String) -> String {
+    category.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+}
+
+private extension ScheduleView {
+    func prefetchSpeakerAvatars() {
+        let urls = Array(
+            Set(
+                viewModel.entries
+                    .flatMap(\.speakers)
+                    .compactMap(\.avatarImageURL)
+            )
+        )
+        guard !urls.isEmpty else { return }
+        speakerPrefetcher?.stop()
+        let prefetcher = ImagePrefetcher(urls: urls)
+        speakerPrefetcher = prefetcher
+        prefetcher.start()
     }
 }
 
@@ -167,7 +216,8 @@ private struct SchedulePreviewHost: View {
                     festivalsRepository: container.festivalsRepository,
                     eventsRepository: container.eventsRepository,
                     zoneRepository: container.zoneRepository,
-                    speakersRepository: container.speakersRepository
+                    speakersRepository: container.speakersRepository,
+                    usersRepository: container.usersRepository
                 )
                 viewModel = model
                 await model.load()

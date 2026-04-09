@@ -1,22 +1,34 @@
+import Kingfisher
 import SafariServices
 import SwiftUI
 
 struct EventDetailedCard: View {
-    @State private var isFavorite = false
+    @State private var isFavorite: Bool
+    @State private var isFavoriteLoading = false
     @State private var isShowingStreamPlayer = false
     @Environment(\.dismiss) private var dismiss
 
     private let model: EventDetailedCardModel
     private let streamURL: URL?
+    private let onToggleFavorite: (() async -> Bool)?
     private let cardCornerRadius: CGFloat = 34
 
-    init(event: Event, zone: Zone?, speaker: Speaker, streamURL: URL?) {
+    init(
+        event: Event,
+        zone: Zone?,
+        speaker: Speaker,
+        streamURL: URL?,
+        isFavorite: Bool,
+        onToggleFavorite: (() async -> Bool)?
+    ) {
         self.streamURL = streamURL
+        self.onToggleFavorite = onToggleFavorite
+        _isFavorite = State(initialValue: isFavorite)
         model = EventDetailedCardModel(
             title: event.title,
             time: Self.formatTimeRange(start: event.startDate, end: event.endDate),
             location: zone?.title ?? "TBD",
-            description: event.description ?? "",
+            description: event.description,
             speakerName: speaker.fullName,
             speakerRole: speaker.job,
             primaryActionTitle: streamURL != nil ? "Смотреть трансляцию" : "Подробнее",
@@ -141,17 +153,17 @@ struct EventDetailedCard: View {
                         )
 
                     if let avatarURL = model.speaker.avatarImageURL {
-                        AsyncImage(url: avatarURL) { image in
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                        } placeholder: {
-                            Image(systemName: "person")
-                                .font(.system(size: 26, weight: .medium))
-                                .foregroundColor(.white.opacity(0.58))
-                        }
-                        .frame(width: 54, height: 54)
-                        .clipShape(Circle())
+                        KFImage(avatarURL)
+                            .placeholder {
+                                Text(speakerInitials)
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundStyle(.white.opacity(0.8))
+                            }
+                            .cancelOnDisappear(true)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 54, height: 54)
+                            .clipShape(Circle())
                     } else {
                         Image(systemName: "person")
                             .font(.system(size: 26, weight: .medium))
@@ -225,7 +237,21 @@ struct EventDetailedCard: View {
             .buttonStyle(.plain)
 
             Button {
-                isFavorite.toggle()
+                guard !isFavoriteLoading else { return }
+                isFavoriteLoading = true
+                let optimisticValue = !isFavorite
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isFavorite = optimisticValue
+                }
+                Task {
+                    if let onToggleFavorite {
+                        let resolvedValue = await onToggleFavorite()
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isFavorite = resolvedValue
+                        }
+                    }
+                    isFavoriteLoading = false
+                }
             } label: {
                 Image(systemName: "star.fill")
                     .font(.system(size: 18, weight: .bold))
@@ -244,6 +270,7 @@ struct EventDetailedCard: View {
                     )
             }
             .buttonStyle(.plain)
+            .disabled(isFavoriteLoading)
         }
     }
 
@@ -261,6 +288,15 @@ struct EventDetailedCard: View {
                 )
         })
         .buttonStyle(.plain)
+    }
+
+    private var speakerInitials: String {
+        let parts = model.speakerName
+            .split(separator: " ")
+            .prefix(2)
+            .compactMap(\.first)
+        if parts.isEmpty { return "?" }
+        return String(parts)
     }
 }
 
