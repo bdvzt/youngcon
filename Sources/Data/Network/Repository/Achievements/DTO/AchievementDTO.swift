@@ -1,6 +1,6 @@
 import Foundation
 
-struct AchievementDTO: Decodable {
+struct AchievementDTO: Codable {
     let id: String
     let name: String
     let description: String

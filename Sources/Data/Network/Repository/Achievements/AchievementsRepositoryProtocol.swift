@@ -1,3 +1,3 @@
 protocol AchievementsRepositoryProtocol {
-    func getAchievements() async throws -> [Achievement]
+    func getAchievements(policy: CachePolicy) async throws -> [Achievement]
 }

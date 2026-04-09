@@ -50,4 +50,17 @@ enum CacheKey {
             CacheKey.make(.map, "zones", "floor", floorID)
         }
     }
+
+    enum Badge {
+        static let myProfile = CacheKey.make(.badge, "profile", "me")
+        static let allAchievements = CacheKey.make(.badge, "achievements", "all")
+
+        static func userAchievements(userID: String) -> String {
+            CacheKey.make(.badge, "user", userID, "achievements")
+        }
+
+        static func userLikedEvents(userID: String) -> String {
+            CacheKey.make(.badge, "user", userID, "likedEvents")
+        }
+    }
 }

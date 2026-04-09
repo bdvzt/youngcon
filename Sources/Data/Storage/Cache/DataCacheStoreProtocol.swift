@@ -7,3 +7,4 @@ protocol DataCacheStoreProtocol: Sendable {
 
 typealias ScheduleCacheStoreProtocol = DataCacheStoreProtocol
 typealias MapCacheStoreProtocol = DataCacheStoreProtocol
+typealias BadgeCacheStoreProtocol = DataCacheStoreProtocol

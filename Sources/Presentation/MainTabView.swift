@@ -301,9 +301,6 @@ struct MainTabView: View {
             )
             badgeViewModel = model
             await model.loadData()
-            if activeTab == .badge {
-                model.startPolling(every: 30)
-            }
         }
 
         if organizerViewModel == nil, appViewModel.profile?.role == .employee {
@@ -323,12 +320,6 @@ struct MainTabView: View {
             selectedSticker = nil
             isQRModalOpen = false
             isOverlayPresented = false
-        }
-
-        if newTab == .badge {
-            badgeViewModel?.startPolling(every: 30)
-        } else {
-            badgeViewModel?.stopPolling()
         }
     }
 

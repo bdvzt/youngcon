@@ -130,7 +130,7 @@ final class ScheduleViewModel {
             policy: policy
         )
 
-        async let favoriteIDsTask = loadFavoriteEventIDs()
+        async let favoriteIDsTask = loadFavoriteEventIDs(policy: policy)
         async let zonesByIDTask = loadZones(for: events, policy: policy)
         async let speakersByEventIDTask = loadSpeakersByEventID(for: events, policy: policy)
 
@@ -219,9 +219,12 @@ final class ScheduleViewModel {
         return speakersByEventID
     }
 
-    private func loadFavoriteEventIDs() async -> Set<String> {
-        guard let profile = try? await usersRepository.getMyProfile(),
-              let likedEvents = try? await usersRepository.getUserLikedEvents(userID: profile.id)
+    private func loadFavoriteEventIDs(policy: CachePolicy) async -> Set<String> {
+        guard let profile = try? await usersRepository.getMyProfile(policy: policy),
+              let likedEvents = try? await usersRepository.getUserLikedEvents(
+                  userID: profile.id,
+                  policy: policy
+              )
         else {
             return []
         }

@@ -6,6 +6,7 @@ final class BadgeViewModel: ObservableObject {
     @Published var profile: UserProfile?
     @Published var stickers: [Sticker] = []
     @Published var isLoading = false
+    @Published var isRefreshing = false
     @Published var shouldCloseQR = false
     @Published var newlyUnlockedSticker: Sticker?
 
@@ -29,13 +30,19 @@ final class BadgeViewModel: ObservableObject {
         isLoading = true
         defer { isLoading = false }
 
-        await fetchAll(isFirstLoad: true)
+        await fetchAll(isFirstLoad: true, policy: .cacheFirst)
     }
 
-    func startPolling(every interval: TimeInterval) {
-        guard currentPollingInterval != interval else {
-            return
-        }
+    func refreshFromNetworkIfNeeded() async {
+        guard !isLoading, !isRefreshing else { return }
+        isRefreshing = true
+        defer { isRefreshing = false }
+
+        await fetchAll(isFirstLoad: false, policy: .networkFirst)
+    }
+
+    func startPolling(every interval: TimeInterval = 1) {
+        guard currentPollingInterval != interval else { return }
 
         stopPolling()
         currentPollingInterval = interval
@@ -44,9 +51,14 @@ final class BadgeViewModel: ObservableObject {
             guard let self else { return }
 
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(interval))
+                do {
+                    try await Task.sleep(for: .seconds(interval))
+                } catch {
+                    break
+                }
+
                 guard !Task.isCancelled else { break }
-                await fetchAll(isFirstLoad: false)
+                await refreshFromNetworkIfNeeded()
             }
         }
     }
@@ -57,25 +69,43 @@ final class BadgeViewModel: ObservableObject {
         currentPollingInterval = nil
     }
 
-    private func fetchAll(isFirstLoad: Bool) async {
+    private func fetchAll(isFirstLoad: Bool, policy: CachePolicy) async {
         do {
-            let payload = try await loadBadgePayload()
+            let payload = try await loadBadgePayload(policy: policy)
             let newUnlockedIDs = makeUnlockedIDs(from: payload.unlockedAchievements)
 
-            guard shouldApplyChanges(
-                isFirstLoad: isFirstLoad,
-                newProfile: payload.profile,
-                newUnlockedIDs: newUnlockedIDs,
-                newAchievements: payload.allAchievements
-            ) else {
+            if isFirstLoad {
+                apply(
+                    profile: payload.profile,
+                    achievements: payload.allAchievements,
+                    unlockedIDs: newUnlockedIDs
+                )
                 return
             }
 
-            showNewlyUnlockedStickerIfNeeded(
-                isFirstLoad: isFirstLoad,
-                newUnlockedIDs: newUnlockedIDs,
-                allAchievements: payload.allAchievements
-            )
+            let profileChanged = profile != payload.profile
+            let achievementCatalogChanged = stickers.map(\.id) != payload.allAchievements.map(\.id)
+            let unlockedChanged = knownUnlockedIDs != newUnlockedIDs
+
+            if !profileChanged, !achievementCatalogChanged, !unlockedChanged {
+                return
+            }
+
+            let freshlyUnlocked = newUnlockedIDs.subtracting(knownUnlockedIDs)
+            let hasOnlyNewUnlocks =
+                !freshlyUnlocked.isEmpty &&
+                !profileChanged &&
+                !achievementCatalogChanged &&
+                knownUnlockedIDs.isSubset(of: newUnlockedIDs)
+
+            if hasOnlyNewUnlocks {
+                knownUnlockedIDs = newUnlockedIDs
+                showNewlyUnlockedStickerIfNeeded(
+                    freshlyUnlockedIDs: freshlyUnlocked,
+                    allAchievements: payload.allAchievements
+                )
+                return
+            }
 
             apply(
                 profile: payload.profile,
@@ -90,8 +120,6 @@ final class BadgeViewModel: ObservableObject {
     }
 }
 
-// MARK: - Private helpers
-
 private extension BadgeViewModel {
     struct BadgePayload {
         let profile: UserProfile
@@ -99,14 +127,15 @@ private extension BadgeViewModel {
         let unlockedAchievements: [Achievement]
     }
 
-    func loadBadgePayload() async throws -> BadgePayload {
-        async let currentProfileTask = usersRepository.getMyProfile()
-        async let allAchievementsTask = achievementsRepository.getAchievements()
+    func loadBadgePayload(policy: CachePolicy) async throws -> BadgePayload {
+        async let currentProfileTask = usersRepository.getMyProfile(policy: policy)
+        async let allAchievementsTask = achievementsRepository.getAchievements(policy: policy)
 
         let currentProfile = try await currentProfileTask
         let allAchievements = try await allAchievementsTask
         let unlockedAchievements = try await usersRepository.getUserAchievements(
-            userID: currentProfile.id
+            userID: currentProfile.id,
+            policy: policy
         )
 
         return BadgePayload(
@@ -120,36 +149,14 @@ private extension BadgeViewModel {
         Set(achievements.map(\.id))
     }
 
-    func shouldApplyChanges(
-        isFirstLoad: Bool,
-        newProfile: UserProfile,
-        newUnlockedIDs: Set<String>,
-        newAchievements: [Achievement]
-    ) -> Bool {
-        if isFirstLoad {
-            return true
-        }
-
-        let profileChanged = profile != newProfile
-        let unlockedChanged = knownUnlockedIDs != newUnlockedIDs
-        let stickersChanged = stickers.map(\.id) != newAchievements.map(\.id)
-
-        return profileChanged || unlockedChanged || stickersChanged
-    }
-
     func showNewlyUnlockedStickerIfNeeded(
-        isFirstLoad: Bool,
-        newUnlockedIDs: Set<String>,
+        freshlyUnlockedIDs: Set<String>,
         allAchievements: [Achievement]
     ) {
-        guard !isFirstLoad, !knownUnlockedIDs.isEmpty else { return }
-
-        let freshlyUnlocked = newUnlockedIDs.subtracting(knownUnlockedIDs)
-
-        guard let firstNewID = freshlyUnlocked.first else { return }
+        guard let firstNewID = freshlyUnlockedIDs.first else { return }
 
         let updatedStickers = allAchievements.map { achievement in
-            let isUnlocked = newUnlockedIDs.contains(achievement.id)
+            let isUnlocked = knownUnlockedIDs.contains(achievement.id)
             return Sticker(from: achievement, isUnlocked: isUnlocked)
         }
 

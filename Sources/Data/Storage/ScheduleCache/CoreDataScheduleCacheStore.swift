@@ -123,6 +123,7 @@ actor CoreDataDataCacheStore: DataCacheStoreProtocol {
 
 typealias CoreDataScheduleCacheStore = CoreDataDataCacheStore
 typealias CoreDataMapCacheStore = CoreDataDataCacheStore
+typealias CoreDataBadgeCacheStore = CoreDataDataCacheStore
 
 private enum StorageType {
     case persistent
