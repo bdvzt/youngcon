@@ -59,13 +59,13 @@ struct UnlockBurstEffect: View {
 
                 VStack(spacing: 4) {
                     Text("Ачивка разблокирована!")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(AppFont.geo(10, weight: .bold))
                         .tracking(0.5)
                         .textCase(.uppercase)
                         .foregroundColor(AppColor.accentYellow)
 
                     Text(sticker.name)
-                        .font(.system(size: 16, weight: .black))
+                        .font(AppFont.geo(16, weight: .black))
                         .tracking(-0.3)
                         .textCase(.uppercase)
                         .foregroundColor(.white)
@@ -169,17 +169,17 @@ struct AchievementsCard: View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Ачивки")
-                    .font(.system(size: 20, weight: .black))
+                    .font(AppFont.geo(20, weight: .black))
                     .tracking(-0.5)
                     .textCase(.uppercase)
                     .foregroundColor(.white)
                 Text("Собери все — получи мерч")
-                    .font(.system(size: 11))
+                    .font(AppFont.geo(11))
                     .foregroundColor(.white.opacity(0.2))
             }
             Spacer()
             Text("\(unlockedCount)/\(stickers.count)")
-                .font(.system(size: 11, weight: .black))
+                .font(AppFont.geo(11, weight: .black))
                 .tracking(0.1)
                 .textCase(.uppercase)
                 .foregroundColor(.black)

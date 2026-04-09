@@ -81,7 +81,7 @@ struct LoginView: View {
             gradientTextView
 
             Text("Войдите, чтобы продолжить")
-                .font(.subheadline)
+                .font(AppFont.geo(14, weight: .medium))
                 .foregroundColor(.white.opacity(0.6))
         }
         .padding(.top, 40)
@@ -97,8 +97,7 @@ struct LoginView: View {
 
     private var gradientTextView: some View {
         Text("Добро пожаловать")
-            .font(.title)
-            .fontWeight(.bold)
+            .font(AppFont.geo(28, weight: .black))
             .overlay {
                 LinearGradient(
                     colors: [
@@ -111,8 +110,7 @@ struct LoginView: View {
                 )
                 .mask(
                     Text("Добро пожаловать")
-                        .font(.title)
-                        .fontWeight(.bold)
+                        .font(AppFont.geo(28, weight: .black))
                 )
             }
     }
@@ -134,7 +132,7 @@ struct LoginView: View {
                 .foregroundColor(AppColor.accentPink)
 
             Text("Неверный формат email")
-                .font(.caption)
+                .font(AppFont.geo(12, weight: .medium))
                 .foregroundColor(AppColor.accentPink)
 
             Spacer()
@@ -160,7 +158,7 @@ struct LoginView: View {
                 .foregroundColor(AppColor.accentPink)
 
             Text("Пароль должен содержать не менее 6 символов")
-                .font(.caption)
+                .font(AppFont.geo(12, weight: .medium))
                 .foregroundColor(AppColor.accentPink)
 
             Spacer()
@@ -183,8 +181,7 @@ struct LoginView: View {
                         )
                 } else {
                     Text("Войти")
-                        .font(.headline)
-                        .fontWeight(.bold)
+                        .font(AppFont.geo(16, weight: .bold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                 }

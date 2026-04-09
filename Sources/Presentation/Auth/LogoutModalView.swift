@@ -14,12 +14,12 @@ struct LogoutModalView: View {
 
             VStack(spacing: 24) {
                 Text("Выйти из аккаунта?")
-                    .font(.system(size: 18, weight: .bold))
+                    .font(AppFont.geo(18, weight: .black))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
 
                 Text("Вы уверены, что хотите выйти из своего профиля?")
-                    .font(.system(size: 14))
+                    .font(AppFont.geo(14))
                     .foregroundColor(.white.opacity(0.6))
                     .multilineTextAlignment(.center)
 
@@ -29,7 +29,7 @@ struct LogoutModalView: View {
                         onConfirm()
                     } label: {
                         Text("Выйти")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(AppFont.geo(16, weight: .bold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -43,7 +43,7 @@ struct LogoutModalView: View {
                         withAnimation { isPresented = false }
                     } label: {
                         Text("Отмена")
-                            .font(.system(size: 16, weight: .bold))
+                            .font(AppFont.geo(16, weight: .bold))
                             .foregroundColor(.white.opacity(0.8))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)

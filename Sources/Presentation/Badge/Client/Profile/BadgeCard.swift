@@ -50,13 +50,13 @@ struct BadgeCard: View {
     private var nameBlock: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Участник / 2026")
-                .font(.system(size: 10, weight: .bold))
+                .font(AppFont.geo(10, weight: .bold))
                 .tracking(0.25)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.2))
 
             Text("\(user.firstName)\n\(user.lastName)")
-                .font(.system(size: 30, weight: .black))
+                .font(AppFont.geo(30, weight: .black))
                 .tracking(-0.5)
                 .textCase(.uppercase)
                 .foregroundColor(.white)
@@ -91,7 +91,7 @@ struct BadgeCard: View {
     private var footerRow: some View {
         HStack(spacing: 12) {
             Text("#YY-\(shortNumericID)")
-                .font(.system(size: 12, weight: .bold))
+                .font(AppFont.geo(12, weight: .bold))
                 .foregroundColor(.white.opacity(0.25))
                 .monospacedDigit()
                 .lineLimit(1)
@@ -100,7 +100,7 @@ struct BadgeCard: View {
                 .fill(Color.white.opacity(0.1))
                 .frame(width: 1, height: 12)
             Text("YoungCon")
-                .font(.system(size: 10, weight: .black))
+                .font(AppFont.geo(10, weight: .black))
                 .tracking(0.1)
                 .textCase(.uppercase)
                 .foregroundColor(.black)

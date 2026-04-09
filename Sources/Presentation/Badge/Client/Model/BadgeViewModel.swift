@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import SwiftUI
 
 @MainActor
@@ -12,7 +13,7 @@ final class BadgeViewModel: ObservableObject {
 
     private let usersRepository: UsersRepositoryProtocol
     private let achievementsRepository: AchievementsRepositoryProtocol
-
+    private let logger = Logger(subsystem: "com.bdvzt.YoungCon", category: "Badge")
     private var pollingTask: Task<Void, Never>?
     private var knownUnlockedIDs: Set<String> = []
     private var currentPollingInterval: TimeInterval?
@@ -113,9 +114,9 @@ final class BadgeViewModel: ObservableObject {
                 unlockedIDs: newUnlockedIDs
             )
         } catch let error as BadgeError {
-            print(error.description)
+            logger.error("\(error.description, privacy: .public)")
         } catch {
-            print("[Badge] Unexpected error: \(error.localizedDescription)")
+            logger.error("Unexpected error: \(error.localizedDescription, privacy: .public)")
         }
     }
 }

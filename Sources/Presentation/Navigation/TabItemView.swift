@@ -37,7 +37,7 @@ struct TabItemView: View {
                 .frame(width: 44, height: 32)
 
                 Text(tab.label)
-                    .font(.system(size: 10, weight: .bold))
+                    .font(AppFont.geo(10, weight: .bold))
                     .kerning(0.8)
                     .textCase(.uppercase)
                     .foregroundColor(isActive ? AppColor.accentYellow : AppColor.gray500)

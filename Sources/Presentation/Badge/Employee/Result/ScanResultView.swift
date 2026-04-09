@@ -46,7 +46,7 @@ struct ScanResultView: View {
                 Image(systemName: result.assignedNow ? "checkmark.circle.fill" : "clock.fill")
                     .font(.system(size: 12))
                 Text(result.assignedNow ? "Выдано впервые" : "Уже была выдана")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(AppFont.geo(11, weight: .bold))
                     .tracking(0.5).textCase(.uppercase)
             }
             .foregroundColor(
@@ -69,14 +69,14 @@ struct ScanResultView: View {
             .opacity(appeared ? 1 : 0)
 
             Text(achievement.name)
-                .font(.system(size: 26, weight: .black))
+                .font(AppFont.geo(26, weight: .black))
                 .tracking(-0.5).textCase(.uppercase)
                 .foregroundColor(.white)
                 .padding(.bottom, 6)
                 .opacity(appeared ? 1 : 0)
 
             Text("\(user.firstName) \(user.lastName)")
-                .font(.system(size: 16, weight: .semibold))
+                .font(AppFont.geo(16, weight: .semibold))
                 .foregroundColor(.white.opacity(0.4))
                 .padding(.bottom, 32)
                 .opacity(appeared ? 1 : 0)
@@ -96,10 +96,10 @@ struct ScanResultView: View {
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     Text("\(user.firstName) \(user.lastName)")
-                        .font(.system(size: 14, weight: .bold))
+                        .font(AppFont.geo(14, weight: .bold))
                         .foregroundColor(.white)
                     Text(user.qrCode)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(AppFont.geo(11, weight: .medium))
                         .foregroundColor(.white.opacity(0.25))
                         .lineLimit(1)
                 }
@@ -124,7 +124,7 @@ struct ScanResultView: View {
                         Image(systemName: "qrcode.viewfinder")
                             .font(.system(size: 15, weight: .bold))
                         Text("Следующий участник")
-                            .font(.system(size: 14, weight: .black))
+                            .font(AppFont.geo(14, weight: .black))
                             .tracking(0.3).textCase(.uppercase)
                     }
                     .foregroundColor(.black)
@@ -140,7 +140,7 @@ struct ScanResultView: View {
 
                 Button(action: onDone) {
                     Text("Готово")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(AppFont.geo(14, weight: .semibold))
                         .foregroundColor(.white.opacity(0.35))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)

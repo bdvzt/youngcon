@@ -142,8 +142,7 @@ struct EventCard: View {
     private var scheduleRow: some View {
         HStack(alignment: .center, spacing: 6) {
             Text(timeRangeText)
-                .font(.footnote)
-                .fontWeight(.bold)
+                .font(AppFont.geo(13, weight: .bold))
                 .monospacedDigit()
                 .foregroundStyle(AppColor.gray500)
             if isLive {
@@ -155,8 +154,7 @@ struct EventCard: View {
 
     private var titleBlock: some View {
         Text(event.title)
-            .font(.title3)
-            .fontWeight(.bold)
+            .font(AppFont.geo(20, weight: .black))
             .foregroundStyle(.white)
             .multilineTextAlignment(.leading)
             .fixedSize(horizontal: false, vertical: true)
@@ -170,11 +168,10 @@ struct EventCard: View {
                 SpeakerAvatar(url: speaker.avatarImageURL, fullName: speaker.fullName)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(speaker.fullName)
-                        .font(.callout)
-                        .fontWeight(.bold)
+                        .font(AppFont.geo(15, weight: .bold))
                         .foregroundStyle(.white)
                     Text(speaker.job)
-                        .font(.caption)
+                        .font(AppFont.geo(12))
                         .foregroundStyle(AppColor.gray500)
                         .lineLimit(2)
                 }
@@ -204,8 +201,7 @@ struct EventCard: View {
                         .padding(4)
 
                     Text(zone.title)
-                        .font(.footnote)
-                        .fontWeight(.bold)
+                        .font(AppFont.geo(13, weight: .bold))
                         .foregroundStyle(AppColor.gray500.opacity(0.7))
                         .lineLimit(1)
                 }

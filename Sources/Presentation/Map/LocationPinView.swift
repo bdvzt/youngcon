@@ -52,7 +52,7 @@ struct LocationPinView: View {
 
     private var pinLabel: some View {
         Text(zone.title.uppercased())
-            .font(.system(size: 9, weight: .bold))
+            .font(AppFont.geo(9, weight: .bold))
             .tracking(0.5)
             .foregroundColor(.white.opacity(0.8))
             .padding(.horizontal, 6).padding(.vertical, 2)

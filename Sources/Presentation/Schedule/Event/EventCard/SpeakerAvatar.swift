@@ -29,7 +29,7 @@ struct SpeakerAvatar: View {
         ZStack {
             AppColor.gray700.opacity(0.35)
             Text(initials)
-                .font(.system(size: 14, weight: .bold))
+                .font(AppFont.geo(14, weight: .bold))
                 .foregroundStyle(.white.opacity(0.8))
         }
     }

@@ -76,7 +76,7 @@ struct ScannerView: View {
                     }
                 }
                 Text(achievement.name)
-                    .font(.system(size: 12, weight: .bold))
+                    .font(AppFont.geo(12, weight: .bold))
                     .foregroundColor(.white)
             }
             .padding(.horizontal, 12)
@@ -115,7 +115,7 @@ struct ScannerView: View {
         VStack(spacing: 32) {
             scanFrame.frame(width: 240, height: 240)
             Text("Наведите камеру на QR-код участника")
-                .font(.system(size: 14, weight: .semibold))
+                .font(AppFont.geo(14, weight: .semibold))
                 .foregroundColor(.white.opacity(0.5))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
@@ -135,17 +135,17 @@ struct ScannerView: View {
     private var loadingView: some View {
         VStack(spacing: 20) {
             ProgressView().progressViewStyle(.circular).tint(AppColor.accentYellow).scaleEffect(1.4)
-            Text("Проверяем QR...").font(.system(size: 14, weight: .semibold)).foregroundColor(.white.opacity(0.4))
+            Text("Проверяем QR...").font(AppFont.geo(14, weight: .semibold)).foregroundColor(.white.opacity(0.4))
         }
     }
 
     private func errorView(_ message: String) -> some View {
         VStack(spacing: 20) {
             Image(systemName: "xmark.circle.fill").font(.system(size: 36)).foregroundColor(AppColor.accentPink)
-            Text("Ошибка").font(.system(size: 20, weight: .black)).foregroundColor(.white)
-            Text(message).font(.system(size: 14)).foregroundColor(.white.opacity(0.4)).multilineTextAlignment(.center).padding(.horizontal, 40)
+            Text("Ошибка").font(AppFont.geo(20, weight: .black)).foregroundColor(.white)
+            Text(message).font(AppFont.geo(14)).foregroundColor(.white.opacity(0.4)).multilineTextAlignment(.center).padding(.horizontal, 40)
             Button { vm.reset() } label: {
-                Text("Попробовать снова").font(.system(size: 14, weight: .bold)).foregroundColor(.black)
+                Text("Попробовать снова").font(AppFont.geo(14, weight: .bold)).foregroundColor(.black)
                     .padding(.horizontal, 28).padding(.vertical, 12)
                     .background(RoundedRectangle(cornerRadius: 14).fill(AppColor.accentYellow))
             }
@@ -155,7 +155,7 @@ struct ScannerView: View {
 
     private var bottomBar: some View {
         Text("Организатор · YoungCon 2026")
-            .font(.system(size: 11, weight: .semibold))
+            .font(AppFont.geo(11, weight: .semibold))
             .tracking(0.5).textCase(.uppercase)
             .foregroundColor(.white.opacity(0.15))
             .padding(.bottom, 40)

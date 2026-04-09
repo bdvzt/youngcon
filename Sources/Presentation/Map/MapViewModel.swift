@@ -81,6 +81,7 @@ final class MapViewModel {
     }
 
     func load() async {
+        guard floors.isEmpty else { return }
         await load(policy: .cacheFirst, mode: .initial)
     }
 

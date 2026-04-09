@@ -10,7 +10,7 @@ struct ScheduleEmptyState: View {
                 .foregroundColor(.white.opacity(0.06))
 
             Text(activeFilter == "Избранное" ? "Нажмите ★ чтобы добавить" : "Ничего не найдено")
-                .font(.system(size: 14, weight: .medium))
+                .font(AppFont.geo(14, weight: .medium))
                 .foregroundColor(.white.opacity(0.2))
         }
         .frame(maxWidth: .infinity)

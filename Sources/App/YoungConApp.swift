@@ -4,6 +4,10 @@ import SwiftUI
 struct YoungConApp: App {
     private let dependencyContainer = DependencyContainer.makeForAppLaunch()
 
+    init() {
+        AppFont.validateRegistration()
+    }
+
     var body: some Scene {
         WindowGroup {
             rootView

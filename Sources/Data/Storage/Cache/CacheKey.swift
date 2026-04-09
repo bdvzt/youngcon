@@ -7,6 +7,7 @@ enum CacheKey {
     }
 
     enum Schedule {
+        static let allFloors = CacheKey.make(.schedule, "floors", "all")
         static let lastFestival = CacheKey.make(.schedule, "festival", "last")
         static let allSpeakers = CacheKey.make(.schedule, "speakers", "all")
 
@@ -16,6 +17,10 @@ enum CacheKey {
 
         static func event(eventID: String) -> String {
             CacheKey.make(.schedule, "event", eventID)
+        }
+
+        static func floor(floorID: String) -> String {
+            CacheKey.make(.schedule, "floor", floorID)
         }
 
         static func speaker(speakerID: String) -> String {

@@ -79,7 +79,7 @@ struct SpeakerCardView: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16, weight: .medium))
                     Text("К СОБЫТИЮ")
-                        .font(.system(size: 16, weight: .heavy))
+                        .font(AppFont.geo(16, weight: .heavy))
                 }
                 .foregroundColor(whiteText.opacity(0.6))
             }
@@ -131,7 +131,7 @@ struct SpeakerCardView: View {
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(speaker.fullName.uppercased())
-                .font(.system(size: 32, weight: .heavy))
+                .font(AppFont.geo(32, weight: .heavy))
                 .lineLimit(2)
                 .minimumScaleFactor(0.7)
         }
@@ -154,7 +154,7 @@ struct SpeakerCardView: View {
 
     private var speakersTag: some View {
         Text("Ключевые спикеры")
-            .font(.system(size: 14, weight: .bold))
+            .font(AppFont.geo(14, weight: .bold))
             .foregroundColor(YoungConAsset.accentYellow.swiftUIColor)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
@@ -182,7 +182,7 @@ struct SpeakerCardView: View {
 
     private var aboutSpeakerTitle: some View {
         Text("О СПИКЕРЕ")
-            .font(.system(size: 13, weight: .heavy))
+            .font(AppFont.geo(13, weight: .heavy))
             .foregroundColor(whiteText.opacity(0.5))
     }
 
@@ -194,7 +194,7 @@ struct SpeakerCardView: View {
 
     private var aboutSpeakerText: some View {
         Text(speaker.bio)
-            .font(.system(size: 14, weight: .semibold))
+            .font(AppFont.geo(14, weight: .semibold))
             .foregroundColor(whiteText.opacity(0.85))
             .lineSpacing(6)
             .fixedSize(horizontal: false, vertical: true)
@@ -213,7 +213,7 @@ struct SpeakerCardView: View {
             },
             label: {
                 Text("вопрос спикеру")
-                    .font(.system(size: 16, weight: .heavy))
+                    .font(AppFont.geo(16, weight: .heavy))
                     .foregroundColor(AppColor.cardBackground)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)

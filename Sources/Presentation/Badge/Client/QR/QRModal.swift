@@ -25,7 +25,7 @@ struct QRModal: View {
                     .padding(.bottom, 32)
 
                 Text("Покажите этот код на входе или на стендах партнёров")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(AppFont.geo(12, weight: .medium))
                     .foregroundColor(.white.opacity(0.3))
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 16)
@@ -42,7 +42,7 @@ struct QRModal: View {
     private var headerRow: some View {
         HStack {
             Text("Отсканируй")
-                .font(.system(size: 18, weight: .black))
+                .font(AppFont.geo(18, weight: .black))
                 .tracking(-0.5)
                 .textCase(.uppercase)
                 .foregroundColor(.white)
@@ -72,7 +72,7 @@ struct QRModal: View {
 
     private func badgeNumber(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 14, weight: .bold))
+            .font(AppFont.geo(14, weight: .bold))
             .tracking(0.1)
             .textCase(.uppercase)
             .foregroundColor(.white.opacity(0.6))

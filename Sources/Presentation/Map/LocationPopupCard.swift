@@ -22,7 +22,7 @@ struct LocationPopupCard: View {
             cardHeader
 
             Text(zone.description)
-                .font(.system(size: 10))
+                .font(AppFont.geo(10))
                 .foregroundColor(.white.opacity(0.5))
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -35,6 +35,7 @@ struct LocationPopupCard: View {
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
         )
+        .shadow(color: .black.opacity(0.8), radius: 20, x: 0, y: 15)
     }
 
     private var cardHeader: some View {
@@ -52,7 +53,7 @@ struct LocationPopupCard: View {
             .accessibilityLabel(zone.title)
 
             Text(zone.title)
-                .font(.system(size: 13, weight: .bold))
+                .font(AppFont.geo(13, weight: .bold))
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.85)

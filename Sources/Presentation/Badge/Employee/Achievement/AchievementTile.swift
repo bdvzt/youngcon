@@ -41,7 +41,7 @@ struct AchievementTile: View {
                     }
                 }
                 Text(achievement.name)
-                    .font(.system(size: 9, weight: .bold))
+                    .font(AppFont.geo(9, weight: .bold))
                     .tracking(0.3)
                     .textCase(.uppercase)
                     .foregroundColor(isSelected ? .white : .white.opacity(0.4))
