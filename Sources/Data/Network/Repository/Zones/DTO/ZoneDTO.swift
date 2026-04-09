@@ -1,6 +1,6 @@
 import Foundation
 
-struct ZoneDTO: Decodable {
+struct ZoneDTO: Codable {
     let id: String
     let floorId: String
     let title: String

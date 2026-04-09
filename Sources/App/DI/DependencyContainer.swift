@@ -2,6 +2,7 @@ import Foundation
 
 final class DependencyContainer {
     private lazy var tokenStorage: TokenStorageProtocol = KeychainTokenStorage()
+    private lazy var scheduleCacheStore: ScheduleCacheStoreProtocol = CoreDataScheduleCacheStore()
 
     private lazy var networkService: NetworkServiceProtocol = NetworkService(
         authorizationProvider: AuthorizationProvider(tokenStorage: tokenStorage),
@@ -22,28 +23,37 @@ final class DependencyContainer {
         tokenStorage: tokenStorage
     )
 
-    private(set) lazy var eventsRepository: EventsRepositoryProtocol = EventsRepository(
+    private lazy var networkEventsRepository: EventsRepositoryProtocol = EventsRepository(
         networkService: networkService
     )
 
-    private(set) lazy var festivalsRepository: FestivalsRepositoryProtocol = FestivalsRepository(
-        networkService: networkService
+    private(set) lazy var eventsRepository: EventsRepositoryProtocol = CachedEventsRepository(
+        networkService: networkService,
+        baseRepository: networkEventsRepository,
+        cacheStore: scheduleCacheStore
+    )
+
+    private(set) lazy var festivalsRepository: FestivalsRepositoryProtocol = CachedFestivalsRepository(
+        networkService: networkService,
+        cacheStore: scheduleCacheStore
     )
 
     private(set) lazy var floorsRepository: FloorsRepositoryProtocol = FloorsRepository(
         networkService: networkService
     )
 
-    private(set) lazy var speakersRepository: SpeakersRepositoryProtocol = SpeakersRepository(
-        networkService: networkService
+    private(set) lazy var speakersRepository: SpeakersRepositoryProtocol = CachedSpeakersRepository(
+        networkService: networkService,
+        cacheStore: scheduleCacheStore
     )
 
     private(set) lazy var usersRepository: UsersRepositoryProtocol = UsersRepository(
         networkService: networkService
     )
 
-    private(set) lazy var zoneRepository: ZoneRepositoryProtocol = ZoneRepository(
-        networkService: networkService
+    private(set) lazy var zoneRepository: ZoneRepositoryProtocol = CachedZoneRepository(
+        networkService: networkService,
+        cacheStore: scheduleCacheStore
     )
 
     init() {}
