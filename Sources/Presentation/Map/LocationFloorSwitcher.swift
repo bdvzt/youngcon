@@ -18,6 +18,7 @@ struct LocationFloorSwitcher: View {
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 10)
+        .accessibilityElement(children: .contain)
         .background {
             ZStack {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -60,6 +61,9 @@ struct LocationFloorSwitcher: View {
                 .tracking(1)
                 .foregroundColor(.white.opacity(0.5))
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier("map.floor.number")
+        .accessibilityLabel("\(floorNumber)")
     }
 
     private enum FloorDirection { case upfloor, downfloor }
@@ -83,5 +87,12 @@ struct LocationFloorSwitcher: View {
         }
         .disabled(isDisabled)
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityIdentifier(
+            direction == .upfloor ? "map.floor.next" : "map.floor.previous"
+        )
+        .accessibilityLabel(
+            direction == .upfloor ? "Следующий этаж" : "Предыдущий этаж"
+        )
     }
 }
