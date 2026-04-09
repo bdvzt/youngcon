@@ -64,7 +64,9 @@ struct MainTabView: View {
                 badgeViewModel: badgeViewModel,
                 isQRModalOpen: $isQRModalOpen,
                 selectedSticker: $selectedSticker,
-                onLogout: { showLogoutConfirm = true }
+                onLogout: {
+                    withAnimation { showLogoutConfirm = true }
+                }
             )
             .ignoresSafeArea(edges: .top)
             .zIndex(1)
@@ -102,6 +104,17 @@ struct MainTabView: View {
                 .transition(.opacity)
             }
 
+            if showLogoutConfirm {
+                LogoutModalView(
+                    isPresented: $showLogoutConfirm,
+                    onConfirm: {
+                        appViewModel.logout()
+                    }
+                )
+                .zIndex(200)
+                .transition(.opacity)
+            }
+
             BottomNavBar(
                 activeTab: Binding(
                     get: { activeTab },
@@ -117,16 +130,6 @@ struct MainTabView: View {
             .zIndex(90)
         }
         .animation(nil, value: activeTab)
-        .confirmationDialog(
-            "Выйти из аккаунта?",
-            isPresented: $showLogoutConfirm,
-            titleVisibility: .visible
-        ) {
-            Button("Выйти", role: .destructive) {
-                appViewModel.logout()
-            }
-            Button("Отмена", role: .cancel) {}
-        }
         .task {
             if scheduleViewModel == nil {
                 let model = ScheduleViewModel(

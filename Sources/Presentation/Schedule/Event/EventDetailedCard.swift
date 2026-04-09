@@ -140,9 +140,23 @@ struct EventDetailedCard: View {
                                 .stroke(Color.white.opacity(0.10), lineWidth: 1)
                         )
 
-                    Image(systemName: "person")
-                        .font(.system(size: 26, weight: .medium))
-                        .foregroundColor(.white.opacity(0.58))
+                    if let avatarURL = model.speaker.avatarImageURL {
+                        AsyncImage(url: avatarURL) { image in
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Image(systemName: "person")
+                                .font(.system(size: 26, weight: .medium))
+                                .foregroundColor(.white.opacity(0.58))
+                        }
+                        .frame(width: 54, height: 54)
+                        .clipShape(Circle())
+                    } else {
+                        Image(systemName: "person")
+                            .font(.system(size: 26, weight: .medium))
+                            .foregroundColor(.white.opacity(0.58))
+                    }
                 }
                 .frame(width: 54, height: 54)
 
