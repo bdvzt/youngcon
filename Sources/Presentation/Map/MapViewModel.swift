@@ -13,7 +13,6 @@ final class MapViewModel {
     private(set) var isLoading = false
     private(set) var loadError: String?
 
-    private var isRefreshing = false
     private var pollingTask: Task<Void, Never>?
 
     var selectedFloor: Floor? {
@@ -75,10 +74,6 @@ final class MapViewModel {
         await fetchAll(isFirstLoad: true)
     }
 
-    func refresh() async {
-        await fetchAll(isFirstLoad: false)
-    }
-
     func startPolling() {
         guard pollingTask == nil else { return }
 
@@ -113,10 +108,6 @@ final class MapViewModel {
     }
 
     private func fetchAll(isFirstLoad: Bool) async {
-        guard !isRefreshing else { return }
-        isRefreshing = true
-        defer { isRefreshing = false }
-
         if isFirstLoad {
             loadError = nil
         }

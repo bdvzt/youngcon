@@ -12,7 +12,6 @@ final class BadgeViewModel: ObservableObject {
     private let usersRepository: UsersRepositoryProtocol
     private let achievementsRepository: AchievementsRepositoryProtocol
 
-    private var isRefreshing = false
     private var pollingTask: Task<Void, Never>?
     private var knownUnlockedIDs: Set<String> = []
     private var currentPollingInterval: TimeInterval?
@@ -31,10 +30,6 @@ final class BadgeViewModel: ObservableObject {
         defer { isLoading = false }
 
         await fetchAll(isFirstLoad: true)
-    }
-
-    func refresh() async {
-        await fetchAll(isFirstLoad: false)
     }
 
     func startPolling(every interval: TimeInterval) {
@@ -63,10 +58,6 @@ final class BadgeViewModel: ObservableObject {
     }
 
     private func fetchAll(isFirstLoad: Bool) async {
-        guard !isRefreshing else { return }
-        isRefreshing = true
-        defer { isRefreshing = false }
-
         do {
             let payload = try await loadBadgePayload()
             let newUnlockedIDs = makeUnlockedIDs(from: payload.unlockedAchievements)

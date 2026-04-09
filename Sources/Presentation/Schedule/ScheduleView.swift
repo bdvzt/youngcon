@@ -38,9 +38,6 @@ struct ScheduleView: View {
                     Color.clear.frame(height: 120)
                 }
             }
-            .refreshable {
-                await viewModel.refresh()
-            }
 
             topOverlay
 
@@ -52,8 +49,6 @@ struct ScheduleView: View {
             }
             .zIndex(21)
             .allowsHitTesting(false)
-
-            refreshOverlay
         }
         .onAppear {
             withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
@@ -66,23 +61,6 @@ struct ScheduleView: View {
         }
         .onDisappear {
             viewModel.stopPolling()
-        }
-    }
-
-    @ViewBuilder
-    private var refreshOverlay: some View {
-        if viewModel.isRefreshingUI {
-            VStack(spacing: 0) {
-                ProgressView()
-                    .tint(.pink)
-                    .scaleEffect(1.05)
-                    .padding(.top, 16)
-
-                Spacer()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .zIndex(30)
-            .allowsHitTesting(false)
         }
     }
 

@@ -23,9 +23,6 @@ struct LocationsView: View {
                 }
             }
             .scrollClipDisabled(true)
-            .refreshable {
-                await viewModel.refresh()
-            }
 
             topOverlay
 

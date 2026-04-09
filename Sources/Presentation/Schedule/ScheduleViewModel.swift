@@ -12,7 +12,6 @@ final class ScheduleViewModel {
     private(set) var entries: [ScheduleEntry] = []
     private(set) var isLoading = false
     private(set) var loadError: String?
-    private(set) var isRefreshingUI = false
     var filters: [String] {
         let categories = Set(
             entries.map {
@@ -24,7 +23,6 @@ final class ScheduleViewModel {
         return ["Все", "Live", "Избранное"] + categories.sorted()
     }
 
-    private var isRefreshing = false
     private var pollingTask: Task<Void, Never>?
 
     init(
@@ -48,20 +46,6 @@ final class ScheduleViewModel {
         await fetchAll(isFirstLoad: true)
     }
 
-    func refresh() async {
-        guard !isRefreshingUI else { return }
-
-        isRefreshingUI = true
-        defer { isRefreshingUI = false }
-
-        async let refreshTask: Void = fetchAll(isFirstLoad: false)
-        async let delay: Void = {
-            try? await Task.sleep(for: .milliseconds(500))
-        }()
-
-        _ = await (refreshTask, delay)
-    }
-
     func startPolling() {
         guard pollingTask == nil else { return }
 
@@ -81,14 +65,7 @@ final class ScheduleViewModel {
         pollingTask = nil
     }
 
-    private func fetchAll(isFirstLoad: Bool, force: Bool = false) async {
-        if !force {
-            guard !isRefreshing else { return }
-        }
-
-        isRefreshing = true
-        defer { isRefreshing = false }
-
+    private func fetchAll(isFirstLoad: Bool) async {
         if isFirstLoad {
             loadError = nil
         }

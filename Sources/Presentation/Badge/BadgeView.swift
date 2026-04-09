@@ -52,9 +52,6 @@ struct BadgeView: View {
                 Color.clear.frame(height: 120)
             }
         }
-        .refreshable {
-            await viewModel.refresh()
-        }
     }
 
     @ViewBuilder
