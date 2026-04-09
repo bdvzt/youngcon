@@ -8,6 +8,8 @@ struct LocationsView: View {
     @State private var focusedZoneID: String?
     @State private var gradientOffset: CGFloat = 0
 
+    var hasFixedHeader: Bool = false
+
     private let appBackground = AppColor.appBackground
 
     var body: some View {
@@ -16,7 +18,7 @@ struct LocationsView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Color.clear.frame(height: 52)
+                    Color.clear.frame(height: hasFixedHeader ? 60 : 52)
                     headerSection
                     mapSection
                     Color.clear.frame(height: 120)
@@ -24,16 +26,6 @@ struct LocationsView: View {
             }
             .scrollClipDisabled(true)
             .accessibilityIdentifier("map.screen")
-
-            topOverlay
-
-            VStack(spacing: 0) {
-                logoView
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                Spacer()
-            }
-            .zIndex(21)
             .allowsHitTesting(false)
         }
         .task {
@@ -117,7 +109,7 @@ struct LocationsView: View {
                 .accessibilityIdentifier("map.header.subtitle")
         }
         .padding(.horizontal, 20)
-        .padding(.top, 32)
+        .padding(.top, hasFixedHeader ? 20 : 32)
         .padding(.bottom, 12)
     }
 
