@@ -195,6 +195,7 @@ private extension ScheduleView {
 
 #Preview {
     SchedulePreviewHost()
+        .environment(\.dependencyContainer, .preview)
         .preferredColorScheme(.dark)
 }
 

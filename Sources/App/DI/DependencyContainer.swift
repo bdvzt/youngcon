@@ -65,4 +65,10 @@ final class DependencyContainer {
     static var preview: DependencyContainer {
         DependencyContainer()
     }
+
+    /// Keep app bootstrap API stable (`YoungConApp` expects this).
+    /// LiveActivity branch runs against real/cached stack from `develop`, without preview mocks.
+    static func makeForAppLaunch() -> DependencyContainer {
+        live()
+    }
 }
