@@ -6,10 +6,6 @@ struct BadgeView: View {
     @Binding var selectedSticker: Sticker?
     var onLogout: (() -> Void)?
 
-    @State private var gradientOffset: CGFloat = 0
-
-    private let appBackground = AppColor.appBackground
-
     var hasFixedHeader: Bool = false
 
     var body: some View {
@@ -66,29 +62,5 @@ struct BadgeView: View {
                 .transition(.opacity)
             }
         }
-        .onAppear {
-            withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
-                gradientOffset = 1
-            }
-        }
-    }
-
-    private var topOverlay: some View {
-        VStack(spacing: 0) {
-            appBackground
-                .ignoresSafeArea(edges: .top)
-                .frame(height: 0)
-            appBackground
-                .frame(height: 52)
-            LinearGradient(
-                colors: [appBackground, appBackground.opacity(0)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: 32)
-            Spacer()
-        }
-        .zIndex(20)
-        .allowsHitTesting(false)
     }
 }

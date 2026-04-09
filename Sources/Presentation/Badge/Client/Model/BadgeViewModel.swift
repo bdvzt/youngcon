@@ -1,8 +1,9 @@
 import Foundation
+import OSLog
 import SwiftUI
 
 @MainActor
-class BadgeViewModel: ObservableObject {
+final class BadgeViewModel: ObservableObject {
     @Published var profile: UserProfile?
     @Published var stickers: [Sticker] = []
     @Published var isLoading = false
@@ -10,6 +11,7 @@ class BadgeViewModel: ObservableObject {
 
     private let usersRepository: UsersRepositoryProtocol
     private let achievementsRepository: AchievementsRepositoryProtocol
+    private let logger = Logger(subsystem: "com.bdvzt.YoungCon", category: "Badge")
     private var pollingTask: Task<Void, Never>?
     private var knownUnlockedIDs: Set<String> = []
 
@@ -90,9 +92,9 @@ class BadgeViewModel: ObservableObject {
                 return Sticker(from: achievement, isUnlocked: isUnlocked)
             }
         } catch let error as BadgeError {
-            print(error.description)
+            logger.error("\(error.description, privacy: .public)")
         } catch {
-            print("[Badge] Unexpected error: \(error.localizedDescription)")
+            logger.error("Unexpected error: \(error.localizedDescription, privacy: .public)")
         }
     }
 }

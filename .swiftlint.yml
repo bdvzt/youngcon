@@ -5,4 +5,5 @@ disabled_rules:
 excluded:
   - Tuist
   - .build
+  - Derived
   - DerivedData

@@ -38,8 +38,9 @@ final class DependencyContainer {
         cacheStore: scheduleCacheStore
     )
 
-    private(set) lazy var floorsRepository: FloorsRepositoryProtocol = FloorsRepository(
-        networkService: networkService
+    private(set) lazy var floorsRepository: FloorsRepositoryProtocol = CachedFloorsRepository(
+        networkService: networkService,
+        cacheStore: scheduleCacheStore
     )
 
     private(set) lazy var speakersRepository: SpeakersRepositoryProtocol = CachedSpeakersRepository(

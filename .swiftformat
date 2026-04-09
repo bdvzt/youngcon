@@ -4,4 +4,4 @@
 --semicolons never
 --trailingcommas always
 --importgrouping alphabetized
---exclude Tuist,.build,DerivedData,**/*.generated.swift,Project.swift,Tuist.swift
+--exclude Tuist,.build,Derived,DerivedData,**/*.generated.swift,Project.swift,Tuist.swift

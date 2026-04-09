@@ -1,3 +1,4 @@
+import Foundation
 import XCTest
 @testable import YoungCon
 
@@ -265,5 +266,136 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertEqual(floorsCallCount, 1)
         XCTAssertEqual(zonesCallCount, 2)
         XCTAssertEqual(viewModel.floors.map(\.id), ["floor-1", "floor-2"])
+    }
+}
+
+final class CachedFloorsRepositoryTests: XCTestCase {
+    func testGetFloors_whenCacheExists_returnsCachedFloorsWithoutNetwork() async throws {
+        let cacheStore = InMemoryScheduleCacheStore()
+        try await cacheStore.save(
+            [makeFloorDTO(id: "floor-cache", title: "Cached Floor")],
+            for: CacheKey.Schedule.allFloors
+        )
+        let networkService = NetworkServiceSpy()
+        networkService.stub(
+            [makeFloorDTO(id: "floor-network", title: "Network Floor")],
+            for: APIConstants.Floors.list
+        )
+        let repository = CachedFloorsRepository(
+            networkService: networkService,
+            cacheStore: cacheStore
+        )
+
+        let floors = try await repository.getFloors()
+
+        XCTAssertEqual(floors.map(\.id), ["floor-cache"])
+        let requestedPaths = networkService.recordedPaths()
+        XCTAssertTrue(requestedPaths.isEmpty)
+    }
+
+    func testGetFloors_whenCacheMissing_loadsNetworkAndSavesCache() async throws {
+        let cacheStore = InMemoryScheduleCacheStore()
+        let networkService = NetworkServiceSpy()
+        networkService.stub(
+            [makeFloorDTO(id: "floor-network", title: "Network Floor")],
+            for: APIConstants.Floors.list
+        )
+        let repository = CachedFloorsRepository(
+            networkService: networkService,
+            cacheStore: cacheStore
+        )
+
+        let floors = try await repository.getFloors()
+        let cachedDTOs = try await cacheStore.load([FloorDTO].self, for: CacheKey.Schedule.allFloors)
+
+        XCTAssertEqual(floors.map(\.id), ["floor-network"])
+        XCTAssertEqual(cachedDTOs?.map(\.id), ["floor-network"])
+        let requestedPaths = networkService.recordedPaths()
+        XCTAssertEqual(requestedPaths, [APIConstants.Floors.list])
+    }
+
+    func testGetFloor_whenCacheExists_returnsCachedFloorWithoutNetwork() async throws {
+        let cacheStore = InMemoryScheduleCacheStore()
+        try await cacheStore.save(
+            makeFloorDTO(id: "floor-cache", title: "Cached Floor"),
+            for: CacheKey.Schedule.floor(floorID: "floor-cache")
+        )
+        let networkService = NetworkServiceSpy()
+        networkService.stub(
+            makeFloorDTO(id: "floor-cache", title: "Network Floor"),
+            for: APIConstants.Floors.details("floor-cache")
+        )
+        let repository = CachedFloorsRepository(
+            networkService: networkService,
+            cacheStore: cacheStore
+        )
+
+        let floor = try await repository.getFloor(id: "floor-cache")
+
+        XCTAssertEqual(floor.id, "floor-cache")
+        XCTAssertEqual(floor.title, "Cached Floor")
+        let requestedPaths = networkService.recordedPaths()
+        XCTAssertTrue(requestedPaths.isEmpty)
+    }
+
+    private func makeFloorDTO(id: String, title: String) -> FloorDTO {
+        FloorDTO(
+            id: id,
+            title: title,
+            mapURL: "https://youngcon.test/\(id).png"
+        )
+    }
+}
+
+private actor InMemoryScheduleCacheStore: ScheduleCacheStoreProtocol {
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+    private var payloads: [String: Data] = [:]
+
+    func save(_ value: some Encodable & Sendable, for key: String) async throws {
+        payloads[key] = try encoder.encode(value)
+    }
+
+    func load<T: Decodable & Sendable>(_: T.Type, for key: String) async throws -> T? {
+        guard let payload = payloads[key] else {
+            return nil
+        }
+        return try decoder.decode(T.self, from: payload)
+    }
+}
+
+private final class NetworkServiceSpy: NetworkServiceProtocol {
+    private let lock = NSLock()
+    private var decodableResponses: [String: any Decodable] = [:]
+    private var requestedPaths: [String] = []
+
+    func stub(_ value: some Decodable, for path: String) {
+        lock.lock()
+        defer { lock.unlock() }
+        decodableResponses[path] = value
+    }
+
+    func request(_ endpoint: Endpoint) async throws {
+        lock.lock()
+        defer { lock.unlock() }
+        requestedPaths.append(endpoint.path)
+    }
+
+    func requestDecodable<T: Decodable>(_ endpoint: Endpoint, as _: T.Type) async throws -> T {
+        lock.lock()
+        defer { lock.unlock() }
+        requestedPaths.append(endpoint.path)
+
+        guard let response = decodableResponses[endpoint.path] as? T else {
+            throw MapViewModelTestError.missingStub
+        }
+
+        return response
+    }
+
+    func recordedPaths() -> [String] {
+        lock.lock()
+        defer { lock.unlock() }
+        return requestedPaths
     }
 }
