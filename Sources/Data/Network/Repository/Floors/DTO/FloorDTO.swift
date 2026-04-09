@@ -1,6 +1,6 @@
 import Foundation
 
-struct FloorDTO: Decodable {
+struct FloorDTO: Codable {
     let id: String
     let title: String
     let mapURL: String

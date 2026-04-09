@@ -1,4 +1,4 @@
 protocol FloorsRepositoryProtocol {
-    func getFloor(id: String) async throws -> Floor
-    func getFloors() async throws -> [Floor]
+    func getFloor(id: String, policy: CachePolicy) async throws -> Floor
+    func getFloors(policy: CachePolicy) async throws -> [Floor]
 }

@@ -1,4 +1,4 @@
-enum MajorDTO: String, Decodable {
+enum MajorDTO: String, Codable, Equatable {
     case frontend = "Frontend"
     case ios = "IOS"
     case flutter = "Flutter"

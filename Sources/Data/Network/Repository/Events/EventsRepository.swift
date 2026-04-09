@@ -5,7 +5,10 @@ final class EventsRepository: EventsRepositoryProtocol {
         self.networkService = networkService
     }
 
-    func getEvents(festivalID: String) async throws -> [Event] {
+    func getEvents(
+        festivalID: String,
+        policy _: CachePolicy
+    ) async throws -> [Event] {
         let endpoint = GetEventsEndpoint(festivalID)
         return try await networkService.requestDecodable(
             endpoint,
@@ -13,7 +16,10 @@ final class EventsRepository: EventsRepositoryProtocol {
         ).compactMap { $0.toEntity() }
     }
 
-    func getEvent(eventID: String) async throws -> Event {
+    func getEvent(
+        eventID: String,
+        policy _: CachePolicy
+    ) async throws -> Event {
         let endpoint = GetEventByIDEndpoint(eventID)
         let response = try await networkService.requestDecodable(
             endpoint,
@@ -65,46 +71,95 @@ final class CachedEventsRepository: EventsRepositoryProtocol {
         self.cacheStore = cacheStore
     }
 
-    func getEvents(festivalID: String) async throws -> [Event] {
-        if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: CacheKey.Schedule.events(festivalID: festivalID)) {
-            return cachedDTOs.compactMap { $0.toEntity() }
-        }
+    func getEvents(
+        festivalID: String,
+        policy: CachePolicy
+    ) async throws -> [Event] {
+        let key = CacheKey.Schedule.events(festivalID: festivalID)
 
-        do {
-            let endpoint = GetEventsEndpoint(festivalID)
-            let dtos = try await networkService.requestDecodable(endpoint, as: [EventDTO].self)
-            try? await cacheStore.save(dtos, for: CacheKey.Schedule.events(festivalID: festivalID))
-            return dtos.compactMap { $0.toEntity() }
-        } catch {
-            if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: CacheKey.Schedule.events(festivalID: festivalID)) {
+        switch policy {
+        case .cacheFirst:
+            if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: key) {
                 return cachedDTOs.compactMap { $0.toEntity() }
             }
-            throw error
+
+            let endpoint = GetEventsEndpoint(festivalID)
+            let dtos = try await networkService.requestDecodable(endpoint, as: [EventDTO].self)
+            try? await cacheStore.save(dtos, for: key)
+            return dtos.compactMap { $0.toEntity() }
+
+        case .networkFirst:
+            do {
+                let endpoint = GetEventsEndpoint(festivalID)
+                let dtos = try await networkService.requestDecodable(endpoint, as: [EventDTO].self)
+                try? await cacheStore.save(dtos, for: key)
+                return dtos.compactMap { $0.toEntity() }
+            } catch {
+                if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: key) {
+                    return cachedDTOs.compactMap { $0.toEntity() }
+                }
+                throw error
+            }
+
+        case .ignoreCache:
+            let endpoint = GetEventsEndpoint(festivalID)
+            let dtos = try await networkService.requestDecodable(endpoint, as: [EventDTO].self)
+            try? await cacheStore.save(dtos, for: key)
+            return dtos.compactMap { $0.toEntity() }
         }
     }
 
-    func getEvent(eventID: String) async throws -> Event {
-        if let cachedDTO = try? await cacheStore.load(EventDTO.self, for: CacheKey.Schedule.event(eventID: eventID)),
-           let event = cachedDTO.toEntity()
-        {
-            return event
-        }
+    func getEvent(
+        eventID: String,
+        policy: CachePolicy
+    ) async throws -> Event {
+        let key = CacheKey.Schedule.event(eventID: eventID)
 
-        do {
-            let endpoint = GetEventByIDEndpoint(eventID)
-            let dto = try await networkService.requestDecodable(endpoint, as: EventDTO.self)
-            try? await cacheStore.save(dto, for: CacheKey.Schedule.event(eventID: eventID))
-            if let event = dto.toEntity() {
-                return event
-            }
-            throw NetworkError.decodingFailed
-        } catch {
-            if let cachedDTO = try? await cacheStore.load(EventDTO.self, for: CacheKey.Schedule.event(eventID: eventID)),
+        switch policy {
+        case .cacheFirst:
+            if let cachedDTO = try? await cacheStore.load(EventDTO.self, for: key),
                let event = cachedDTO.toEntity()
             {
                 return event
             }
-            throw error
+
+            let endpoint = GetEventByIDEndpoint(eventID)
+            let dto = try await networkService.requestDecodable(endpoint, as: EventDTO.self)
+            try? await cacheStore.save(dto, for: key)
+
+            guard let event = dto.toEntity() else {
+                throw NetworkError.decodingFailed
+            }
+            return event
+
+        case .networkFirst:
+            do {
+                let endpoint = GetEventByIDEndpoint(eventID)
+                let dto = try await networkService.requestDecodable(endpoint, as: EventDTO.self)
+                try? await cacheStore.save(dto, for: key)
+
+                guard let event = dto.toEntity() else {
+                    throw NetworkError.decodingFailed
+                }
+                return event
+            } catch {
+                if let cachedDTO = try? await cacheStore.load(EventDTO.self, for: key),
+                   let event = cachedDTO.toEntity()
+                {
+                    return event
+                }
+                throw error
+            }
+
+        case .ignoreCache:
+            let endpoint = GetEventByIDEndpoint(eventID)
+            let dto = try await networkService.requestDecodable(endpoint, as: EventDTO.self)
+            try? await cacheStore.save(dto, for: key)
+
+            guard let event = dto.toEntity() else {
+                throw NetworkError.decodingFailed
+            }
+            return event
         }
     }
 
@@ -117,17 +172,26 @@ final class CachedEventsRepository: EventsRepositoryProtocol {
     }
 
     func getSpeakerEvents(speakerID: String) async throws -> [Event] {
-        if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: CacheKey.Schedule.speakerEvents(speakerID: speakerID)) {
+        if let cachedDTOs = try? await cacheStore.load(
+            [EventDTO].self,
+            for: CacheKey.Schedule.speakerEvents(speakerID: speakerID)
+        ) {
             return cachedDTOs.compactMap { $0.toEntity() }
         }
 
         do {
             let endpoint = GetSpeakerEventsEndpoint(speakerID)
             let dtos = try await networkService.requestDecodable(endpoint, as: [EventDTO].self)
-            try? await cacheStore.save(dtos, for: CacheKey.Schedule.speakerEvents(speakerID: speakerID))
+            try? await cacheStore.save(
+                dtos,
+                for: CacheKey.Schedule.speakerEvents(speakerID: speakerID)
+            )
             return dtos.compactMap { $0.toEntity() }
         } catch {
-            if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: CacheKey.Schedule.speakerEvents(speakerID: speakerID)) {
+            if let cachedDTOs = try? await cacheStore.load(
+                [EventDTO].self,
+                for: CacheKey.Schedule.speakerEvents(speakerID: speakerID)
+            ) {
                 return cachedDTOs.compactMap { $0.toEntity() }
             }
             throw error

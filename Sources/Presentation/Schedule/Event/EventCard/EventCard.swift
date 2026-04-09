@@ -198,7 +198,7 @@ struct EventCard: View {
                         .resizable()
                         .scaledToFit()
                         .colorInvert()
-                        .colorMultiply(AppColor.accentYellow)
+                        .colorMultiply(zone.color)
                         .frame(width: 16, height: 16)
                         .padding(4)
 

@@ -127,16 +127,18 @@ struct LocationsView: View {
                     let height = geo.size.height
 
                     ZStack {
-                        if viewModel.isLoading {
+                        if viewModel.isInitialLoading && viewModel.floors.isEmpty {
                             ProgressView()
                                 .tint(.white.opacity(0.6))
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .accessibilityIdentifier("map.loading")
-                        } else if let loadError = viewModel.loadError {
+                        } else if let loadError = viewModel.loadError, viewModel.floors.isEmpty {
                             Text(loadError)
                                 .font(.footnote)
                                 .foregroundStyle(.white.opacity(0.55))
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 24)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .accessibilityIdentifier("map.error")
                         } else if let floor = viewModel.selectedFloor {
                             LocationFloorSwitcher(
@@ -173,9 +175,11 @@ struct LocationsView: View {
                                 .font(.footnote)
                                 .foregroundStyle(.white.opacity(0.55))
                                 .multilineTextAlignment(.center)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .accessibilityIdentifier("map.empty")
                         }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 .id(viewModel.selectedFloor?.id)
             }
@@ -210,12 +214,11 @@ struct LocationsView: View {
                                 .accessibilityElement(children: .ignore)
                                 .accessibilityIdentifier("map.zoneChip.icon.\(zone.id)")
                                 .accessibilityLabel(zone.title)
+
                                 Text(zone.title)
                                     .font(.system(size: 11, weight: .bold))
                                     .tracking(0.3)
-                                    .foregroundColor(
-                                        isSelected ? .black : .white.opacity(0.6)
-                                    )
+                                    .foregroundColor(isSelected ? .black : .white.opacity(0.6))
                             }
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
@@ -279,6 +282,7 @@ struct LocationsView: View {
                 if let coordinate = coordinate(for: zone) {
                     let pinX = mapW * coordinate.x
                     let pinY = mapH * coordinate.y
+
                     LocationPinView(
                         zone: zone,
                         isFocused: focusedZoneID == zone.id,
@@ -300,6 +304,7 @@ struct LocationsView: View {
             {
                 let pinX = mapW * coordinate.x
                 let pinY = mapH * coordinate.y
+
                 LocationPopupCard(
                     zone: zone,
                     background: AppColor.appBackground,
@@ -356,8 +361,6 @@ struct LocationsView: View {
             )
     }
 
-    // MARK: - Helpers
-
     private func normalizedCoordinate(_ value: Double) -> CGFloat {
         min(max(CGFloat(value), 0), 1)
     }
@@ -373,34 +376,4 @@ struct LocationsView: View {
     }
 
     private static let mapAspectRatio: CGFloat = 501 / 981
-}
-
-#Preview {
-    LocationsPreviewHost()
-        .preferredColorScheme(.dark)
-}
-
-private struct LocationsPreviewHost: View {
-    @State private var viewModel: MapViewModel?
-    @Environment(\.dependencyContainer) private var container
-
-    var body: some View {
-        Group {
-            if let viewModel {
-                LocationsView(viewModel: viewModel)
-            } else {
-                ProgressView()
-            }
-        }
-        .task {
-            if viewModel == nil {
-                let model = MapViewModel(
-                    floorsRepository: container.floorsRepository,
-                    zoneRepository: container.zoneRepository
-                )
-                viewModel = model
-                await model.load()
-            }
-        }
-    }
 }
