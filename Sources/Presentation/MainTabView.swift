@@ -291,7 +291,7 @@ struct MainTabView: View {
             )
             mapViewModel = model
             await model.load()
-            model.startPolling(every: 10)
+            model.startPolling(every: 120)
         }
 
         if badgeViewModel == nil {

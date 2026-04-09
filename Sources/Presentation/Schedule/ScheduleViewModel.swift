@@ -17,6 +17,17 @@ final class ScheduleViewModel {
     private(set) var isLoading = false
     private(set) var loadError: String?
 
+    var filters: [String] {
+        let categories = Set(
+            entries.map {
+                $0.event.category
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .capitalized
+            }
+        )
+        return ["Все", "Live", "Избранное"] + categories.sorted()
+    }
+
     init(
         festivalsRepository: FestivalsRepositoryProtocol,
         eventsRepository: EventsRepositoryProtocol,
