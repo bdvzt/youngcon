@@ -294,27 +294,28 @@ struct LocationsView: View {
                 }
             }
 
-            if let focusedZoneID,
-               let zone = zones.first(where: { $0.id == focusedZoneID }),
-               let coordinate = coordinate(for: zone)
-            {
-                let pinX = mapW * coordinate.x
-                let pinY = mapH * coordinate.y
-                LocationPopupCard(
-                    zone: zone,
-                    background: AppColor.appBackground,
-                    yellow: AppColor.accentYellow
-                ) {
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        self.focusedZoneID = nil
+            ForEach(zones) { zone in
+                if let coordinate = coordinate(for: zone) {
+                    let pinX = mapW * coordinate.x
+                    let pinY = mapH * coordinate.y
+                    let isFocused = focusedZoneID == zone.id
+
+                    LocationPopupCard(
+                        zone: zone,
+                        background: AppColor.appBackground,
+                        yellow: AppColor.accentYellow
+                    ) {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            focusedZoneID = nil
+                        }
                     }
+                    .shadow(color: .black.opacity(0.8), radius: 20, x: 0, y: 15)
+                    .scaleEffect(isFocused ? 1.0 : 0.9, anchor: .bottom)
+                    .opacity(isFocused ? 1.0 : 0.0)
+                    .position(x: pinX, y: pinY - 90)
+                    .zIndex(isFocused ? 100 : -1)
+                    .allowsHitTesting(isFocused)
                 }
-                .position(x: pinX, y: pinY - 90)
-                .zIndex(100)
-                .transition(.asymmetric(
-                    insertion: .scale(scale: 0.9).combined(with: .opacity),
-                    removal: .scale(scale: 0.9).combined(with: .opacity)
-                ))
             }
         }
         .frame(width: mapW, height: mapH)

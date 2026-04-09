@@ -12,7 +12,6 @@ struct LocationPopupCard: View {
             arrowTip
         }
         .frame(width: 200)
-        .compositingGroup()
         .onTapGesture {}
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("map.popup.\(zone.id)")
@@ -35,7 +34,6 @@ struct LocationPopupCard: View {
                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
                 )
         )
-        .shadow(color: .black.opacity(0.8), radius: 20, x: 0, y: 15)
     }
 
     private var cardHeader: some View {
@@ -57,8 +55,9 @@ struct LocationPopupCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityIdentifier("map.popup.title.\(zone.id)")
             }
-            Spacer(minLength: 0)
+
             closeButton
+                .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 
