@@ -68,14 +68,14 @@ struct EventDetailedCard: View {
 
                 Text(model.title)
                     .foregroundColor(.white)
-                    .font(.system(size: 28, weight: .black))
+                    .font(AppFont.geo(28, weight: .black))
                     .lineSpacing(-2)
                     .fixedSize(horizontal: false, vertical: true)
 
                 locationChip
 
                 Text(model.description)
-                    .font(.system(size: 16, weight: .medium))
+                    .font(AppFont.geo(16, weight: .medium))
                     .foregroundColor(.white.opacity(0.74))
                     .lineSpacing(6)
                     .fixedSize(horizontal: false, vertical: true)
@@ -110,7 +110,7 @@ struct EventDetailedCard: View {
     private var timeChip: some View {
         Text(model.time)
             .foregroundColor(.white.opacity(0.92))
-            .font(.system(size: 15, weight: .semibold))
+            .font(AppFont.geo(15, weight: .semibold))
             .padding(.horizontal, 13)
             .padding(.vertical, 10)
             .background(
@@ -131,7 +131,7 @@ struct EventDetailedCard: View {
 
             Text(model.location)
                 .foregroundColor(.white.opacity(0.62))
-                .font(.system(size: 16, weight: .semibold))
+                .font(AppFont.geo(16, weight: .semibold))
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
@@ -156,7 +156,7 @@ struct EventDetailedCard: View {
                         KFImage(avatarURL)
                             .placeholder {
                                 Text(speakerInitials)
-                                    .font(.system(size: 20, weight: .bold))
+                                    .font(AppFont.geo(20, weight: .bold))
                                     .foregroundStyle(.white.opacity(0.8))
                             }
                             .cancelOnDisappear(true)
@@ -175,13 +175,13 @@ struct EventDetailedCard: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(model.speakerName)
                         .foregroundColor(.white)
-                        .font(.system(size: 17, weight: .black))
+                        .font(AppFont.geo(17, weight: .black))
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text(model.speakerRole)
                         .foregroundColor(AppColor.accentYellow)
-                        .font(.system(size: 14, weight: .black))
+                        .font(AppFont.geo(14, weight: .black))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -219,7 +219,7 @@ struct EventDetailedCard: View {
                         .font(.system(size: 16, weight: .bold))
 
                     Text(model.primaryActionTitle)
-                        .font(.system(size: 16, weight: .black))
+                        .font(AppFont.geo(16, weight: .black))
                 }
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity)

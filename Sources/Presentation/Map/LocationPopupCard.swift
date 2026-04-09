@@ -22,7 +22,7 @@ struct LocationPopupCard: View {
         VStack(alignment: .leading, spacing: 8) {
             cardHeader
             Text(zone.description)
-                .font(.system(size: 10))
+                .font(AppFont.geo(10))
                 .foregroundColor(.white.opacity(0.5))
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -52,7 +52,7 @@ struct LocationPopupCard: View {
                 .accessibilityIdentifier("map.popup.icon.\(zone.id)")
                 .accessibilityLabel(zone.title)
                 Text(zone.title)
-                    .font(.system(size: 13, weight: .bold))
+                    .font(AppFont.geo(13, weight: .bold))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityIdentifier("map.popup.title.\(zone.id)")

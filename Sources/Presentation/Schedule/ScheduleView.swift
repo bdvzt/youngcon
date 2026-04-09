@@ -95,7 +95,7 @@ struct ScheduleView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Расписание")
-                .font(.system(size: 54, weight: .black))
+                .font(AppFont.geo(54, weight: .black))
                 .tracking(-1)
                 .textCase(.uppercase)
                 .lineLimit(1)
@@ -110,7 +110,7 @@ struct ScheduleView: View {
                 )
 
             Text("Программа мероприятий")
-                .font(.system(size: 11, weight: .semibold))
+                .font(AppFont.geo(11, weight: .semibold))
                 .tracking(2)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.25))
@@ -146,7 +146,7 @@ struct ScheduleView: View {
                     .padding(.vertical, 40)
             } else if let loadError = viewModel.loadError {
                 Text(loadError)
-                    .font(.footnote)
+                    .font(AppFont.geo(14, weight: .medium))
                     .foregroundStyle(.white.opacity(0.55))
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)

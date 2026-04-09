@@ -15,7 +15,7 @@ struct StickerDetailModal: View {
                 VStack(alignment: .leading, spacing: 20) {
                     headerRow(sticker: sticker)
                     Text(sticker.description)
-                        .font(.system(size: 14))
+                        .font(AppFont.geo(14))
                         .foregroundColor(.white.opacity(0.4))
                         .lineSpacing(4)
                 }
@@ -69,11 +69,11 @@ struct StickerDetailModal: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(sticker.name)
-                        .font(.system(size: 16, weight: .bold))
+                        .font(AppFont.geo(16, weight: .bold))
                         .foregroundColor(.white)
 
                     Text(sticker.isUnlocked ? "Разблокировано" : "Заблокировано")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(AppFont.geo(11, weight: .bold))
                         .tracking(0.05)
                         .textCase(.uppercase)
                         .foregroundColor(

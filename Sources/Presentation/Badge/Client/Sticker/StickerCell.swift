@@ -54,7 +54,7 @@ struct StickerCell: View {
             .saturation(sticker.isUnlocked ? 1 : 0)
 
             Text(sticker.name)
-                .font(.system(size: 9, weight: .bold))
+                .font(AppFont.geo(9, weight: .bold))
                 .tracking(0.05)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.4))

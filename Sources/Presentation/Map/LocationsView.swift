@@ -80,7 +80,7 @@ struct LocationsView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Локации")
-                .font(.system(size: 48, weight: .black))
+                .font(AppFont.geo(48, weight: .black))
                 .tracking(-1)
                 .textCase(.uppercase)
                 .lineLimit(1)
@@ -101,7 +101,7 @@ struct LocationsView: View {
                 .accessibilityIdentifier("map.header.title")
 
             Text("Навигация по площадке")
-                .font(.system(size: 11, weight: .semibold))
+                .font(AppFont.geo(11, weight: .semibold))
                 .tracking(2)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.25))
@@ -133,7 +133,7 @@ struct LocationsView: View {
                                 .accessibilityIdentifier("map.loading")
                         } else if let loadError = viewModel.loadError {
                             Text(loadError)
-                                .font(.footnote)
+                                .font(AppFont.geo(14, weight: .medium))
                                 .foregroundStyle(.white.opacity(0.55))
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 24)
@@ -170,7 +170,7 @@ struct LocationsView: View {
                             )
                         } else {
                             Text("Карта пока недоступна")
-                                .font(.footnote)
+                                .font(AppFont.geo(14, weight: .medium))
                                 .foregroundStyle(.white.opacity(0.55))
                                 .multilineTextAlignment(.center)
                                 .accessibilityIdentifier("map.empty")
@@ -211,7 +211,7 @@ struct LocationsView: View {
                                 .accessibilityIdentifier("map.zoneChip.icon.\(zone.id)")
                                 .accessibilityLabel(zone.title)
                                 Text(zone.title)
-                                    .font(.system(size: 11, weight: .bold))
+                                    .font(AppFont.geo(11, weight: .bold))
                                     .tracking(0.3)
                                     .foregroundColor(
                                         isSelected ? .black : .white.opacity(0.6)

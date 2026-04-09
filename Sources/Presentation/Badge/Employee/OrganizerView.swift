@@ -46,7 +46,7 @@ struct OrganizerView: View {
                                     .padding(.vertical, 24)
                             } else if let loadingError = viewModel.loadingError {
                                 Text(loadingError)
-                                    .font(.system(size: 13))
+                                    .font(AppFont.geo(13))
                                     .foregroundColor(.white.opacity(0.55))
                                     .multilineTextAlignment(.center)
                             }
@@ -102,7 +102,7 @@ struct OrganizerView: View {
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Выдать\nачивку")
-                .font(.system(size: 48, weight: .black))
+                .font(AppFont.geo(48, weight: .black))
                 .lineSpacing(-10)
                 .tracking(-1)
                 .textCase(.uppercase)
@@ -124,7 +124,7 @@ struct OrganizerView: View {
                 )
 
             Text("Выберите ачивку, которую будете раздавать")
-                .font(.system(size: 12, weight: .semibold))
+                .font(AppFont.geo(12, weight: .semibold))
                 .tracking(0.5)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.25))
@@ -159,12 +159,12 @@ struct OrganizerView: View {
             }
             VStack(alignment: .leading, spacing: 3) {
                 Text("Выбрано")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(AppFont.geo(10, weight: .bold))
                     .tracking(1)
                     .textCase(.uppercase)
                     .foregroundColor(.white.opacity(0.3))
                 Text(a.name)
-                    .font(.system(size: 15, weight: .bold))
+                    .font(AppFont.geo(15, weight: .bold))
                     .foregroundColor(.white)
             }
             Spacer()
@@ -192,7 +192,7 @@ struct OrganizerView: View {
                 Image(systemName: "qrcode.viewfinder")
                     .font(.system(size: 18, weight: .bold))
                 Text("Сканировать QR")
-                    .font(.system(size: 15, weight: .black))
+                    .font(AppFont.geo(15, weight: .black))
                     .tracking(0.5)
                     .textCase(.uppercase)
             }

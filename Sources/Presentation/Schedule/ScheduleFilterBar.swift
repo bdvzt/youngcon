@@ -33,7 +33,7 @@ struct ScheduleFilterBar: View {
                         .font(.system(size: 10, weight: .bold))
                 }
                 Text(filter)
-                    .font(.system(size: 11, weight: .bold))
+                    .font(AppFont.geo(11, weight: .bold))
                     .tracking(0.5)
                     .textCase(.uppercase)
             }

@@ -23,7 +23,7 @@ struct CustomTextField: UIViewRepresentable {
             string: placeholder,
             attributes: [
                 .foregroundColor: UIColor.white.withAlphaComponent(0.25),
-                .font: UIFont.systemFont(ofSize: 14, weight: .medium),
+                .font: AppFont.uiGeo(14, weight: .medium),
             ]
         )
 

@@ -192,7 +192,7 @@ struct MainTabView: View {
                 Image(systemName: "rectangle.portrait.and.arrow.right")
                     .font(.system(size: 10, weight: .bold))
                 Text("Выйти")
-                    .font(.system(size: 12, weight: .bold))
+                    .font(AppFont.geo(12, weight: .bold))
             }
             .foregroundColor(.white.opacity(0.6))
             .padding(.horizontal, 16)

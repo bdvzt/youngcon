@@ -49,7 +49,7 @@ struct LocationFloorSwitcher: View {
     private var floorLabel: some View {
         VStack(spacing: 2) {
             Text("\(floorNumber)")
-                .font(.system(size: 22, weight: .black))
+                .font(AppFont.geo(22, weight: .black))
                 .foregroundStyle(
                     LinearGradient(
                         colors: [yellow, purple],
@@ -57,7 +57,7 @@ struct LocationFloorSwitcher: View {
                     )
                 )
             Text("ЭТАЖ")
-                .font(.system(size: 7, weight: .bold))
+                .font(AppFont.geo(7, weight: .bold))
                 .tracking(1)
                 .foregroundColor(.white.opacity(0.5))
         }
