@@ -1,4 +1,4 @@
-struct UserProfile {
+struct UserProfile: Equatable {
     let id: String
     let firstName: String
     let lastName: String

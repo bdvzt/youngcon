@@ -297,7 +297,7 @@ struct MainTabView: View {
             badgeViewModel = model
             await model.loadData()
             if activeTab == .badge {
-                model.startPolling()
+                model.startPolling(every: 30)
             }
         }
 
@@ -321,7 +321,7 @@ struct MainTabView: View {
         }
 
         if newTab == .badge {
-            badgeViewModel?.startPolling()
+            badgeViewModel?.startPolling(every: 30)
         } else {
             badgeViewModel?.stopPolling()
         }
