@@ -70,8 +70,10 @@ struct MainTabView: View {
             .zIndex(1)
 
             headerBar
+                .zIndex(50)
 
             modalsLayer
+                .zIndex(40)
 
             if showLogoutConfirm {
                 LogoutModalView(
@@ -109,6 +111,8 @@ struct MainTabView: View {
         }
         .onDisappear { badgeViewModel?.stopPolling() }
     }
+
+    // MARK: - Header Bar (с рабочей кнопкой!)
 
     private var headerBar: some View {
         ZStack(alignment: .topLeading) {
@@ -229,19 +233,15 @@ struct MainTabView: View {
     private var modalsLayer: some View {
         if selectedSticker != nil {
             StickerDetailModal(selectedSticker: $selectedSticker)
-                .zIndex(100)
         }
 
         if isQRModalOpen, let profile = badgeViewModel?.profile {
             let qrString = profile.qrCode.isEmpty ? profile.id : profile.qrCode
             QRModal(qrString: qrString, userID: profile.id, isOpen: $isQRModalOpen)
-                .zIndex(100)
         }
 
         if let burstSticker = badgeViewModel?.newlyUnlockedSticker, activeTab == .badge {
             unlockBurstView(sticker: burstSticker)
-                .zIndex(100)
-                .transition(.opacity)
         }
     }
 

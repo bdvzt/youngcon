@@ -26,7 +26,6 @@ struct LocationsView: View {
             }
             .scrollClipDisabled(true)
             .accessibilityIdentifier("map.screen")
-            .allowsHitTesting(false)
         }
         .task {
             await viewModel.load()
