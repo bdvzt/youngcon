@@ -103,6 +103,7 @@ struct OrganizerView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Выдать\nачивку")
                 .font(.system(size: 48, weight: .black))
+                .lineSpacing(-10)
                 .tracking(-1)
                 .textCase(.uppercase)
                 .lineLimit(2)
@@ -123,10 +124,12 @@ struct OrganizerView: View {
                 )
 
             Text("Выберите ачивку, которую будете раздавать")
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(2)
+                .font(.system(size: 12, weight: .semibold))
+                .tracking(0.5)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.25))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)

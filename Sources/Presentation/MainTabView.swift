@@ -23,7 +23,7 @@ struct MainTabView: View {
         let isOrganizerMode = tabs.contains(.scanner)
 
         if isOrganizerMode {
-            return true
+            return activeTab == .scanner
         } else {
             return activeTab == .badge
         }
@@ -112,7 +112,7 @@ struct MainTabView: View {
         .onDisappear { badgeViewModel?.stopPolling() }
     }
 
-    // MARK: - Header Bar (с рабочей кнопкой!)
+    // MARK: - Header Bar
 
     private var headerBar: some View {
         ZStack(alignment: .topLeading) {
@@ -120,17 +120,14 @@ struct MainTabView: View {
                 AppColor.appBackground
                     .ignoresSafeArea(edges: .top)
                     .frame(height: 0)
-
                 AppColor.appBackground
                     .frame(height: 52)
-
                 LinearGradient(
                     colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
                 .frame(height: 32)
-
                 Spacer()
             }
             .zIndex(20)
