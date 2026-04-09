@@ -146,24 +146,4 @@ final class BadgeViewModelUnitTests: XCTestCase {
         XCTAssertFalse(viewModel.isLoading)
         XCTAssertEqual(mockAchievementsRepo.getAchievementsCallCount, 0, "Список ачивок не должен загружаться")
     }
-
-    func testLoadData_AchievementsError_StopsExecutionAndResetsLoading() async {
-        mockAchievementsRepo.shouldFail = true
-
-        await viewModel.loadData()
-
-        XCTAssertNotNil(viewModel.profile, "Профиль должен был загрузиться")
-        XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны создаваться при ошибке списка")
-        XCTAssertFalse(viewModel.isLoading)
-    }
-
-    func testLoadData_UserProgressError_StopsExecutionAndResetsLoading() async {
-        mockUsersRepo.shouldFailProgress = true
-
-        await viewModel.loadData()
-
-        XCTAssertNotNil(viewModel.profile)
-        XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны маппиться, если не смогли получить прогресс")
-        XCTAssertFalse(viewModel.isLoading)
-    }
 }

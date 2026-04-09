@@ -106,6 +106,7 @@ final class ScheduleViewModelUnitTests: XCTestCase {
     private var eventsRepo: MockEventsRepository!
     private var zonesRepo: MockZoneRepository!
     private var speakersRepo: MockSpeakersRepository!
+    private var usersRepo: MockUsersRepository!
     private var viewModel: ScheduleViewModel!
 
     override func setUp() {
@@ -114,11 +115,13 @@ final class ScheduleViewModelUnitTests: XCTestCase {
         eventsRepo = MockEventsRepository()
         zonesRepo = MockZoneRepository()
         speakersRepo = MockSpeakersRepository()
+        usersRepo = MockUsersRepository()
         viewModel = ScheduleViewModel(
             festivalsRepository: festivalsRepo,
             eventsRepository: eventsRepo,
             zoneRepository: zonesRepo,
-            speakersRepository: speakersRepo
+            speakersRepository: speakersRepo,
+            usersRepository: usersRepo
         )
     }
 

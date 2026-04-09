@@ -13,6 +13,8 @@ final class MapViewModel {
     private(set) var isLoading = false
     private(set) var loadError: String?
 
+    private var pollingTask: Task<Void, Never>?
+
     var selectedFloor: Floor? {
         guard let selectedFloorID else {
             return floors.first
@@ -99,6 +101,31 @@ final class MapViewModel {
         }
     }
 
+    func startPolling() {
+        guard pollingTask == nil else { return }
+        guard let floorsRepository, let zoneRepository else { return }
+
+        pollingTask = Task { [weak self] in
+            guard let self else { return }
+
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(30))
+                guard !Task.isCancelled else { break }
+
+                await fetchAll(
+                    isFirstLoad: false,
+                    floorsRepository: floorsRepository,
+                    zoneRepository: zoneRepository
+                )
+            }
+        }
+    }
+
+    func stopPolling() {
+        pollingTask?.cancel()
+        pollingTask = nil
+    }
+
     func selectNextFloor() {
         guard canSelectNextFloor, let selectedFloorIndex else {
             return
@@ -111,6 +138,79 @@ final class MapViewModel {
             return
         }
         selectedFloorID = floors[selectedFloorIndex - 1].id
+    }
+
+    private func fetchAll(
+        isFirstLoad: Bool,
+        floorsRepository: FloorsRepositoryProtocol,
+        zoneRepository: ZoneRepositoryProtocol
+    ) async {
+        if isFirstLoad {
+            loadError = nil
+        }
+
+        do {
+            let loadedFloors = try await Self.sortedFloors(floorsRepository.getFloors())
+            let loadedZonesByFloorID = try await loadZonesByFloorID(
+                for: loadedFloors,
+                zoneRepository: zoneRepository
+            )
+
+            guard shouldApplyChanges(
+                isFirstLoad: isFirstLoad,
+                newFloors: loadedFloors,
+                newZonesByFloorID: loadedZonesByFloorID
+            ) else {
+                return
+            }
+
+            apply(
+                floors: loadedFloors,
+                zonesByFloorID: loadedZonesByFloorID
+            )
+        } catch {
+            if isFirstLoad {
+                floors = []
+                zonesByFloorID = [:]
+                selectedFloorID = nil
+                loadError = error.localizedDescription
+            } else {
+                print("[Map] Polling error: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func shouldApplyChanges(
+        isFirstLoad: Bool,
+        newFloors: [Floor],
+        newZonesByFloorID: [String: [Zone]]
+    ) -> Bool {
+        if isFirstLoad {
+            return true
+        }
+
+        let floorsChanged = floors != newFloors
+        let zonesChanged = zonesByFloorID != newZonesByFloorID
+
+        return floorsChanged || zonesChanged
+    }
+
+    private func apply(
+        floors: [Floor],
+        zonesByFloorID: [String: [Zone]]
+    ) {
+        let previousSelectedFloorID = selectedFloorID
+
+        self.floors = floors
+        self.zonesByFloorID = zonesByFloorID
+
+        if let previousSelectedFloorID,
+           floors.contains(where: { $0.id == previousSelectedFloorID })
+        {
+            selectedFloorID = previousSelectedFloorID
+        } else {
+            selectedFloorID = floors.first?.id
+        }
     }
 
     private func loadZonesByFloorID(
@@ -128,6 +228,7 @@ final class MapViewModel {
                     return (floor.id, zones)
                 }
             }
+
             for try await (floorID, zones) in group {
                 zonesByFloorID[floorID] = zones
             }

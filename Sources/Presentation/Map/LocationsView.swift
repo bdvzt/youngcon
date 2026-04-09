@@ -35,6 +35,13 @@ struct LocationsView: View {
                 gradientOffset = 1
             }
         }
+        .task {
+            await viewModel.load()
+            viewModel.startPolling()
+        }
+        .onDisappear {
+            viewModel.stopPolling()
+        }
     }
 
     private var topOverlay: some View {
