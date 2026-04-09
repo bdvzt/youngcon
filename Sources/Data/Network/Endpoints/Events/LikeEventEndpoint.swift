@@ -18,7 +18,7 @@ struct LikeEventEndpoint: Endpoint {
     }
 
     var method: HTTPMethod {
-        .get
+        .post
     }
 
     var task: HTTPTask {

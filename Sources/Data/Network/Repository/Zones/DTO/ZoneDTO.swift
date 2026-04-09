@@ -1,12 +1,12 @@
 import Foundation
 
-struct ZoneDTO: Decodable {
+struct ZoneDTO: Codable {
     let id: String
-    let floorID: String
+    let floorId: String
     let title: String
     let description: String
-    let cordX: Double
-    let cordY: Double
+    let coordX: Double
+    let coordY: Double
     let icon: String
     let color: String
 }
@@ -19,11 +19,11 @@ extension ZoneDTO {
 
         return Zone(
             id: id,
-            floorID: floorID,
+            floorID: floorId,
             title: title,
             description: description,
-            cordX: cordX,
-            cordY: cordY,
+            cordX: coordX,
+            cordY: coordY,
             icon: iconURL,
             color: color.toColor()
         )

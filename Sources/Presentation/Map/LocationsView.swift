@@ -1,39 +1,59 @@
+import Kingfisher
+import Observation
 import SwiftUI
 
 struct LocationsView: View {
-    @State private var floor: Int = 1
-    @State private var focusedLocId: String?
+    @Bindable var viewModel: MapViewModel
+
+    @State private var focusedZoneID: String?
     @State private var gradientOffset: CGFloat = 0
 
-    private var currentLocations: [LocationModel] {
-        mapLocationsData.filter { $0.floor == floor }
-    }
+    var hasFixedHeader: Bool = false
+
+    private let appBackground = AppColor.appBackground
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            AppColor.appBackground.ignoresSafeArea()
-            ambientGlows
+            Color.clear
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Color.clear.frame(height: 52)
+                    Color.clear.frame(height: hasFixedHeader ? 60 : 52)
                     headerSection
                     mapSection
                     Color.clear.frame(height: 120)
                 }
             }
-
-            VStack {
-                logoView.padding(.horizontal, 20)
-                Spacer()
-            }
-            .zIndex(20)
+            .scrollClipDisabled(true)
+            .accessibilityIdentifier("map.screen")
+        }
+        .task {
+            await viewModel.load()
         }
         .onAppear {
-            withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
+            withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
                 gradientOffset = 1
             }
         }
+    }
+
+    private var topOverlay: some View {
+        VStack(spacing: 0) {
+            appBackground
+                .ignoresSafeArea(edges: .top)
+                .frame(height: 0)
+            appBackground
+                .frame(height: 52)
+            LinearGradient(
+                colors: [appBackground, appBackground.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 32)
+            Spacer()
+        }
+        .zIndex(20)
+        .allowsHitTesting(false)
     }
 
     private var logoView: some View {
@@ -57,118 +77,330 @@ struct LocationsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var ambientGlows: some View {
-        ZStack {
-            Circle()
-                .fill(AppColor.accentPurple)
-                .frame(width: 320, height: 320)
-                .blur(radius: 100)
-                .opacity(0.3)
-                .offset(x: -130, y: -130)
-                .allowsHitTesting(false)
-
-            Circle()
-                .fill(AppColor.accentYellow)
-                .frame(width: 288, height: 288)
-                .blur(radius: 90)
-                .opacity(0.2)
-                .offset(x: 130, y: 300)
-                .allowsHitTesting(false)
-        }
-        .ignoresSafeArea()
-    }
-
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Локации")
                 .font(.system(size: 48, weight: .black))
                 .tracking(-1)
                 .textCase(.uppercase)
+                .lineLimit(1)
+                .minimumScaleFactor(0.65)
+                .allowsTightening(true)
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [AppColor.accentYellow, AppColor.accentPurple, AppColor.accentPink, AppColor.accentYellow],
+                        colors: [
+                            AppColor.accentYellow,
+                            AppColor.accentPurple,
+                            AppColor.accentPink,
+                            AppColor.accentYellow,
+                        ],
                         startPoint: UnitPoint(x: gradientOffset * 0.5, y: 0),
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )
                 )
+                .accessibilityIdentifier("map.header.title")
 
             Text("Навигация по площадке")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.25))
+                .accessibilityIdentifier("map.header.subtitle")
         }
         .padding(.horizontal, 20)
-        .padding(.top, 20)
+        .padding(.top, hasFixedHeader ? 20 : 32)
         .padding(.bottom, 12)
     }
 
     private var mapSection: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(AppColor.cardBackground.opacity(0.6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .stroke(Color.white.opacity(0.06), lineWidth: 1)
-                )
+        VStack(spacing: 0) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .fill(AppColor.cardBackground.opacity(0.6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 28, style: .continuous)
+                            .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                    )
 
-            GeometryReader { geo in
-                let width = geo.size.width
-                let height = geo.size.height
-                ZStack {
-                    LocationFloorSwitcher(
-                        floor: $floor,
-                        background: AppColor.appBackground,
-                        yellow: AppColor.accentYellow,
-                        purple: AppColor.accentPurple
-                    ) {
-                        focusedLocId = nil
+                GeometryReader { geo in
+                    let width = geo.size.width
+                    let height = geo.size.height
+
+                    ZStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .tint(.white.opacity(0.6))
+                                .accessibilityIdentifier("map.loading")
+                        } else if let loadError = viewModel.loadError {
+                            Text(loadError)
+                                .font(.footnote)
+                                .foregroundStyle(.white.opacity(0.55))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                                .accessibilityIdentifier("map.error")
+                        } else if let floor = viewModel.selectedFloor {
+                            LocationFloorSwitcher(
+                                floorNumber: viewModel.selectedFloorNumber,
+                                canSelectNextFloor: viewModel.canSelectNextFloor,
+                                canSelectPreviousFloor: viewModel.canSelectPreviousFloor,
+                                background: AppColor.appBackground,
+                                yellow: AppColor.accentYellow,
+                                purple: AppColor.accentPurple,
+                                onNextFloor: {
+                                    viewModel.selectNextFloor()
+                                    withAnimation(.easeOut(duration: 0.2)) {
+                                        focusedZoneID = nil
+                                    }
+                                },
+                                onPreviousFloor: {
+                                    viewModel.selectPreviousFloor()
+                                    withAnimation(.easeOut(duration: 0.2)) {
+                                        focusedZoneID = nil
+                                    }
+                                }
+                            )
+                            .position(x: 32, y: height / 2)
+                            .zIndex(2)
+
+                            flatMap(
+                                containerW: width,
+                                containerH: height,
+                                floor: floor,
+                                zones: viewModel.selectedZones
+                            )
+                        } else {
+                            Text("Карта пока недоступна")
+                                .font(.footnote)
+                                .foregroundStyle(.white.opacity(0.55))
+                                .multilineTextAlignment(.center)
+                                .accessibilityIdentifier("map.empty")
+                        }
                     }
-                    .position(x: 32, y: height / 2)
-
-                    flatMap(containerW: width, containerH: height)
                 }
+                .id(viewModel.selectedFloor?.id)
             }
+            .frame(height: 460)
+            .padding(.horizontal, 20)
+
+            zoneSelector
         }
-        .frame(height: 520)
-        .padding(.horizontal, 20)
-        .animation(.easeInOut(duration: 0.25), value: floor)
-        .animation(.easeInOut(duration: 0.2), value: focusedLocId)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.selectedFloor?.id)
     }
 
     @ViewBuilder
-    private func flatMap(containerW: CGFloat, containerH: CGFloat) -> some View {
-        let mapW: CGFloat = containerW * 0.73
-        let mapH: CGFloat = containerH * 0.82
+    private var zoneSelector: some View {
+        if !viewModel.selectedZones.isEmpty {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(viewModel.selectedZones) { zone in
+                        let isSelected = focusedZoneID == zone.id
+                        Button {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                focusedZoneID = isSelected ? nil : zone.id
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                ZStack {
+                                    Circle()
+                                        .fill(isSelected ? zone.color : zone.color.opacity(0.15))
+                                        .frame(width: 22, height: 22)
+                                    ZoneIconImage(url: zone.icon, placeholderFontSize: 10)
+                                        .frame(width: 10, height: 10)
+                                }
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityIdentifier("map.zoneChip.icon.\(zone.id)")
+                                .accessibilityLabel(zone.title)
+                                Text(zone.title)
+                                    .font(.system(size: 11, weight: .bold))
+                                    .tracking(0.3)
+                                    .foregroundColor(
+                                        isSelected ? .black : .white.opacity(0.6)
+                                    )
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                Capsule()
+                                    .fill(
+                                        isSelected
+                                            ? zone.color
+                                            : Color.white.opacity(0.04)
+                                    )
+                                    .overlay(
+                                        Capsule()
+                                            .stroke(
+                                                isSelected
+                                                    ? zone.color.opacity(0.6)
+                                                    : Color.white.opacity(0.08),
+                                                lineWidth: 1
+                                            )
+                                    )
+                            )
+                            .shadow(
+                                color: isSelected ? zone.color.opacity(0.35) : .clear,
+                                radius: 8, x: 0, y: 2
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .animation(.easeInOut(duration: 0.2), value: isSelected)
+                        .accessibilityIdentifier("map.zoneChip.\(zone.id)")
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 14)
+            }
+            .accessibilityIdentifier("map.zoneSelector")
+            .mask(
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.06),
+                        .init(color: .black, location: 0.94),
+                        .init(color: .clear, location: 1),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func flatMap(containerW: CGFloat, containerH: CGFloat, floor: Floor, zones: [Zone]) -> some View {
+        let mapH: CGFloat = containerH * 0.90
+        let mapW: CGFloat = mapH * Self.mapAspectRatio
         let mapX: CGFloat = containerW / 2 + 28
         let mapY: CGFloat = containerH / 2
-        let offsetX: CGFloat = mapX - mapW / 2
-        let offsetY: CGFloat = mapY - mapH / 2
 
         ZStack {
-            ForEach(currentLocations) { loc in
-                let pinX = offsetX + mapW * loc.leftPercent
-                let pinY = offsetY + mapH * loc.topPercent
+            mapImage(floor)
 
-                LocationPinView(
-                    loc: loc,
-                    isFocused: focusedLocId == loc.id,
-                    focusedLocId: focusedLocId,
+            ForEach(zones) { zone in
+                if let coordinate = coordinate(for: zone) {
+                    let pinX = mapW * coordinate.x
+                    let pinY = mapH * coordinate.y
+                    LocationPinView(
+                        zone: zone,
+                        isFocused: focusedZoneID == zone.id,
+                        focusedZoneID: focusedZoneID,
+                        background: AppColor.appBackground,
+                        yellow: AppColor.accentYellow
+                    ) {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            focusedZoneID = (focusedZoneID == zone.id) ? nil : zone.id
+                        }
+                    }
+                    .position(x: pinX, y: pinY)
+                }
+            }
+
+            if let focusedZoneID,
+               let zone = zones.first(where: { $0.id == focusedZoneID }),
+               let coordinate = coordinate(for: zone)
+            {
+                let pinX = mapW * coordinate.x
+                let pinY = mapH * coordinate.y
+                LocationPopupCard(
+                    zone: zone,
                     background: AppColor.appBackground,
                     yellow: AppColor.accentYellow
                 ) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        focusedLocId = (focusedLocId == loc.id) ? nil : loc.id
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        self.focusedZoneID = nil
                     }
                 }
-                .position(x: pinX, y: pinY)
+                .position(x: pinX, y: pinY - 90)
+                .zIndex(100)
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.9).combined(with: .opacity),
+                    removal: .scale(scale: 0.9).combined(with: .opacity)
+                ))
             }
         }
+        .frame(width: mapW, height: mapH)
         .position(x: mapX, y: mapY)
     }
+
+    private func mapImage(_ floor: Floor) -> some View {
+        KFImage(floor.mapImageURL)
+            .placeholder {
+                mapImageFallback
+                    .overlay {
+                        ProgressView()
+                            .tint(.white.opacity(0.6))
+                    }
+            }
+            .resizable()
+            .scaledToFill()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
+            }
+            .shadow(color: .black.opacity(0.35), radius: 18, y: 12)
+    }
+
+    private var mapImageFallback: some View {
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .fill(
+                LinearGradient(
+                    colors: [
+                        AppColor.accentPurple.opacity(0.26),
+                        AppColor.cardBackground.opacity(0.9),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+    }
+
+    // MARK: - Helpers
+
+    private func normalizedCoordinate(_ value: Double) -> CGFloat {
+        min(max(CGFloat(value), 0), 1)
+    }
+
+    private func coordinate(for zone: Zone) -> CGPoint? {
+        guard let cordX = zone.cordX, let cordY = zone.cordY else {
+            return nil
+        }
+        return CGPoint(
+            x: normalizedCoordinate(cordX),
+            y: normalizedCoordinate(cordY)
+        )
+    }
+
+    private static let mapAspectRatio: CGFloat = 501 / 981
 }
 
 #Preview {
-    LocationsView()
+    LocationsPreviewHost()
         .preferredColorScheme(.dark)
+}
+
+private struct LocationsPreviewHost: View {
+    @State private var viewModel: MapViewModel?
+    @Environment(\.dependencyContainer) private var container
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                LocationsView(viewModel: viewModel)
+            } else {
+                ProgressView()
+            }
+        }
+        .task {
+            if viewModel == nil {
+                let model = MapViewModel(
+                    floorsRepository: container.floorsRepository,
+                    zoneRepository: container.zoneRepository
+                )
+                viewModel = model
+                await model.load()
+            }
+        }
+    }
 }

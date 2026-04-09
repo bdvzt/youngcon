@@ -1,6 +1,6 @@
 import Foundation
 
-struct FestivalDTO: Decodable {
+struct FestivalDTO: Codable {
     let id: String
     let title: String
     let description: String

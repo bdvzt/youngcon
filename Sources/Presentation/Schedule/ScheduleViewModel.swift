@@ -8,8 +8,10 @@ final class ScheduleViewModel {
     private let eventsRepository: EventsRepositoryProtocol
     private let zoneRepository: ZoneRepositoryProtocol
     private let speakersRepository: SpeakersRepositoryProtocol
+    private let usersRepository: UsersRepositoryProtocol
 
     private(set) var entries: [ScheduleEntry] = []
+    private(set) var favoriteEventIDs: Set<String> = []
     private(set) var isLoading = false
     private(set) var loadError: String?
 
@@ -17,12 +19,14 @@ final class ScheduleViewModel {
         festivalsRepository: FestivalsRepositoryProtocol,
         eventsRepository: EventsRepositoryProtocol,
         zoneRepository: ZoneRepositoryProtocol,
-        speakersRepository: SpeakersRepositoryProtocol
+        speakersRepository: SpeakersRepositoryProtocol,
+        usersRepository: UsersRepositoryProtocol
     ) {
         self.festivalsRepository = festivalsRepository
         self.eventsRepository = eventsRepository
         self.zoneRepository = zoneRepository
         self.speakersRepository = speakersRepository
+        self.usersRepository = usersRepository
     }
 
     func load() async {
@@ -35,8 +39,10 @@ final class ScheduleViewModel {
             let festival = try await festivalsRepository.getLastFestival()
             let events = try await eventsRepository.getEvents(festivalID: festival.id)
 
+            async let favoriteIDs = loadFavoriteEventIDs()
             let zonesByID = await loadZones(for: events)
             let speakersByEventID = await loadSpeakersByEventID(for: events)
+            favoriteEventIDs = await favoriteIDs
 
             entries = events.map { event in
                 ScheduleEntry(
@@ -52,7 +58,6 @@ final class ScheduleViewModel {
                 await CurrentEventLiveActivityController.sync(with: entries)
             }
         } catch {
-            entries = []
             loadError = error.localizedDescription
             if #available(iOS 16.1, *) {
                 await CurrentEventLiveActivityController.sync(with: [])
@@ -64,6 +69,24 @@ final class ScheduleViewModel {
     func syncCurrentEventLiveActivity() async {
         if #available(iOS 16.1, *) {
             await CurrentEventLiveActivityController.sync(with: entries)
+        }
+    }
+
+    func isFavorite(eventID: String) -> Bool {
+        favoriteEventIDs.contains(eventID)
+    }
+
+    func toggleFavorite(eventID: String) async -> Bool {
+        do {
+            let response = try await eventsRepository.likeEvent(eventID: eventID)
+            if response.isLiked {
+                favoriteEventIDs.insert(eventID)
+            } else {
+                favoriteEventIDs.remove(eventID)
+            }
+            return response.isLiked
+        } catch {
+            return favoriteEventIDs.contains(eventID)
         }
     }
 
@@ -121,5 +144,14 @@ final class ScheduleViewModel {
         }
 
         return speakersByEventID
+    }
+
+    private func loadFavoriteEventIDs() async -> Set<String> {
+        guard let profile = try? await usersRepository.getMyProfile(),
+              let likedEvents = try? await usersRepository.getUserLikedEvents(userID: profile.id)
+        else {
+            return []
+        }
+        return Set(likedEvents.map(\.id))
     }
 }

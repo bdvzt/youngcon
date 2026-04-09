@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct LocationPopupCard: View {
-    let loc: LocationModel
+    let zone: Zone
     let background: Color
     let yellow: Color
     let onClose: () -> Void
@@ -12,13 +12,16 @@ struct LocationPopupCard: View {
             arrowTip
         }
         .frame(width: 200)
+        .compositingGroup()
         .onTapGesture {}
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("map.popup.\(zone.id)")
     }
 
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             cardHeader
-            Text(loc.description)
+            Text(zone.description)
                 .font(.system(size: 10))
                 .foregroundColor(.white.opacity(0.5))
                 .fixedSize(horizontal: false, vertical: true)
@@ -40,16 +43,19 @@ struct LocationPopupCard: View {
             HStack(spacing: 8) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 7)
-                        .fill(loc.color)
+                        .fill(zone.color)
                         .frame(width: 28, height: 28)
-                    Image(systemName: loc.iconName)
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.black)
+                    ZoneIconImage(url: zone.icon, placeholderFontSize: 12)
+                        .frame(width: 14, height: 14)
                 }
-                Text(loc.title)
+                .accessibilityElement(children: .ignore)
+                .accessibilityIdentifier("map.popup.icon.\(zone.id)")
+                .accessibilityLabel(zone.title)
+                Text(zone.title)
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("map.popup.title.\(zone.id)")
             }
             Spacer(minLength: 0)
             closeButton
@@ -72,19 +78,30 @@ struct LocationPopupCard: View {
                 )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("map.popup.close")
     }
 
     private var arrowTip: some View {
-        Rectangle()
+        ArrowTipShape()
             .fill(background.opacity(0.95))
-            .frame(width: 12, height: 12)
-            .rotationEffect(.degrees(45))
+            .frame(width: 16, height: 8)
             .overlay(
-                Rectangle()
+                ArrowTipShape()
                     .stroke(Color.white.opacity(0.1), lineWidth: 1)
-                    .rotationEffect(.degrees(45))
+                    .frame(width: 16, height: 8)
             )
             .frame(maxWidth: .infinity)
-            .offset(y: -6)
+            .offset(y: -1)
+    }
+}
+
+private struct ArrowTipShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX - rect.width / 2, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.midX + rect.width / 2, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.closeSubpath()
+        return path
     }
 }

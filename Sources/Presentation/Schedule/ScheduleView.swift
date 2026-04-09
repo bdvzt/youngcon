@@ -1,3 +1,4 @@
+import Kingfisher
 import Observation
 import SwiftUI
 
@@ -6,8 +7,11 @@ struct ScheduleView: View {
 
     @State private var activeFilter: String = "Все"
     @State private var gradientOffset: CGFloat = 0
+    @State private var speakerPrefetcher: ImagePrefetcher?
 
-    let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
+    var hasFixedHeader: Bool = false
+
+    private let filters = ["Все", "Избранное", "Live", "Лекция", "Воркшоп", "Backend", "ML"]
 
     private var filteredEntries: [ScheduleEntry] {
         switch activeFilter {
@@ -16,57 +20,54 @@ struct ScheduleView: View {
         case "Live":
             viewModel.entries.filter { $0.streamURL != nil }
         case "Избранное":
-            []
+            viewModel.entries.filter { viewModel.isFavorite(eventID: $0.event.id) }
+        case "Лекция":
+            viewModel.entries.filter {
+                normalizedCategory($0.event.category) == "лекция"
+            }
+        case "Воркшоп":
+            viewModel.entries.filter {
+                normalizedCategory($0.event.category) == "воркшоп"
+            }
+        case "Backend":
+            viewModel.entries.filter {
+                let zoneTitle = $0.zone?.title.lowercased() ?? ""
+                return zoneTitle.contains("бэкенд") || zoneTitle.contains("backend")
+            }
+        case "ML":
+            viewModel.entries.filter {
+                let zoneTitle = $0.zone?.title.lowercased() ?? ""
+                return zoneTitle.contains("ии") || zoneTitle.contains("ml")
+            }
         default:
             viewModel.entries.filter {
-                $0.event.category.lowercased() == activeFilter.lowercased()
+                normalizedCategory($0.event.category) == normalizedCategory(activeFilter)
             }
         }
     }
 
     var body: some View {
         ZStack(alignment: .topLeading) {
-            AppColor.appBackground.ignoresSafeArea()
-            ambientGlows
+            Color.clear
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Color.clear.frame(height: 52)
+                    Color.clear.frame(height: hasFixedHeader ? 60 : 52)
                     headerSection
-                    ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
+                    filterBarWithMask
                     eventList
                     Color.clear.frame(height: 120)
                 }
             }
-
-            VStack(spacing: 0) {
-                AppColor.appBackground.ignoresSafeArea(edges: .top)
-                    .frame(height: 0)
-                AppColor.appBackground.frame(height: 52)
-                LinearGradient(
-                    colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 32)
-                Spacer()
-            }
-            .zIndex(20)
-            .allowsHitTesting(false)
-
-            VStack(spacing: 0) {
-                logoView
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                Spacer()
-            }
-            .zIndex(21)
-            .allowsHitTesting(false)
         }
         .onAppear {
-            withAnimation(.linear(duration: 3).repeatForever(autoreverses: true)) {
+            withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
                 gradientOffset = 1
             }
+            prefetchSpeakerAvatars()
+        }
+        .onChange(of: viewModel.entries.map(\.id)) { _, _ in
+            prefetchSpeakerAvatars()
         }
     }
 
@@ -91,31 +92,10 @@ struct ScheduleView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var ambientGlows: some View {
-        ZStack {
-            Circle()
-                .fill(AppColor.accentPurple)
-                .frame(width: 320, height: 320)
-                .blur(radius: 100)
-                .opacity(0.3)
-                .offset(x: -130, y: -130)
-                .allowsHitTesting(false)
-
-            Circle()
-                .fill(AppColor.accentYellow)
-                .frame(width: 288, height: 288)
-                .blur(radius: 90)
-                .opacity(0.2)
-                .offset(x: 130, y: 300)
-                .allowsHitTesting(false)
-        }
-        .ignoresSafeArea()
-    }
-
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("Расписание")
-                .font(.system(size: 48, weight: .black))
+                .font(.system(size: 54, weight: .black))
                 .tracking(-1)
                 .textCase(.uppercase)
                 .lineLimit(1)
@@ -136,8 +116,25 @@ struct ScheduleView: View {
                 .foregroundColor(.white.opacity(0.25))
         }
         .padding(.horizontal, 20)
-        .padding(.top, 32)
+        .padding(.top, hasFixedHeader ? 20 : 32)
         .padding(.bottom, 12)
+    }
+
+    private var filterBarWithMask: some View {
+        ScheduleFilterBar(filters: filters, activeFilter: $activeFilter)
+            .mask(
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: 0),
+                        .init(color: .black, location: 0.06),
+                        .init(color: .black, location: 0.94),
+                        .init(color: .clear, location: 1),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .padding(.bottom, 8)
     }
 
     private var eventList: some View {
@@ -162,12 +159,37 @@ struct ScheduleView: View {
                         event: entry.event,
                         zone: entry.zone,
                         speakers: entry.speakers,
-                        streamURL: entry.streamURL
+                        streamURL: entry.streamURL,
+                        isFavorite: viewModel.isFavorite(eventID: entry.event.id),
+                        onToggleFavorite: { [viewModel] in
+                            await viewModel.toggleFavorite(eventID: entry.event.id)
+                        }
                     )
                 }
             }
         }
         .padding(.horizontal, 20)
+    }
+}
+
+private func normalizedCategory(_ category: String) -> String {
+    category.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+}
+
+private extension ScheduleView {
+    func prefetchSpeakerAvatars() {
+        let urls = Array(
+            Set(
+                viewModel.entries
+                    .flatMap(\.speakers)
+                    .compactMap(\.avatarImageURL)
+            )
+        )
+        guard !urls.isEmpty else { return }
+        speakerPrefetcher?.stop()
+        let prefetcher = ImagePrefetcher(urls: urls)
+        speakerPrefetcher = prefetcher
+        prefetcher.start()
     }
 }
 
@@ -195,7 +217,8 @@ private struct SchedulePreviewHost: View {
                     festivalsRepository: container.festivalsRepository,
                     eventsRepository: container.eventsRepository,
                     zoneRepository: container.zoneRepository,
-                    speakersRepository: container.speakersRepository
+                    speakersRepository: container.speakersRepository,
+                    usersRepository: container.usersRepository
                 )
                 viewModel = model
                 await model.load()

@@ -1,20 +1,5 @@
 import SwiftUI
 
-// MARK: - Mocks
-
-let example = Speaker(
-    id: "",
-    fullName: "Анна Иванова",
-    job: "Директор по продукту, Яндекс",
-    bio: """
-    Лидеры направлений, визионеры и создатели ключевых продуктов. 
-    Они задают тренды в индустрии, формируют вектор развития технологий 
-    и знают, как построить сервисы, которыми будут пользоваться 
-    миллионы людей каждый день.
-    """,
-    avatarImageURL: nil
-)
-
 // MARK: - SpeakerCardView
 
 struct SpeakerCardView: View {
@@ -40,7 +25,7 @@ struct SpeakerCardView: View {
     // MARK: - Background
 
     private var backgroundView: some View {
-        YoungConAsset.appBackground.swiftUIColor
+        AppColor.navBackground
             .ignoresSafeArea()
     }
 
@@ -48,15 +33,11 @@ struct SpeakerCardView: View {
 
     private var mainContent: some View {
         VStack(spacing: 0) {
-            Spacer()
-
             GeometryReader { geometry in
                 cardContainer
-                    .frame(height: geometry.size.height / 1.6)
+                    .frame(height: geometry.size.height / 1.5)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             }
-
-            Spacer()
         }
     }
 
@@ -68,15 +49,15 @@ struct SpeakerCardView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 20)
                 .padding(.bottom, 12)
-                .background(AppColor.cardBackground)
+                .background(AppColor.navBackground)
 
             scrollableContent
         }
-        .background(AppColor.cardBackground.preferredColorScheme(.dark))
-        .clipShape(RoundedRectangle(cornerRadius: 30))
+        .background(AppColor.navBackground.preferredColorScheme(.dark))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay(
-            RoundedRectangle(cornerRadius: 42)
-                .stroke(whiteText.opacity(0.2), lineWidth: 1.0)
+            RoundedRectangle(cornerRadius: 30)
+                .stroke(whiteText.opacity(0.05), lineWidth: 1.0)
         )
     }
 
@@ -149,10 +130,10 @@ struct SpeakerCardView: View {
 
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("ТОП-МЕНЕДЖМЕНТ")
+            Text(speaker.fullName.uppercased())
                 .font(.system(size: 32, weight: .heavy))
-            Text("ЯНДЕКСА")
-                .font(.system(size: 32, weight: .heavy))
+                .lineLimit(2)
+                .minimumScaleFactor(0.7)
         }
         .foregroundColor(whiteText)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -223,7 +204,13 @@ struct SpeakerCardView: View {
 
     private var askQuestionButton: some View {
         Button(
-            action: { print("Задать вопрос спикеру: \(speaker.fullName)") },
+            action: {
+                guard let url = URL(string: "https://forms.yandex.ru/u/69d62952d046880434747b3f") else {
+                    print("❌ Не удалось создать URL для Яндекс Формы")
+                    return
+                }
+                UIApplication.shared.open(url)
+            },
             label: {
                 Text("вопрос спикеру")
                     .font(.system(size: 16, weight: .heavy))
@@ -294,10 +281,4 @@ struct SpeakerCardView: View {
         }
         .offset(x: 4, y: 4)
     }
-}
-
-// MARK: - Preview
-
-#Preview {
-    SpeakerCardView(speaker: example)
 }

@@ -1,14 +1,14 @@
 import Foundation
 
-struct EventDTO: Decodable {
+struct EventDTO: Codable {
     let id: String
     let title: String
     let description: String
     let startDateTime: String
     let endDateTime: String
     let category: String
-    let zoneID: String
-    let festivalID: String
+    let zoneId: String
+    let festivalId: String
     let streamURL: String?
 }
 
@@ -35,8 +35,8 @@ extension EventDTO {
             startDate: startDate,
             endDate: endDate,
             category: category,
-            zoneID: zoneID,
-            festivalID: festivalID,
+            zoneID: zoneId,
+            festivalID: festivalId,
             streamURL: streamURL.flatMap { URL(string: $0) }
         )
     }
