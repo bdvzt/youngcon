@@ -19,7 +19,6 @@ struct TabPageView: View {
 
     var body: some View {
         TabView(selection: $activeTab) {
-            // Map
             Group {
                 if let mapViewModel {
                     LocationsView(viewModel: mapViewModel)

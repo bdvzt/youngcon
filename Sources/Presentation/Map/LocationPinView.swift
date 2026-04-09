@@ -13,7 +13,13 @@ struct LocationPinView: View {
     var body: some View {
         VStack(spacing: 4) {
             pinIcon
-            if !isFocused { pinLabel }
+            if !isFocused {
+                pinLabel
+                    .transition(.asymmetric(
+                        insertion: .scale(scale: 0.9).combined(with: .opacity),
+                        removal: .scale(scale: 0.9).combined(with: .opacity)
+                    ))
+            }
         }
         .opacity(focusedZoneID != nil && !isFocused ? 0.5 : 1)
         .onTapGesture { onTap() }
