@@ -1,4 +1,4 @@
-enum UserRoleDTO: String, Decodable {
+enum UserRoleDTO: String, Codable, Equatable {
     case client = "Client"
     case employee = "Employee"
 }

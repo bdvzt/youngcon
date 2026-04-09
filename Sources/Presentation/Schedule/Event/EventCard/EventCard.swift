@@ -198,7 +198,8 @@ struct EventCard: View {
                         .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
-                        .foregroundStyle(zone.color)
+                        .colorInvert()
+                        .colorMultiply(zone.color)
                         .frame(width: 16, height: 16)
                         .padding(4)
 

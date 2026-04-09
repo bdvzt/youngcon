@@ -1,6 +1,6 @@
 import Foundation
 
-struct Speaker: Identifiable {
+struct Speaker: Identifiable, Equatable {
     let id: String
     let fullName: String
     let job: String

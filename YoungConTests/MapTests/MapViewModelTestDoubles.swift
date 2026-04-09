@@ -11,7 +11,7 @@ actor FloorsRepositorySpy: FloorsRepositoryProtocol {
         self.failureError = failureError
     }
 
-    func getFloor(id: String) async throws -> Floor {
+    func getFloor(id: String, policy _: CachePolicy = .cacheFirst) async throws -> Floor {
         if let floor = floors.first(where: { $0.id == id }) {
             return floor
         }
@@ -19,7 +19,7 @@ actor FloorsRepositorySpy: FloorsRepositoryProtocol {
         throw MapViewModelTestError.missingStub
     }
 
-    func getFloors() async throws -> [Floor] {
+    func getFloors(policy _: CachePolicy = .cacheFirst) async throws -> [Floor] {
         getFloorsCallCount += 1
 
         if let failureError {
@@ -50,7 +50,7 @@ actor ZoneRepositorySpy: ZoneRepositoryProtocol {
         self.failureError = failureError
     }
 
-    func getZone(zoneID: String) async throws -> Zone {
+    func getZone(zoneID: String, policy _: CachePolicy = .cacheFirst) async throws -> Zone {
         for zones in zonesByFloorID.values {
             if let zone = zones.first(where: { $0.id == zoneID }) {
                 return zone
@@ -60,7 +60,7 @@ actor ZoneRepositorySpy: ZoneRepositoryProtocol {
         throw MapViewModelTestError.missingStub
     }
 
-    func getZones(floorID: String) async throws -> [Zone] {
+    func getZones(floorID: String, policy _: CachePolicy = .cacheFirst) async throws -> [Zone] {
         requestedFloorIDs.append(floorID)
 
         if failingFloorIDs.contains(floorID), let failureError {

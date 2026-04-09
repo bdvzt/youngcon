@@ -1,6 +1,6 @@
 import Foundation
 
-struct ScheduleEntry: Identifiable {
+struct ScheduleEntry: Identifiable, Equatable {
     let id: String
     let event: Event
     let zone: Zone?

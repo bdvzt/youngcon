@@ -114,7 +114,10 @@ struct MainTabView: View {
                 gradientOffset = 1
             }
         }
-        .onDisappear { badgeViewModel?.stopPolling() }
+        .onDisappear {
+            badgeViewModel?.stopPolling()
+            scheduleViewModel?.stopPolling()
+        }
     }
 
     // MARK: - Header Bar
@@ -278,6 +281,7 @@ struct MainTabView: View {
             )
             scheduleViewModel = model
             await model.load()
+            model.startPolling(every: 30)
         }
 
         if mapViewModel == nil {
@@ -287,6 +291,7 @@ struct MainTabView: View {
             )
             mapViewModel = model
             await model.load()
+            model.startPolling(every: 120)
         }
 
         if badgeViewModel == nil {
@@ -296,9 +301,6 @@ struct MainTabView: View {
             )
             badgeViewModel = model
             await model.loadData()
-            if activeTab == .badge {
-                model.startPolling()
-            }
         }
 
         if organizerViewModel == nil, appViewModel.profile?.role == .employee {
@@ -318,12 +320,6 @@ struct MainTabView: View {
             selectedSticker = nil
             isQRModalOpen = false
             isOverlayPresented = false
-        }
-
-        if newTab == .badge {
-            badgeViewModel?.startPolling()
-        } else {
-            badgeViewModel?.stopPolling()
         }
     }
 
