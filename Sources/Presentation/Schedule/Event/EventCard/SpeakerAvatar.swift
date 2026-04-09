@@ -1,23 +1,18 @@
+import Kingfisher
 import SwiftUI
 
 struct SpeakerAvatar: View {
     let url: URL?
+    let fullName: String
 
     var body: some View {
         Group {
             if let url {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case let .success(image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure, .empty:
-                        placeholder
-                    @unknown default:
-                        placeholder
-                    }
-                }
+                KFImage(url)
+                    .placeholder { placeholder }
+                    .cancelOnDisappear(true)
+                    .resizable()
+                    .scaledToFill()
             } else {
                 placeholder
             }
@@ -33,9 +28,18 @@ struct SpeakerAvatar: View {
     private var placeholder: some View {
         ZStack {
             AppColor.gray700.opacity(0.35)
-            Image(systemName: "person.fill")
-                .font(.system(size: 20, weight: .medium))
-                .foregroundStyle(.white.opacity(0.5))
+            Text(initials)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(.white.opacity(0.8))
         }
+    }
+
+    private var initials: String {
+        let parts = fullName
+            .split(separator: " ")
+            .prefix(2)
+            .compactMap(\.first)
+        if parts.isEmpty { return "?" }
+        return String(parts)
     }
 }

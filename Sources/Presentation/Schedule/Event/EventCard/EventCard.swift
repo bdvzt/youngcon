@@ -8,6 +8,8 @@ struct EventCard: View {
     let zone: Zone?
     let speakers: [Speaker]
     var streamURL: URL?
+    let isFavorite: Bool
+    let onToggleFavorite: (() async -> Bool)?
     @State private var isShowingStreamPlayer = false
 
     @State private var showingDetail = false
@@ -84,7 +86,9 @@ struct EventCard: View {
                         event: event,
                         zone: zone,
                         speaker: speaker,
-                        streamURL: streamURL
+                        streamURL: streamURL,
+                        isFavorite: isFavorite,
+                        onToggleFavorite: onToggleFavorite
                     )
                 }
                 .presentationBackground(.ultraThinMaterial)
@@ -163,7 +167,7 @@ struct EventCard: View {
             showingSpeakerCard = true
         }) {
             HStack(alignment: .center, spacing: 12) {
-                SpeakerAvatar(url: speaker.avatarImageURL)
+                SpeakerAvatar(url: speaker.avatarImageURL, fullName: speaker.fullName)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(speaker.fullName)
                         .font(.callout)

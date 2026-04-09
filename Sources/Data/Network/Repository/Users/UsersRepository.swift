@@ -5,6 +5,11 @@ private struct UserAchievementsResponse: Decodable {
     let achievments: [AchievementDTO]
 }
 
+private struct UserLikedEventsResponse: Decodable {
+    let userId: String
+    let likedEvents: [EventDTO]
+}
+
 final class UsersRepository: UsersRepositoryProtocol {
     private let networkService: NetworkServiceProtocol
 
@@ -28,11 +33,18 @@ final class UsersRepository: UsersRepositoryProtocol {
 
     func getUserLikedEvents(userID: String) async throws -> [Event] {
         let endpoint = GetUserLikedEventsEndpoint(userID)
-        let dtos = try await networkService.requestDecodable(
+        if let wrappedResponse = try? await networkService.requestDecodable(
+            endpoint,
+            as: UserLikedEventsResponse.self
+        ) {
+            return wrappedResponse.likedEvents.compactMap { $0.toEntity() }
+        }
+
+        let plainResponse = try await networkService.requestDecodable(
             endpoint,
             as: [EventDTO].self
         )
-        return dtos.compactMap { $0.toEntity() }
+        return plainResponse.compactMap { $0.toEntity() }
     }
 
     func getUserAchievements(userID: String) async throws -> [Achievement] {

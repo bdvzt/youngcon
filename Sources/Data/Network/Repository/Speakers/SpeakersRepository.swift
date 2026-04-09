@@ -36,6 +36,12 @@ final class CachedSpeakersRepository: SpeakersRepositoryProtocol {
     }
 
     func getSpeaker(speakerID: String) async throws -> Speaker {
+        if let cachedDTO = try? await cacheStore.load(SpeakerDTO.self, for: CacheKey.Schedule.speaker(speakerID: speakerID)),
+           let speaker = cachedDTO.toEntity()
+        {
+            return speaker
+        }
+
         do {
             let endpoint = GetSpeakerByIDEndpoint(speakerID)
             let dto = try await networkService.requestDecodable(endpoint, as: SpeakerDTO.self)
@@ -55,6 +61,10 @@ final class CachedSpeakersRepository: SpeakersRepositoryProtocol {
     }
 
     func getAllSpeakers() async throws -> [Speaker] {
+        if let cachedDTOs = try? await cacheStore.load([SpeakerDTO].self, for: CacheKey.Schedule.allSpeakers) {
+            return cachedDTOs.compactMap { $0.toEntity() }
+        }
+
         do {
             let endpoint = GetSpeakersEndpoint()
             let dtos = try await networkService.requestDecodable(endpoint, as: [SpeakerDTO].self)

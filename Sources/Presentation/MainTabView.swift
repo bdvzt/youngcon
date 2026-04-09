@@ -268,7 +268,8 @@ struct MainTabView: View {
                 festivalsRepository: container.festivalsRepository,
                 eventsRepository: container.eventsRepository,
                 zoneRepository: container.zoneRepository,
-                speakersRepository: container.speakersRepository
+                speakersRepository: container.speakersRepository,
+                usersRepository: container.usersRepository
             )
             scheduleViewModel = model
             await model.load()
@@ -290,7 +291,9 @@ struct MainTabView: View {
             )
             badgeViewModel = model
             await model.loadData()
-            model.startPolling()
+            if activeTab == .badge {
+                model.startPolling()
+            }
         }
 
         if organizerViewModel == nil, appViewModel.profile?.role == .employee {
@@ -310,6 +313,12 @@ struct MainTabView: View {
             selectedSticker = nil
             isQRModalOpen = false
             isOverlayPresented = false
+        }
+
+        if newTab == .badge {
+            badgeViewModel?.startPolling()
+        } else {
+            badgeViewModel?.stopPolling()
         }
     }
 

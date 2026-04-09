@@ -28,6 +28,12 @@ final class CachedFestivalsRepository: FestivalsRepositoryProtocol {
     }
 
     func getLastFestival() async throws -> Festival {
+        if let cachedDTO = try? await cacheStore.load(FestivalDTO.self, for: CacheKey.Schedule.lastFestival),
+           let cachedFestival = cachedDTO.toEntity()
+        {
+            return cachedFestival
+        }
+
         do {
             let dto = try await networkService.requestDecodable(GetLastFestivalEndpoint(), as: FestivalDTO.self)
             try? await cacheStore.save(dto, for: CacheKey.Schedule.lastFestival)

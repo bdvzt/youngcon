@@ -66,6 +66,10 @@ final class CachedEventsRepository: EventsRepositoryProtocol {
     }
 
     func getEvents(festivalID: String) async throws -> [Event] {
+        if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: CacheKey.Schedule.events(festivalID: festivalID)) {
+            return cachedDTOs.compactMap { $0.toEntity() }
+        }
+
         do {
             let endpoint = GetEventsEndpoint(festivalID)
             let dtos = try await networkService.requestDecodable(endpoint, as: [EventDTO].self)
@@ -80,6 +84,12 @@ final class CachedEventsRepository: EventsRepositoryProtocol {
     }
 
     func getEvent(eventID: String) async throws -> Event {
+        if let cachedDTO = try? await cacheStore.load(EventDTO.self, for: CacheKey.Schedule.event(eventID: eventID)),
+           let event = cachedDTO.toEntity()
+        {
+            return event
+        }
+
         do {
             let endpoint = GetEventByIDEndpoint(eventID)
             let dto = try await networkService.requestDecodable(endpoint, as: EventDTO.self)
@@ -107,6 +117,10 @@ final class CachedEventsRepository: EventsRepositoryProtocol {
     }
 
     func getSpeakerEvents(speakerID: String) async throws -> [Event] {
+        if let cachedDTOs = try? await cacheStore.load([EventDTO].self, for: CacheKey.Schedule.speakerEvents(speakerID: speakerID)) {
+            return cachedDTOs.compactMap { $0.toEntity() }
+        }
+
         do {
             let endpoint = GetSpeakerEventsEndpoint(speakerID)
             let dtos = try await networkService.requestDecodable(endpoint, as: [EventDTO].self)
