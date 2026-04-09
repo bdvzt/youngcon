@@ -10,6 +10,8 @@ struct OrganizerView: View {
     @State private var showScanner = false
     @State private var gradientOffset: CGFloat = 0
 
+    var hasFixedHeader: Bool = false
+
     init(container: DependencyContainer, appViewModel: AppViewModel, onLogout: (() -> Void)? = nil) {
         self.container = container
         self.appViewModel = appViewModel
@@ -29,7 +31,8 @@ struct OrganizerView: View {
                 Color.clear
 
                 VStack(spacing: 0) {
-                    Color.clear.frame(height: 52)
+                    Color.clear.frame(height: hasFixedHeader ? 60 : 52)
+
                     headerSection
 
                     ScrollView(showsIndicators: false) {
@@ -70,71 +73,6 @@ struct OrganizerView: View {
                         .padding(.bottom, 180)
                     }
                 }
-
-                VStack(spacing: 0) {
-                    AppColor.appBackground.ignoresSafeArea(edges: .top)
-                        .frame(height: 0)
-                    AppColor.appBackground.frame(height: 52)
-                    LinearGradient(
-                        colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 32)
-                    Spacer()
-                }
-                .zIndex(20)
-                .allowsHitTesting(false)
-
-                VStack(spacing: 0) {
-                    HStack(alignment: .center) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(RadialGradient(
-                                    colors: [AppColor.accentYellow, .clear],
-                                    center: .center, startRadius: 5, endRadius: 40
-                                ))
-                                .frame(width: 80, height: 60)
-                                .blur(radius: 20)
-                                .opacity(0.35)
-
-                            YoungConAsset.logo.swiftUIImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 36)
-                                .shadow(color: AppColor.accentYellow.opacity(0.3), radius: 8)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .allowsHitTesting(false)
-
-                        Spacer()
-
-                        Button {
-                            onLogout?()
-                        } label: {
-                            HStack(spacing: 6) {
-                                Image(systemName: "rectangle.portrait.and.arrow.right")
-                                    .font(.system(size: 10, weight: .bold))
-                                Text("Выйти")
-                                    .font(.system(size: 12, weight: .bold))
-                            }
-                            .foregroundColor(.white.opacity(0.6))
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(
-                                Capsule()
-                                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
-                                    .background(Capsule().fill(Color.white.opacity(0.05)))
-                            )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-
-                    Spacer()
-                }
-                .zIndex(21)
 
                 VStack {
                     Spacer()
@@ -192,7 +130,7 @@ struct OrganizerView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 20)
-        .padding(.top, 32)
+        .padding(.top, hasFixedHeader ? 20 : 32)
         .padding(.bottom, 12)
     }
 

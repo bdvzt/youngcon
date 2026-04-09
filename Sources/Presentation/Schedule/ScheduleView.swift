@@ -7,6 +7,8 @@ struct ScheduleView: View {
     @State private var activeFilter: String = "Все"
     @State private var gradientOffset: CGFloat = 0
 
+    var hasFixedHeader: Bool = false
+
     let filters = ["Все", "Избранное", "Live", "Лекция", "Интерактив", "Backend", "ML"]
 
     private var filteredEntries: [ScheduleEntry] {
@@ -30,37 +32,13 @@ struct ScheduleView: View {
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Color.clear.frame(height: 52)
+                    Color.clear.frame(height: hasFixedHeader ? 60 : 52)
                     headerSection
                     filterBarWithMask
                     eventList
                     Color.clear.frame(height: 120)
                 }
             }
-
-            VStack(spacing: 0) {
-                AppColor.appBackground.ignoresSafeArea(edges: .top)
-                    .frame(height: 0)
-                AppColor.appBackground.frame(height: 52)
-                LinearGradient(
-                    colors: [AppColor.appBackground, AppColor.appBackground.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 32)
-                Spacer()
-            }
-            .zIndex(20)
-            .allowsHitTesting(false)
-
-            VStack(spacing: 0) {
-                logoView
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                Spacer()
-            }
-            .zIndex(21)
-            .allowsHitTesting(false)
         }
         .onAppear {
             withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
@@ -114,7 +92,7 @@ struct ScheduleView: View {
                 .foregroundColor(.white.opacity(0.25))
         }
         .padding(.horizontal, 20)
-        .padding(.top, 32)
+        .padding(.top, hasFixedHeader ? 20 : 32)
         .padding(.bottom, 12)
     }
 
