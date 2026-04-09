@@ -34,4 +34,20 @@ enum CacheKey {
             CacheKey.make(.schedule, "zones", "floor", floorID)
         }
     }
+
+    enum Map {
+        static let allFloors = CacheKey.make(.map, "floors", "all")
+
+        static func floor(floorID: String) -> String {
+            CacheKey.make(.map, "floor", floorID)
+        }
+
+        static func zone(zoneID: String) -> String {
+            CacheKey.make(.map, "zone", zoneID)
+        }
+
+        static func zones(floorID: String) -> String {
+            CacheKey.make(.map, "zones", "floor", floorID)
+        }
+    }
 }

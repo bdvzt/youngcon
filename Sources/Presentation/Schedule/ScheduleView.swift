@@ -139,7 +139,7 @@ struct ScheduleView: View {
 
     private var eventList: some View {
         VStack(spacing: 14) {
-            if viewModel.isLoading {
+            if viewModel.isLoading, viewModel.entries.isEmpty {
                 ProgressView()
                     .tint(.white.opacity(0.6))
                     .frame(maxWidth: .infinity)
@@ -190,39 +190,5 @@ private extension ScheduleView {
         let prefetcher = ImagePrefetcher(urls: urls)
         speakerPrefetcher = prefetcher
         prefetcher.start()
-    }
-}
-
-#Preview {
-    SchedulePreviewHost()
-        .environment(\.dependencyContainer, .preview)
-        .preferredColorScheme(.dark)
-}
-
-private struct SchedulePreviewHost: View {
-    @State private var viewModel: ScheduleViewModel?
-    @Environment(\.dependencyContainer) private var container
-
-    var body: some View {
-        Group {
-            if let viewModel {
-                ScheduleView(viewModel: viewModel)
-            } else {
-                ProgressView()
-            }
-        }
-        .task {
-            if viewModel == nil {
-                let model = ScheduleViewModel(
-                    festivalsRepository: container.festivalsRepository,
-                    eventsRepository: container.eventsRepository,
-                    zoneRepository: container.zoneRepository,
-                    speakersRepository: container.speakersRepository,
-                    usersRepository: container.usersRepository
-                )
-                viewModel = model
-                await model.load()
-            }
-        }
     }
 }

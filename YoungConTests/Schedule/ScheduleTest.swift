@@ -21,7 +21,7 @@ final class MockFestivalsRepository: FestivalsRepositoryProtocol {
 
     private(set) var getLastFestivalCallCount = 0
 
-    func getLastFestival() async throws -> Festival {
+    func getLastFestival(policy _: CachePolicy = .cacheFirst) async throws -> Festival {
         getLastFestivalCallCount += 1
         if shouldFail { throw NetworkError.generic }
         return mockFestival
@@ -36,13 +36,13 @@ final class MockEventsRepository: EventsRepositoryProtocol {
     private(set) var getEventsCallCount = 0
     private(set) var getSpeakerEventsCallCount = 0
 
-    func getEvents(festivalID _: String) async throws -> [Event] {
+    func getEvents(festivalID _: String, policy _: CachePolicy = .cacheFirst) async throws -> [Event] {
         getEventsCallCount += 1
         if shouldFail { throw NetworkError.generic }
         return mockEvents
     }
 
-    func getEvent(eventID _: String) async throws -> Event {
+    func getEvent(eventID _: String, policy _: CachePolicy = .cacheFirst) async throws -> Event {
         fatalError("не используется в тестах")
     }
 
@@ -67,7 +67,7 @@ final class MockZoneRepository: ZoneRepositoryProtocol {
 
     private(set) var getZoneCallCount = 0
 
-    func getZone(zoneID: String) async throws -> Zone {
+    func getZone(zoneID: String, policy _: CachePolicy = .cacheFirst) async throws -> Zone {
         getZoneCallCount += 1
         if shouldFail { throw NetworkError.generic }
         guard let zone = mockZones[zoneID] else {
@@ -76,7 +76,7 @@ final class MockZoneRepository: ZoneRepositoryProtocol {
         return zone
     }
 
-    func getZones(floorID _: String) async throws -> [Zone] {
+    func getZones(floorID _: String, policy _: CachePolicy = .cacheFirst) async throws -> [Zone] {
         fatalError("не используется в тестах")
     }
 }
@@ -87,11 +87,11 @@ final class MockSpeakersRepository: SpeakersRepositoryProtocol {
 
     private(set) var getAllSpeakersCallCount = 0
 
-    func getSpeaker(speakerID _: String) async throws -> Speaker {
+    func getSpeaker(speakerID _: String, policy _: CachePolicy = .cacheFirst) async throws -> Speaker {
         fatalError("не используется в тестах")
     }
 
-    func getAllSpeakers() async throws -> [Speaker] {
+    func getAllSpeakers(policy _: CachePolicy = .cacheFirst) async throws -> [Speaker] {
         getAllSpeakersCallCount += 1
         if shouldFail { throw NetworkError.generic }
         return mockSpeakers

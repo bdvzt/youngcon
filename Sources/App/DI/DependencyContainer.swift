@@ -3,6 +3,7 @@ import Foundation
 final class DependencyContainer {
     private lazy var tokenStorage: TokenStorageProtocol = KeychainTokenStorage()
     private lazy var scheduleCacheStore: ScheduleCacheStoreProtocol = CoreDataScheduleCacheStore()
+    private lazy var mapCacheStore: MapCacheStoreProtocol = CoreDataMapCacheStore()
 
     private lazy var networkService: NetworkServiceProtocol = NetworkService(
         authorizationProvider: AuthorizationProvider(tokenStorage: tokenStorage),
@@ -38,8 +39,9 @@ final class DependencyContainer {
         cacheStore: scheduleCacheStore
     )
 
-    private(set) lazy var floorsRepository: FloorsRepositoryProtocol = FloorsRepository(
-        networkService: networkService
+    private(set) lazy var floorsRepository: FloorsRepositoryProtocol = CachedFloorsRepository(
+        networkService: networkService,
+        cacheStore: mapCacheStore
     )
 
     private(set) lazy var speakersRepository: SpeakersRepositoryProtocol = CachedSpeakersRepository(

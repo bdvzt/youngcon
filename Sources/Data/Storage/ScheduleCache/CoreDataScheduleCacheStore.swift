@@ -122,6 +122,7 @@ actor CoreDataDataCacheStore: DataCacheStoreProtocol {
 }
 
 typealias CoreDataScheduleCacheStore = CoreDataDataCacheStore
+typealias CoreDataMapCacheStore = CoreDataDataCacheStore
 
 private enum StorageType {
     case persistent

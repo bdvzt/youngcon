@@ -281,7 +281,7 @@ struct MainTabView: View {
             )
             scheduleViewModel = model
             await model.load()
-            model.startPolling(every: 60)
+            model.startPolling(every: 30)
         }
 
         if mapViewModel == nil {
@@ -291,6 +291,7 @@ struct MainTabView: View {
             )
             mapViewModel = model
             await model.load()
+            model.startPolling(every: 10)
         }
 
         if badgeViewModel == nil {
