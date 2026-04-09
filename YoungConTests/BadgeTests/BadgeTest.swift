@@ -30,20 +30,22 @@ final class MockUsersRepository: UsersRepositoryProtocol {
         return mockProfile
     }
 
-    func getUserAchievements(
-        userID _: String,
-        policy _: CachePolicy = .cacheFirst
-    ) async throws -> [Achievement] {
+    func getUserAchievements(userID _: String, policy _: CachePolicy = .cacheFirst) async throws -> [Achievement] {
         getUserAchievementsCallCount += 1
         if shouldFailProgress { throw NetworkError.generic }
         return mockUnlockedAchievements
     }
 
-    func getUserLikedEvents(
-        userID _: String,
-        policy _: CachePolicy = .cacheFirst
-    ) async throws -> [Event] {
+    func getUserLikedEvents(userID _: String, policy _: CachePolicy = .cacheFirst) async throws -> [Event] {
         []
+    }
+
+    func assignAchievement(qrCode _: String, achievementId _: String, policy _: CachePolicy = .cacheFirst) async throws -> AssignResult {
+        .init(userId: "test", achievementId: "test", assignedNow: false)
+    }
+
+    func resolveQR(_: String) async throws -> ResolvedUser {
+        .init(userId: "1", firstName: "", lastName: "", qrCode: "")
     }
 }
 
@@ -142,11 +144,7 @@ final class BadgeViewModelUnitTests: XCTestCase {
         XCTAssertNil(viewModel.profile, "Профиль не должен устанавливаться при ошибке")
         XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны создаваться, если упал профиль")
         XCTAssertFalse(viewModel.isLoading)
-        XCTAssertEqual(
-            mockAchievementsRepo.getAchievementsCallCount,
-            1,
-            "Список ачивок теперь загружается параллельно с профилем"
-        )
+        XCTAssertEqual(mockAchievementsRepo.getAchievementsCallCount, 0, "Список ачивок не должен загружаться")
     }
 
     func testLoadData_AchievementsError_StopsExecutionAndResetsLoading() async {
@@ -154,7 +152,7 @@ final class BadgeViewModelUnitTests: XCTestCase {
 
         await viewModel.loadData()
 
-        XCTAssertNil(viewModel.profile, "Состояние применяется только после полного успешного payload")
+        XCTAssertNotNil(viewModel.profile, "Профиль должен был загрузиться")
         XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны создаваться при ошибке списка")
         XCTAssertFalse(viewModel.isLoading)
     }
@@ -164,7 +162,7 @@ final class BadgeViewModelUnitTests: XCTestCase {
 
         await viewModel.loadData()
 
-        XCTAssertNil(viewModel.profile, "Состояние применяется только после полной успешной загрузки")
+        XCTAssertNotNil(viewModel.profile)
         XCTAssertTrue(viewModel.stickers.isEmpty, "Стикеры не должны маппиться, если не смогли получить прогресс")
         XCTAssertFalse(viewModel.isLoading)
     }
