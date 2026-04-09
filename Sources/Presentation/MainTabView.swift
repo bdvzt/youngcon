@@ -3,6 +3,7 @@ import SwiftUI
 struct MainTabView: View {
     private let container: DependencyContainer
     private let tabs: [AppTab]
+    @Environment(\.scenePhase) private var scenePhase
 
     @ObservedObject var appViewModel: AppViewModel
 
@@ -104,6 +105,10 @@ struct MainTabView: View {
         .onChange(of: isQRModalOpen) { _, _ in syncOverlay() }
         .onChange(of: selectedSticker) { _, _ in syncOverlay() }
         .onChange(of: badgeViewModel?.newlyUnlockedSticker) { _, _ in syncOverlay() }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active, let scheduleViewModel else { return }
+            Task { await scheduleViewModel.syncCurrentEventLiveActivity() }
+        }
         .onAppear {
             withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
                 gradientOffset = 1
