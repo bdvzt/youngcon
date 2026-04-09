@@ -127,7 +127,7 @@ struct LocationsView: View {
                     let height = geo.size.height
 
                     ZStack {
-                        if viewModel.isInitialLoading && viewModel.floors.isEmpty {
+                        if viewModel.isInitialLoading, viewModel.floors.isEmpty {
                             ProgressView()
                                 .tint(.white.opacity(0.6))
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
