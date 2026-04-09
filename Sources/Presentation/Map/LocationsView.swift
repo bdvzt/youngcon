@@ -23,6 +23,7 @@ struct LocationsView: View {
                 }
             }
             .scrollClipDisabled(true)
+            .accessibilityIdentifier("map.screen")
 
             topOverlay
 
@@ -106,12 +107,14 @@ struct LocationsView: View {
                         endPoint: UnitPoint(x: gradientOffset * 0.5 + 1, y: 1)
                     )
                 )
+                .accessibilityIdentifier("map.header.title")
 
             Text("Навигация по площадке")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(2)
                 .textCase(.uppercase)
                 .foregroundColor(.white.opacity(0.25))
+                .accessibilityIdentifier("map.header.subtitle")
         }
         .padding(.horizontal, 20)
         .padding(.top, 32)
@@ -136,12 +139,14 @@ struct LocationsView: View {
                         if viewModel.isLoading {
                             ProgressView()
                                 .tint(.white.opacity(0.6))
+                                .accessibilityIdentifier("map.loading")
                         } else if let loadError = viewModel.loadError {
                             Text(loadError)
                                 .font(.footnote)
                                 .foregroundStyle(.white.opacity(0.55))
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 24)
+                                .accessibilityIdentifier("map.error")
                         } else if let floor = viewModel.selectedFloor {
                             LocationFloorSwitcher(
                                 floorNumber: viewModel.selectedFloorNumber,
@@ -177,6 +182,7 @@ struct LocationsView: View {
                                 .font(.footnote)
                                 .foregroundStyle(.white.opacity(0.55))
                                 .multilineTextAlignment(.center)
+                                .accessibilityIdentifier("map.empty")
                         }
                     }
                 }
@@ -210,6 +216,9 @@ struct LocationsView: View {
                                     ZoneIconImage(url: zone.icon, placeholderFontSize: 10)
                                         .frame(width: 10, height: 10)
                                 }
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityIdentifier("map.zoneChip.icon.\(zone.id)")
+                                .accessibilityLabel(zone.title)
                                 Text(zone.title)
                                     .font(.system(size: 11, weight: .bold))
                                     .tracking(0.3)
@@ -242,11 +251,14 @@ struct LocationsView: View {
                             )
                         }
                         .buttonStyle(.plain)
+                        .animation(.easeInOut(duration: 0.2), value: isSelected)
+                        .accessibilityIdentifier("map.zoneChip.\(zone.id)")
                     }
                 }
                 .padding(.horizontal, 24)
                 .padding(.vertical, 14)
             }
+            .accessibilityIdentifier("map.zoneSelector")
             .mask(
                 LinearGradient(
                     gradient: Gradient(stops: [

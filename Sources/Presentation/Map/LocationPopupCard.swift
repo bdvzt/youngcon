@@ -14,6 +14,8 @@ struct LocationPopupCard: View {
         .frame(width: 200)
         .compositingGroup()
         .onTapGesture {}
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("map.popup.\(zone.id)")
     }
 
     private var cardContent: some View {
@@ -46,10 +48,14 @@ struct LocationPopupCard: View {
                     ZoneIconImage(url: zone.icon, placeholderFontSize: 12)
                         .frame(width: 14, height: 14)
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityIdentifier("map.popup.icon.\(zone.id)")
+                .accessibilityLabel(zone.title)
                 Text(zone.title)
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.white)
                     .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("map.popup.title.\(zone.id)")
             }
             Spacer(minLength: 0)
             closeButton
@@ -72,6 +78,7 @@ struct LocationPopupCard: View {
                 )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("map.popup.close")
     }
 
     private var arrowTip: some View {

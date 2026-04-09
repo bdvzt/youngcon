@@ -4,8 +4,8 @@ import Observation
 @MainActor
 @Observable
 final class MapViewModel {
-    private let floorsRepository: FloorsRepositoryProtocol
-    private let zoneRepository: ZoneRepositoryProtocol
+    private let floorsRepository: FloorsRepositoryProtocol?
+    private let zoneRepository: ZoneRepositoryProtocol?
 
     private(set) var floors: [Floor] = []
     private(set) var zonesByFloorID: [String: [Zone]] = [:]
@@ -63,16 +63,30 @@ final class MapViewModel {
         self.zoneRepository = zoneRepository
     }
 
+    init(
+        preloadedFloors: [Floor],
+        zonesByFloorID: [String: [Zone]],
+        selectedFloorID: String? = nil
+    ) {
+        floorsRepository = nil
+        zoneRepository = nil
+        floors = Self.sortedFloors(preloadedFloors)
+        self.zonesByFloorID = Self.sortedZonesByFloorID(zonesByFloorID)
+        self.selectedFloorID = selectedFloorID ?? floors.first?.id
+    }
+
     func load() async {
-        guard !isLoading, floors.isEmpty else { return }
+        guard !isLoading, floors.isEmpty, let floorsRepository, let zoneRepository else { return }
         isLoading = true
         loadError = nil
         defer { isLoading = false }
 
         do {
-            let loadedFloors = try await floorsRepository.getFloors()
-                .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
-            let loadedZonesByFloorID = try await loadZonesByFloorID(for: loadedFloors)
+            let loadedFloors = try await Self.sortedFloors(floorsRepository.getFloors())
+            let loadedZonesByFloorID = try await loadZonesByFloorID(
+                for: loadedFloors,
+                zoneRepository: zoneRepository
+            )
 
             floors = loadedFloors
             zonesByFloorID = loadedZonesByFloorID
@@ -99,14 +113,18 @@ final class MapViewModel {
         selectedFloorID = floors[selectedFloorIndex - 1].id
     }
 
-    private func loadZonesByFloorID(for floors: [Floor]) async throws -> [String: [Zone]] {
+    private func loadZonesByFloorID(
+        for floors: [Floor],
+        zoneRepository: ZoneRepositoryProtocol
+    ) async throws -> [String: [Zone]] {
         var zonesByFloorID: [String: [Zone]] = [:]
 
         try await withThrowingTaskGroup(of: (String, [Zone]).self) { group in
             for floor in floors {
                 group.addTask { [zoneRepository] in
-                    let zones = try await zoneRepository.getZones(floorID: floor.id)
-                        .sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+                    let zones = try await Self.sortedZones(
+                        zoneRepository.getZones(floorID: floor.id)
+                    )
                     return (floor.id, zones)
                 }
             }
@@ -116,5 +134,21 @@ final class MapViewModel {
         }
 
         return zonesByFloorID
+    }
+
+    private static func sortedFloors(_ floors: [Floor]) -> [Floor] {
+        floors.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+
+    private static func sortedZones(_ zones: [Zone]) -> [Zone] {
+        zones.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
+    }
+
+    private static func sortedZonesByFloorID(_ zonesByFloorID: [String: [Zone]]) -> [String: [Zone]] {
+        Dictionary(
+            uniqueKeysWithValues: zonesByFloorID.map { floorID, zones in
+                (floorID, sortedZones(zones))
+            }
+        )
     }
 }
