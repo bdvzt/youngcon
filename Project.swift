@@ -37,13 +37,26 @@ let project = Project(
             scripts: [swiftFormatScript],
             dependencies: [
                 .external(name: "SnapKit"),
-                .external(name: "Kingfisher")
+                .external(name: "Kingfisher"),
+                .target(name: "YoungConLiveActivityExtension")
             ],
             settings: .settings(
                 base: [
                     "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentPurple"
                 ]
             )
+        ),
+
+        .target(
+            name: "YoungConLiveActivityExtension",
+            destinations: .iOS,
+            product: .appExtension,
+            bundleId: "com.bdvzt.YoungCon.YoungConLiveActivity",
+            infoPlist: .file(path: "YoungConLiveActivity/Info.plist"),
+            sources: [
+                "YoungConLiveActivity/**",
+                "Sources/App/LiveActivity/EventLiveActivityAttributes.swift"
+            ]
         ),
 
         .target(
