@@ -98,34 +98,6 @@ final class MockSpeakersRepository: SpeakersRepositoryProtocol {
     }
 }
 
-final class MockScheduleUsersRepository: UsersRepositoryProtocol {
-    func getMyProfile(policy _: CachePolicy = .cacheFirst) async throws -> UserProfile {
-        UserProfile(
-            id: "user-1",
-            firstName: "Тест",
-            lastName: "Тестов",
-            email: "test@youngcon.test",
-            qrCode: "qr-test",
-            major: .ios,
-            role: .client
-        )
-    }
-
-    func getUserLikedEvents(
-        userID _: String,
-        policy _: CachePolicy = .cacheFirst
-    ) async throws -> [Event] {
-        []
-    }
-
-    func getUserAchievements(
-        userID _: String,
-        policy _: CachePolicy = .cacheFirst
-    ) async throws -> [Achievement] {
-        []
-    }
-}
-
 // MARK: - Unit-тесты ScheduleViewModel
 
 @MainActor
@@ -134,7 +106,7 @@ final class ScheduleViewModelUnitTests: XCTestCase {
     private var eventsRepo: MockEventsRepository!
     private var zonesRepo: MockZoneRepository!
     private var speakersRepo: MockSpeakersRepository!
-    private var usersRepo: MockScheduleUsersRepository!
+    private var usersRepo: MockUsersRepository!
     private var viewModel: ScheduleViewModel!
 
     override func setUp() {
@@ -143,7 +115,7 @@ final class ScheduleViewModelUnitTests: XCTestCase {
         eventsRepo = MockEventsRepository()
         zonesRepo = MockZoneRepository()
         speakersRepo = MockSpeakersRepository()
-        usersRepo = MockScheduleUsersRepository()
+        usersRepo = MockUsersRepository()
         viewModel = ScheduleViewModel(
             festivalsRepository: festivalsRepo,
             eventsRepository: eventsRepo,
@@ -158,7 +130,6 @@ final class ScheduleViewModelUnitTests: XCTestCase {
         eventsRepo = nil
         zonesRepo = nil
         speakersRepo = nil
-        usersRepo = nil
         viewModel = nil
         super.tearDown()
     }

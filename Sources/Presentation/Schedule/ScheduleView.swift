@@ -17,7 +17,7 @@ struct ScheduleView: View {
             viewModel.entries
 
         case "Live":
-            viewModel.entries.filter { $0.streamURL != nil }
+            viewModel.entries.filter { isLiveEvent($0.event) }
 
         case "Избранное":
             viewModel.entries.filter { viewModel.isFavorite(eventID: $0.event.id) }
@@ -176,5 +176,10 @@ private extension ScheduleView {
         let prefetcher = ImagePrefetcher(urls: urls)
         speakerPrefetcher = prefetcher
         prefetcher.start()
+    }
+
+    private func isLiveEvent(_ event: Event) -> Bool {
+        let now = Date()
+        return now >= event.startDate && now <= event.endDate
     }
 }

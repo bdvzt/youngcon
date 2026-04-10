@@ -90,6 +90,11 @@ final class MapViewModel {
     }
 
     func startPolling(every seconds: TimeInterval = 60) {
+        #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--uitesting-map") {
+                return
+            }
+        #endif
         stopPolling()
 
         pollingTask = Task { [weak self] in

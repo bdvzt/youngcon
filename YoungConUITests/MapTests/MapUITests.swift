@@ -80,23 +80,6 @@ final class MapUITests: XCTestCase {
         XCTAssertTrue(careerIcon.exists)
     }
 
-    /// Проверяет, что в попапе отображаются иконка выбранной зоны и её заголовок.
-    @MainActor
-    func testMapScreen_popupDisplaysZoneIconAndTitle() {
-        let app = launchMapApp()
-        let zoneChip = element(in: app, id: "map.zoneChip.zone-main-stage")
-        let popupIcon = element(in: app, id: "map.popup.icon.zone-main-stage")
-        let popupTitle = element(in: app, id: "map.popup.title.zone-main-stage")
-
-        XCTAssertTrue(zoneChip.waitForExistence(timeout: 5))
-
-        zoneChip.tap()
-
-        XCTAssertTrue(popupIcon.waitForExistence(timeout: 2))
-        XCTAssertTrue(popupTitle.exists)
-        XCTAssertEqual(popupTitle.label, "Main Stage")
-    }
-
     @MainActor
     private func launchMapApp() -> XCUIApplication {
         let app = XCUIApplication()

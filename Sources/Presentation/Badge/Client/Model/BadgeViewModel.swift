@@ -129,11 +129,10 @@ private extension BadgeViewModel {
     }
 
     func loadBadgePayload(policy: CachePolicy) async throws -> BadgePayload {
-        async let currentProfileTask = usersRepository.getMyProfile(policy: policy)
-        async let allAchievementsTask = achievementsRepository.getAchievements(policy: policy)
+        let currentProfile = try await usersRepository.getMyProfile(policy: policy)
+        profile = currentProfile
 
-        let currentProfile = try await currentProfileTask
-        let allAchievements = try await allAchievementsTask
+        let allAchievements = try await achievementsRepository.getAchievements(policy: policy)
         let unlockedAchievements = try await usersRepository.getUserAchievements(
             userID: currentProfile.id,
             policy: policy
